@@ -2858,7 +2858,7 @@ public class LKADController {
      * @param fieldName : 父类中的属性名 
      * @return 父类中的属性对象 
      */  
-    public Field[] getDeclaredField(Object object){ 
+   /* public Field[] getDeclaredField(Object object){ 
         Class<?> clazz = object.getClass();
         if(clazz != Object.class){
             try {
@@ -2871,6 +2871,19 @@ public class LKADController {
             }   
         }  
         return null;  
-    }     
+    }     */
+    
+  //July_wonderful兄优化方案(支持多层继承)
+    public  Field[] getDeclaredField(Object object) {
+    	Class<?> clazz = object.getClass();
+        List<Field> fieldList = new ArrayList<>();
+        while (clazz != null) {
+            fieldList.addAll(new ArrayList<>(Arrays.asList(clazz.getDeclaredFields())));
+            clazz = clazz.getSuperclass();
+        }
+        Field[] fields = new Field[fieldList.size()];
+        fieldList.toArray(fields);
+        return fields;
+    }
 
 }
