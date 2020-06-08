@@ -24,13 +24,15 @@ function copyUrl(pt){
 }
 
 let indexFlag = null
+let oldWidth = 340
+let oldLeft = 365
 function bindResize(el) {
 	console.log(el)
 	  //初始化参数   
 	let menuBody = document.getElementById('menu')
 	let method_tables = $('.method-table')
-	let oldWidth = 340
-	let oldLeft = 365
+	/*let oldWidth = 340
+	let oldLeft = 365*/
 	  var els = el.style,
 	    //鼠标的 X 和 Y 轴坐标   
 	    x = y = 0;
@@ -54,21 +56,22 @@ function bindResize(el) {
 	    //防止默认事件发生   
 	    e.preventDefault()
 	  });
-	  //移动事件   
-	  function mouseMove(e) {		  
-		  console.log(method_tables)
-		 
-		  	  
+	  //移动事件 
+	  let oldFeft_s = 0
+	  let oldWidth_s =0
+	  function mouseMove(e) {		
+		  oldFeft_s   = oldLeft+ e.clientX - x
 		  if(indexFlag != null){
-			  let left = oldLeft+ e.clientX - x
+//			  let method_tables = $('.method-table')
 			let divs = method_tables[indexFlag].getElementsByTagName('div')[0]
-			  if(left < 185){
-				  left = 185
+			  if(oldFeft_s < 185){
+				  oldFeft_s = 185
 			  }
-			divs.style.left = left  + 'px'
+			divs.style.left = oldFeft_s  + 'px'
 		  }
 	    //宇宙超级无敌运算中... 
-		  menuBody.style.width =oldWidth+ e.clientX - x + 'px' //改变宽度
+		  oldWidth_s = oldWidth+ e.clientX - x
+		  menuBody.style.width = oldWidth_s+ 'px' //改变宽度
 //	      els.height = e.clientY - y + 'px' //改变高度 
 	  }
 	  //停止事件   
@@ -83,6 +86,9 @@ function bindResize(el) {
 	      //卸载事件   
 	      $(document).unbind("mousemove", mouseMove).unbind("mouseup", mouseUp)
 	    )
+	    oldLeft = oldFeft_s
+	    console.log(oldLeft)
+	    oldWidth = oldWidth_s
 	  }
 	}   
 $(function(){
@@ -114,6 +120,7 @@ $(function(){
 							
 							setTimeout(()=>{
 								let uls = $('.secondary')
+								let method_tables = $('.method-table')
 								for(let i = 0; i < uls.length;i++){
 									uls[i].onclick=function(){
 										indexFlag = i
@@ -121,6 +128,11 @@ $(function(){
 											uls[j].className = 'secondary'
 										}
 										this.className = 'secondary active'
+										 
+											let divs = method_tables[indexFlag].getElementsByTagName('div')[0]
+											  
+											divs.style.left = oldLeft  + 'px'
+										
 									}
 								}
 							},0)
