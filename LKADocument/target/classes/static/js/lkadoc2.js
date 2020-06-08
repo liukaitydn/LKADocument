@@ -57,11 +57,15 @@ function bindResize(el) {
 	  //移动事件   
 	  function mouseMove(e) {		  
 		  console.log(method_tables)
-		  console.log('ssss')
-		  console.log(indexFlag)	  
+		 
+		  	  
 		  if(indexFlag != null){
+			  let left = oldLeft+ e.clientX - x
 			let divs = method_tables[indexFlag].getElementsByTagName('div')[0]
-			divs.style.left = oldLeft+ e.clientX - x + 'px'
+			  if(left < 185){
+				  left = 185
+			  }
+			divs.style.left = left  + 'px'
 		  }
 	    //宇宙超级无敌运算中... 
 		  menuBody.style.width =oldWidth+ e.clientX - x + 'px' //改变宽度
