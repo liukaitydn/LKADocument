@@ -23,7 +23,68 @@ function copyUrl(pt){
 	pt.value = "复制成功";
 }
 
+let indexFlag = null
+function bindResize(el) {
+	console.log(el)
+	  //初始化参数   
+	let menuBody = document.getElementById('menu')
+	let method_tables = $('.method-table')
+	let oldWidth = 340
+	let oldLeft = 365
+	  var els = el.style,
+	    //鼠标的 X 和 Y 轴坐标   
+	    x = y = 0;
+	  //邪恶的食指   
+	  $(el).mousedown(function (e) {
+	    //按下元素后，计算当前鼠标与对象计算后的坐标  
+	    x = e.clientX - el.offsetWidth, y = e.clientY - el.offsetHeight;
+	    //在支持 setCapture 做些东东  
+	    el.setCapture ? (
+	      //捕捉焦点   
+	      el.setCapture(),
+	      //设置事件   
+	      el.onmousemove = function (ev) {
+	        mouseMove(ev || event)
+	      },
+	      el.onmouseup = mouseUp
+	    ) : (
+	      //绑定事件   
+	      $(document).bind("mousemove", mouseMove).bind("mouseup", mouseUp)
+	    )
+	    //防止默认事件发生   
+	    e.preventDefault()
+	  });
+	  //移动事件   
+	  function mouseMove(e) {		  
+		  console.log(method_tables)
+		  console.log('ssss')
+		  console.log(indexFlag)	  
+		  if(indexFlag != null){
+			let divs = method_tables[indexFlag].getElementsByTagName('div')[0]
+			divs.style.left = oldLeft+ e.clientX - x + 'px'
+		  }
+	    //宇宙超级无敌运算中... 
+		  menuBody.style.width =oldWidth+ e.clientX - x + 'px' //改变宽度
+//	      els.height = e.clientY - y + 'px' //改变高度 
+	  }
+	  //停止事件   
+	  function mouseUp() {
+	    //在支持 releaseCapture 做些东东   
+	    el.releaseCapture ? (
+	      //释放焦点   
+	      el.releaseCapture(),
+	      //移除事件   
+	      el.onmousemove = el.onmouseup = null
+	    ) : (
+	      //卸载事件   
+	      $(document).unbind("mousemove", mouseMove).unbind("mouseup", mouseUp)
+	    )
+	  }
+	}   
 $(function(){
+	setTimeout(()=>{
+		bindResize(document.getElementById('line'));
+	})
 	$.ajax({
 	    url:"/lkad/doc",
 	    type:"get",
@@ -51,6 +112,7 @@ $(function(){
 								let uls = $('.secondary')
 								for(let i = 0; i < uls.length;i++){
 									uls[i].onclick=function(){
+										indexFlag = i
 										for(let j = 0; j < uls.length;j++){
 											uls[j].className = 'secondary'
 										}

@@ -32,7 +32,7 @@ body {
   color: #f8f8f8;
   padding-bottom:24px;
   padding-left:30px;
-  margin-bottom:16px;
+  /* margin-bottom:16px; */
   height:180px;
   box-sizing:border-box;
 }
@@ -57,25 +57,56 @@ a:actived{
     /*  text-decoration: none;  */
   }
 
-.right-box {
-    width: 80%;
-    
-    height:-webkit-calc(100% - 180px) !important; 
+
+
+.main{
+	width:100%;
+	display:flex;
+	height:-webkit-calc(100% - 180px) !important; 
 	height:-moz-calc(100% - 180px) !important; 
 	height:calc(100% - 180px) !important; 
-    float: left;
+	overflow:hidden;
+}
+#line{
+	width:5px;
+	height:100%;
+	background:#000;
+	cursor: e-resize
+}
+#menu {
+    cursor: default;
+    overflow:hidden;
+	height:100%;
+    width: 340px;
+    min-width:160px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    /* padding-top:10px;
+    box-sizing:border-box; */
+}
+.right-box {
+    margin-left:5px;
+    flex:1;
+	height:100%;
     overflow: auto;
 }
 #right-box-id >div{
 	position:relative;
 	padding-top:250px;
+	width:100%;
 }
 #right-box-id >div>div:nth-of-type(1){
 	position:fixed;
-	left:20.8%;
+	left:365px;
 	top:180px;
 	background:#fff;
-	width:100%;
+	width:-webkit-calc(100% - 400px) !important; 
+	width:-moz-calc(100% - 400px) !important; 
+	width:calc(100% - 400px) !important; 
 	z-index:9999;
 	
 }
@@ -84,30 +115,13 @@ a:actived{
 	padding:0 !important;  
 }
 
-#menu {
-    cursor: default;
-    overflow:hidden;
-    height:-webkit-calc(100% - 180px) !important; 
-	height:-moz-calc(100% - 180px) !important; 
-	height:calc(100% - 180px) !important; 
-    width: 20%;
-    float: left;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    margin-top: -1.5rem;
-}
-
 #menu #open {
     /*显示菜单样式*/
     width: auto;
     height: 99% !important;
     background-color: #f8f8f8;
     padding-bottom: 0.1rem;
-    border-right:5px solid #000;
+   /*  border-right:5px solid #000; */
     /* border-top:5px solid #000; */
     margin-top: 17px;
     box-sizing: border-box;
