@@ -30,4 +30,10 @@ public @interface ApiOperation {
 	
 	/**是否隐藏**/
 	boolean hidden() default false;
+	/**作者*/
+	String author() default "";
+	/**创建时间*/
+	String createTime() default "";
+	/**修改时间*/
+	String updateTime() default "";
 }

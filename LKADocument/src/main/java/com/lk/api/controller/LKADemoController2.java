@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lk.api.annotation.ContentType;
@@ -18,9 +19,10 @@ import com.lk.api.annotation.LKAType;
 import com.lk.api.annotation.Lkad;
 import com.lk.api.annotation.ParamType;
 
-@LKAType("测试类")
+@LKAType("测试类2")
 @RestController
-public class LKADemoController {
+@RequestMapping("demo2")
+public class LKADemoController2 {
 	
 	/**
      *	说明：入参属性名后面加上'-n'代表不是必传字段,例如下面"id-n"那么代表入参id不是必须的

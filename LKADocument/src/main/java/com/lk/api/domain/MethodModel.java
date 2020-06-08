@@ -3,8 +3,6 @@ package com.lk.api.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.lk.api.annotation.LKAProperty;
-
 public class MethodModel {
 	private String name;
 	private String description;
@@ -15,7 +13,28 @@ public class MethodModel {
 	private String url;
 	private String version;
 	private String contentType;
+	private String author;
+	private String createTime;
+	private String updateTime;
 	
+	public String getAuthor() {
+		return author;
+	}
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+	public String getCreateTime() {
+		return createTime;
+	}
+	public void setCreateTime(String createTime) {
+		this.createTime = createTime;
+	}
+	public String getUpdateTime() {
+		return updateTime;
+	}
+	public void setUpdateTime(String updateTime) {
+		this.updateTime = updateTime;
+	}
 	public String getContentType() {
 		return contentType;
 	}

@@ -371,6 +371,8 @@ $(function(){
 		var methodType = $(this).parents("table").parent().parent().find(".method-requestParamInfo").eq(0).find("span").eq(1).html();
 		// 获取请求路径
 		var path = $(this).parents("table").parent().parent().find(".method-requestParamInfo").eq(1).find("span").eq(1).html();
+		//contentType
+		var contentType =  $(this).parents("table").parent().parent().find(".method-requestParamInfo").eq(2).find("span").eq(1).html();
 		// 获取请求参数名称
 		var paramValues = $(this).parents("table").find(".paramValue");
 		// 获取请求参数位置
@@ -399,7 +401,7 @@ $(function(){
 		// 请求头参数
 		// var contentType = "application/json";
 		// var contentType = "application/x-www-form-urlencoded";
-		var contentType = $(this).parent().find('input:radio:checked').val();
+		//var contentType = $(this).parent().find('input:radio:checked').val();
 		if(contentType != null && contentType !=""){
 			headerJson['Content-Type']=contentType;
 		}else{
@@ -489,16 +491,16 @@ $(function(){
 			$(this).parent().css("background-image","linear-gradient(to right,#e3d3ff,#f8f8f8)");
 		}
 		
-		if($(this).html() == 'GET' || $(this).html() == 'get'){
+		if($(this).html() == 'GET' || $(this).html() == 'get' || $(this).html() == 'POST' || $(this).html() == 'post'){
 			$(this).css("background","#60a0dd").css("color","#fff");
 			$(this).parent().css("background-image","linear-gradient(to right,#d3e3ff,#f8f8f8)");
 		}
-		if($(this).html() == 'POST' || $(this).html() == 'post'){
+		/*if($(this).html() == 'POST' || $(this).html() == 'post'){
 			//$(this).css("background","#dda060").css("color","#fff");
 			//$(this).parent().css("background-image","linear-gradient(to right,#ffe3d3,#f8f8f8)");
 			$(this).css("background","#a0dd60").css("color","#fff");
 			$(this).parent().css("background-image","linear-gradient(to right,#C7EDCC,#f8f8f8)");
-		}
+		}*/
 		if($(this).html() == '通用'){
 			$(this).css("background","#dda060").css("color","#fff");
 			$(this).parent().css("background-image","linear-gradient(to right,#ffe3d3,#f8f8f8)");
@@ -527,7 +529,7 @@ $(function(){
 			$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#e3d3ff,#f8f8f8)");
 		}
 		
-		if($(this).find(".method-requestType").html() == 'GET' || $(this).find(".method-requestType").html() == 'get'){
+		if($(this).find(".method-requestType").html() == 'GET' || $(this).find(".method-requestType").html() == 'get' ||$(this).find(".method-requestType").html() == 'POST' || $(this).find(".method-requestType").html() == 'post'){
 			$(this).find(".method-requestType").css("background","#60a0dd").css("color","#fff");
 			$(this).css("background","#f8f8f8");
 			$(this).find(".reqcls").css("backgroundColor","#d3e3ff");
@@ -544,7 +546,7 @@ $(function(){
 
 			
 		}
-		if($(this).find(".method-requestType").html() == 'POST' || $(this).find(".method-requestType").html() == 'post'){
+		/*if($(this).find(".method-requestType").html() == 'POST' || $(this).find(".method-requestType").html() == 'post'){
 			$(this).find(".method-requestType").css("background","#a0dd60").css("color","#fff");
 			$(this).css("background","#f8f8f8");
 			$(this).find(".reqcls").css("backgroundColor","#e3ffd3");
@@ -552,7 +554,7 @@ $(function(){
 			$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#e3ffd3,#f8f8f8)");
 
 			
-		}
+		}*/
 		if($(this).find(".method-requestType").html() == '未知'){
 			$(this).find(".method-requestType").css("background","#dd60a0").css("color","#fff");
 			$(this).css("background","#f8f8f8");
@@ -874,13 +876,14 @@ function buildMenu(doc) {
 	// var str =
 	// "<h2><span>"+doc.value+"</span><span>"+doc.name+"</span><span>"+doc.description+"</span><div
 	// class='d3'></div></h2>";
-	var str = "<h3 class='obtain'><span>"+doc.name+"</span><span>"+doc.description+"</span><div class='d3'></div></h3>";
+	var str = "<h3 class='obtain'><img src='img/file.gif' height='30px' width='30px'>&nbsp;<span>"+doc.name+"</span><span>"+doc.description+"</span><div class='d3'></div></h3>";
 	var methods =doc.methodModels;
     if(methods != null && methods.length>0){
     	str +="<ul hidden='hidden'>"
     	for(var i = 0;i<methods.length;i++){
     		met_index++;
-    		str += "<li data='"+met_index+"' class='secondary'><h5><span class='method-reqtype'>"+methods[i].requestType+"</span><span>"+methods[i].name+"</span></h5></li>";
+    		//str += "<li data='"+met_index+"' class='secondary'><h5><span class='method-reqtype'>"+methods[i].requestType+"</span><span>"+methods[i].name+"</span></h5></li>";
+    		str += "<li data='"+met_index+"' class='secondary'><h5><img src='img/f.gif' height='30px' width='30px'>&nbsp;<span>"+methods[i].name+"</span></h5></li>";
     		var request = methods[i].request;
     		var respose = methods[i].respose;
     		var str2 ="<div id='method_"+met_index+"' class='method-table' hidden='hidden'><div>" +
@@ -888,7 +891,8 @@ function buildMenu(doc) {
     				"<li><span class='method-name-pdf'>"+methods[i].name+"</span>&nbsp;&nbsp;<span>"+methods[i].description+"</span>&nbsp;&nbsp;<span>"+methods[i].version+"</span></li>"+
     				"<li class='method-requestParamInfo'><span>Method Type：</span><span class='method-requestType'>"+methods[i].requestType+"</span></li>"+
     				"<li class='method-requestParamInfo'><span>URL：</span><span class='method-URL'>"+methods[i].url+"</span></li>"+
-    				"<li class='method-requestParamInfo'><span>Content Type：</span><span>"+methods[i].contentType+"</span></li>"+
+    				"<li class='method-requestParamInfo'><span>Content Type：</span><span class='content-TYPE'>"+methods[i].contentType+"</span></li>"+
+    				"<li class='method-requestParamInfo'><span></span><span><b>Author：</b>"+(methods[i].author==''?'未设置':methods[i].author)+"&nbsp;&nbsp;&nbsp;<b>CreateTime：</b>"+(methods[i].createTime==''?'未设置':methods[i].createTime)+"&nbsp;&nbsp;&nbsp;<b>UpdateTime：</b>"+(methods[i].updateTime==''?'未设置':methods[i].updateTime)+"</span></li>"+
     				"</ul>"+
     				"</div><div>"+buildParams(request,"req","loc_method",1,methods[i].contentType)+"</div>";
     		str2 +="<div>"+buildParams(respose,"resp","loc_method",1)+"</div></div>";
@@ -908,12 +912,12 @@ function buildParams(doc,type,loc,flag,contentType){
 	 	str = "<table class='hovertable'>";
 		if(type=="req" || type=="param"){
 			str += "<thead class='reqcls'><tr><td colspan='7'>Parameters</td></tr>"
-			str += "<tr><td>名称/Name</td><td>作用/Value</td><td>描述/Description</td><td>是否必须/Required</td><td>数据类型/DataType</td><td>参数类型/ParamType</td><td>测试数据/TestData</td></tr>"
+			str += "<tr><td>名称</td><td>作用</td><td>是否必须</td><td>数据类型</td><td>参数类型</td><td>测试数据</td><td>描述</td></tr>"
 			str +="</thead><tbody>"
 		}else if(type=="resp"){
 			str += "<thead class='respcls'><tr><td colspan='4'>Responses</td></tr>"
 			str += "<tr class='resposeDataJson' hidden='hidden'><td colspan='4'></td></tr>"
-			str += "<tr class='resposeDataTable'><td>名称/Name</td><td>作用/Value</td><td>描述/Description</td><td>数据类型/DataType</td></tr>"
+			str += "<tr class='resposeDataTable'><td>名称</td><td>作用</td><td>数据类型</td><td>描述</td></tr>"
 			str +="</thead><tbody class='resposeDataTable'>"
 		}
 		
@@ -956,15 +960,15 @@ function buildParams(doc,type,loc,flag,contentType){
 				}else{
 					var val = array != null && (array==true || array=='true')?value+'[]':value;
 					if(type=="req" || type=="param" || type=="params"){
-						str+="<tr><td class='paramValue addinfo' title='双击可添加参数修改信息'>"+val+"</td><td class='paramInfo'>"+name+"</td><td>"+description+"</td><td class='isRequired'>"+
+						str+="<tr><td class='paramValue addinfo' title='双击可添加参数修改信息'>"+val+"</td><td class='paramInfo'>"+name+"</td><td class='isRequired'>"+
 						(required==true?'yes':'no')+"</td><td class='dataType'>"+
 						dataType+"</td><td class='paramType'>"+
 						paramType+"</td><td>"+
 						(dataType=='file'?"<form class='upload' enctype='multipart/form-data'>"+
 						"<input type='file' name='"+value+"'>"+"</form>":"<input class='testData' type='text' value='"+testData+"'>"+
-						(dataType==null?"":dataType.indexOf('[]')==-1?"":"<input type='button' class='subtract' value='-'><input type='button' class='add' value='+'>")+"</td></tr>")
+						(dataType==null?"":dataType.indexOf('[]')==-1?"":"<input type='button' class='subtract' value='-'><input type='button' class='add' value='+'>")+"</td><td>"+description+"</td></tr>")
 					}else{
-						str+="<tr><td class='respValue addinfo' title='双击可添加参数修改信息'>"+val+"</td><td class='respInfo'>"+name+"</td><td>"+description+"</td><td class='respType'>"+dataType+"</td></tr>"
+						str+="<tr><td class='respValue addinfo' title='双击可添加参数修改信息'>"+val+"</td><td class='respInfo'>"+name+"</td><td class='respType'><input class='reqdatatype' disabled='disabled' type='text' value='"+dataType+"'></td><td>"+description+"</td></tr>"
 					}
 				}
 			}
@@ -973,9 +977,9 @@ function buildParams(doc,type,loc,flag,contentType){
 			if(type=="req" || type=="param"){
 				str+="<tr><td colspan='7' class='requestData' hidden='hidden'></td></tr>"
 				str+="<tr class='testSend'><td colspan='7'>"+
-				"<input type='button' class='testSendButton' value='测试API请求'>"+
-				"<label><input type='radio' name='conType"+radioRandom+"' class='app-form' "+(contentType=='application/x-www-form-urlencoded'?"checked='true'":"")+" value='application/x-www-form-urlencoded;charset=utf-8'>application/x-www-form-urlencoded</label>&nbsp;&nbsp;"+
-				"<label><input type='radio' name='conType"+radioRandom+"' class='app-json' "+(contentType=='application/json'?"checked='true'":"")+" value='application/json;charset=utf-8'>application/json</label>&nbsp;&nbsp;"+
+				"<input type='button' class='testSendButton' value='测试API请求'>&nbsp;&nbsp;"+
+				/*"<label><input type='radio' name='conType"+radioRandom+"' class='app-form' "+(contentType=='application/x-www-form-urlencoded'?"checked='true'":"")+" value='application/x-www-form-urlencoded;charset=utf-8'>application/x-www-form-urlencoded</label>&nbsp;&nbsp;"+
+				"<label><input type='radio' name='conType"+radioRandom+"' class='app-json' "+(contentType=='application/json'?"checked='true'":"")+" value='application/json;charset=utf-8'>application/json</label>&nbsp;&nbsp;"+*/
 				"<label><input type='checkbox' class='app-traditional' value='1'>阻止深度序列化</label>&nbsp;&nbsp;"+
 				"<input type='button' class='request-json' value='树状展示请求参数'>&nbsp;&nbsp;"+
 				"<input type='button' class='switch-resp-json' value='树状展示响应内容'>"+
@@ -988,9 +992,9 @@ function buildParams(doc,type,loc,flag,contentType){
 		if(type=="req" || type=="param"){
 			str+="<tr><td colspan='7' style='color:red'>该API没有设置请求参数相关注解</td></tr>"
 				str+="<tr class='testSend'><td colspan='7'>"+
-				"<input type='button' class='testSendButton' value='测试API请求'>"+
-				"<label><input type='radio' name='conType"+radioRandom+"' class='app-form' "+(contentType=='application/x-www-form-urlencoded'?"checked='true'":"")+" value='application/x-www-form-urlencoded;charset=utf-8'>application/x-www-form-urlencoded</label>&nbsp;&nbsp;"+
-				"<label><input type='radio' name='conType"+radioRandom+"' class='app-json' "+(contentType=='application/json'?"checked='true'":"")+" value='application/json;charset=utf-8'>application/json</label>&nbsp;&nbsp;"+
+				"<input type='button' class='testSendButton' value='测试API请求'>&nbsp;&nbsp;"+
+				/*"<label><input type='radio' name='conType"+radioRandom+"' class='app-form' "+(contentType=='application/x-www-form-urlencoded'?"checked='true'":"")+" value='application/x-www-form-urlencoded;charset=utf-8'>application/x-www-form-urlencoded</label>&nbsp;&nbsp;"+
+				"<label><input type='radio' name='conType"+radioRandom+"' class='app-json' "+(contentType=='application/json'?"checked='true'":"")+" value='application/json;charset=utf-8'>application/json</label>&nbsp;&nbsp;"+*/
 				"<label><input type='checkbox' class='app-traditional' value='1'>阻止深度序列化</label>&nbsp;&nbsp;"+
 				"<input type='button' class='request-json' value='树状展示请求参数'>&nbsp;&nbsp;"+
 				"<input type='button' class='switch-resp-json' value='树状展示响应内容'>"+
@@ -1028,7 +1032,7 @@ function filter(value,doc,arr){
 
 
 
-$(function(){
+/*$(function(){
 	var canvas = document.getElementById('canvas'), 
 	  ctx = canvas.getContext('2d'), 
 	  w = canvas.width = window.innerWidth, 
@@ -1130,7 +1134,7 @@ $(function(){
 	} 
 	 
 	animation();
-})
+})*/
 
 // 导出成PDF
 function getmes() {

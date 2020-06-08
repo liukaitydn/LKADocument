@@ -68,10 +68,10 @@ public class LKADController {
 	@Value("${lkad.basePackages:}")
 	private String basePackages;
 	/** 项目名称 */
-	@Value("${lkad.projectName:Project Name}")
+	@Value("${lkad.projectName:LKADocument智能接口文档}")
 	private String projectName;
 	/** 项目描述 */
-	@Value("${lkad.description:Project Description}")
+	@Value("${lkad.description:为智能、便捷、高效而生！}")
 	private String description;
 	/** 文档开关 */
 	@Value("${lkad.enabled:true}")
@@ -298,6 +298,9 @@ public class LKADController {
 							methodModel.setVersion(lkaMethod.version());
 							methodModel.setContentType(lkaMethod.contentType());
 							methodModel.setRequestType("未知");
+							methodModel.setAuthor(lkaMethod.author());
+							methodModel.setCreateTime(lkaMethod.createTime());
+							methodModel.setUpdateTime(lkaMethod.updateTime());
 						}else {
 							ApiOperation lkaMethod  = method.getAnnotation(ApiOperation.class);
 							if(lkaMethod.hidden())continue;
@@ -311,6 +314,9 @@ public class LKADController {
 							methodModel.setVersion(lkaMethod.version());
 							methodModel.setContentType(lkaMethod.contentType());
 							methodModel.setRequestType("未知");
+							methodModel.setAuthor(lkaMethod.author());
+							methodModel.setCreateTime(lkaMethod.createTime());
+							methodModel.setUpdateTime(lkaMethod.updateTime());
 						}
 						
 						for (Map<String, Object> map : methodURLs) {

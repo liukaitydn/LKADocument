@@ -1,8 +1,7 @@
 @charset "UTF-8";
 * {
   box-sizing: border-box;
-  font-family: Georgia,微软雅黑;
-  font-weight: 700;
+  font-family: Georgia,宋体;
 }
 
 body {
@@ -18,8 +17,8 @@ body {
 /* 导航条 */
 .topnav {
   overflow: hidden;
- /*  background-color: #000; */
-  background-color: rgba(0, 0, 0, 0.0);
+   background-color: #000; 
+ /*  background-color: rgba(0, 0, 0, 0.0); */
  /*  color: #8ac007; */
   color: #f8f8f8;
   padding-bottom:24px;
@@ -83,20 +82,21 @@ a:actived{
     -ms-transition: all 0.8s ease;
 }
 .obtain{
-	background-color:#f1f1f1;
+	background-color:#ffffff;
 	padding-bottom:10px;
   	padding-top:10px;
   	padding-left:15px;
   	margin-top:15px;
   	margin-bottom:-14px;
   	color: #000;
-  	border-top:2px solid #055;
-  	border-radius:4px;
+  	/* border-top:3px solid #000;*/
+  	border-radius:5px;
   	cursor:pointer;
   	font-size:16px;
+  	font-weight:700;
 }
 .obtain:hover{
-	background-color: #e1f1e1;
+	background-color:#aaa;
 }
 
 h5{
@@ -108,6 +108,7 @@ h5{
     text-overflow: ellipsis;
     -webkit-box-orient: vertical;
     -webkit-line-clamp:1;   /*显示行数*/
+    font-weight:400;
 }
 /* .d3{
  float:right;
@@ -142,11 +143,14 @@ h5{
     margin-left:8px;
     margin-right:8px;
 }
-
+#menu #open h3 img{
+	margin-top:5px;
+	vertical-align:bottom;
+}
 #menu #open h3 span:nth-child(2){
 	margin-left:5px;
-  	font-size:12px;
-  	color:#555;
+  	font-size:18px;
+  	color:#000;
 }
 #menu #open .navBox ul{
 	width:100%;
@@ -157,18 +161,23 @@ h5{
 #menu #open .navBox ul li{
 	list-style: none;
     text-align: left;
-    color: #300;
+    color: #000;
 	cursor:pointer;
-	margin-left:-30px;
+	margin-left:0px;
 	margin-bottom:-20px;
 	border-radius:2px;
-	height:25px;
+	height:50px;
 	line-height:25px;
 	padding-left:5px;
-	background-image:linear-gradient(to right,#eeffdd,#f8f8f8);
+	background-color:#fff;
 }
+#menu #open .navBox ul li img{
+	margin-top:10px;
+	vertical-align:bottom;
+}
+
 #menu #open .navBox ul li:hover{
-    color: #588;
+    background-color: #aaa;
 }
 #menu #open .navBox ul li:first-child{
 	margin-top:-15px;
@@ -264,7 +273,7 @@ table.hovertable tbody tr {
 table.hovertable tbody tr td {
 	border-width: 1px;
 	padding: 12px;
-	border-bottom:1px solid #888;
+	border-bottom:1px solid #000;
 	word-wrap:break-word;
 }
 table thead tr:first-child{
@@ -278,12 +287,12 @@ table thead tr:nth-child(2){
 	font-size:13px;
 	border-bottom:2px solid #888;
 }
-table:tbody tr:nth-child(odd){
+/* table:tbody tr:nth-child(odd){
 	background: #fee;
 }
 table tbody tr:nth-child(even){
 	background: #eef;
-}
+} */
 .respcls{
 	background: #fff;
 }
@@ -292,7 +301,7 @@ table tbody tr:nth-child(even){
 }
 .tokenDiv{
 	color: #daf057;
-	font-weight:700;
+	font-weight:400;
 	line-height:30px;
 }
 
@@ -354,6 +363,7 @@ table tbody tr:nth-child(even){
 }
 .add:hover,.subtract:hover,.testSendButton:hover,.switch-resp-json:hover,.request-json:hover,#modalconfirm:hover,#modalcancel:hover,.copyText:hover { /* 鼠标移入按钮范围时改变颜色 */
 	background: #53a5ff;
+	color:#fff;
 }
 .testSend td{
 	text-align: center;
@@ -376,6 +386,10 @@ table tbody tr:nth-child(even){
 	-webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 	transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 }
+.reqdatatype{
+	height: 25px;
+	border: 0px solid #cccccc;
+}
 .testData:disabled,.prevData:disabled,.headerKey:disabled,.headerValue:disabled{
 	color: #333;
 	background-color: #888;
@@ -388,9 +402,9 @@ table tbody tr:nth-child(even){
 	box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6); 
 }
 .parentParam td{
-	color:#aaa;
+	color:#000;
 	/* font-weight:700; */
-	/* background-color:#8ac007; */
+	background-color:#eeffee;
 }
 .resposeData,.requestData,.resposeDataJson td{
 	background-color:#000;
@@ -406,7 +420,7 @@ table tbody tr:nth-child(even){
 	border-radius: 10px; 
 	background-color:#3385ff;
 	/* background-color: rgba(0,0,0,0.0); */
-	opacity:0.6;
+	/* opacity:0.6; */
 	cursor: pointer; 
 	outline: none; 
 	color: #fff; 
@@ -421,7 +435,7 @@ table tbody tr:nth-child(even){
 	border-width: 0px; 
 	border-radius: 10px; 
 	background-color:#3385ff;
-	opacity:0.6;
+	/* opacity:0.6; */
 	cursor: pointer; 
 	outline: none; 
 	color: #fff; 
@@ -516,8 +530,6 @@ table tbody tr:nth-child(even){
 			margin-right:20px;
 		}
 		.copyText{ /* 按钮美化 */
-			width: 60px; /* 宽度 */
-			height: 15px; /* 高度 */
 			border-width: 0px; /* 边框宽度 */
 			border-radius: 3px; /* 边框半径 */
 			background-color:#ddd; 
@@ -527,5 +539,5 @@ table tbody tr:nth-child(even){
 			color: #000; /* 字体颜色 */
 			font-size: 12px; /* 字体大小 */
 			font-weight:400;
-			margin-right:20px;
+			margin-left:10px;
 		}
