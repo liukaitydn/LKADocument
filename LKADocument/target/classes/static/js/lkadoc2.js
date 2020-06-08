@@ -46,6 +46,19 @@ $(function(){
 							for(var i = 0;i<doc.length;i++){
 								$(".navBox").append(buildMenu(doc[i]));
 							}
+							
+							setTimeout(()=>{
+								let uls = $('.secondary')
+								for(let i = 0; i < uls.length;i++){
+									uls[i].onclick=function(){
+										for(let j = 0; j < uls.length;j++){
+											uls[j].className = 'secondary'
+										}
+										this.className = 'secondary active'
+									}
+								}
+							},0)
+							
 						}
 	    			}
 	    		}
@@ -237,6 +250,11 @@ $(function(){
 			$(this).find("div").removeClass("d3");
 			$(this).find("div").addClass("d4");
 		}
+		
+		let uls = $('.secondary')
+		for(let i = 0; i < uls.length;i++){
+			uls[i].className = 'secondary'
+		}
 	})
 	
 	$(".navBox").on("click","li",function(){
@@ -247,6 +265,8 @@ $(function(){
 		var rightH = $(".right-box").height();
 		$("#menu").height(rightH+20);
 		$("#menu #open").height(rightH+10);
+		
+		
 	})
 	
 	$(".right-box").on("click",".add",function(){

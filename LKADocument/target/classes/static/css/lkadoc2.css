@@ -7,6 +7,15 @@
 body {
   margin: 0;
   background-color: #f8f8f8;
+  width:100%;
+  height:100%;
+  overflow: hidden;
+}
+.active{
+	background:#0066ff !important;
+	color:#fff !important;
+	font-size:22px;
+	font-weight:600;
 }
 
 #canvas{
@@ -18,12 +27,14 @@ body {
 .topnav {
   overflow: hidden;
    background-color: #000; 
- /*  background-color: rgba(0, 0, 0, 0.0); */
+ /*  background-color: rgba(0, 0, 0, 0.0); */ 
  /*  color: #8ac007; */
   color: #f8f8f8;
   padding-bottom:24px;
   padding-left:30px;
   margin-bottom:16px;
+  height:22%;
+  box-sizing:border-box;
 }
 #description{
 	font-size: 18px;
@@ -48,13 +59,32 @@ a:actived{
 
 .right-box {
     width: 80%;
+    height:77% !important;
     float: left;
+    overflow: auto;
+}
+#right-box-id >div{
+	position:relative;
+	padding-top:250px;
+}
+#right-box-id >div>div:nth-of-type(1){
+	position:fixed;
+	left:20.8%;
+	top:22%;
+	background:#fff;
+	width:100%;
+	z-index:9999;
+	
+}
+
+#right-box-id >div  .method-ul{ 
+	padding:0 !important;  
 }
 
 #menu {
     cursor: default;
-    overflow: hidden;
-    height: 100%;
+    overflow:hidden;
+    height: 77% !important;
     width: 20%;
     float: left;
     -webkit-touch-callout: none;
@@ -69,7 +99,7 @@ a:actived{
 #menu #open {
     /*显示菜单样式*/
     width: auto;
-    height: 100%;
+    height: 99% !important;
     background-color: #f8f8f8;
     padding-bottom: 0.1rem;
     border-right:5px solid #000;
@@ -135,8 +165,9 @@ h5{
 	margin-left:20px;
 }
 #menu #open .navBox {
-    height: 100%;
-    overflow-y: auto;
+     height: 99%; 
+    /* overflow-y: auto; */
+    overflow: auto;
     padding-left: 0.05rem;
     padding-right: 0.07rem;
     margin-top: -10px;
