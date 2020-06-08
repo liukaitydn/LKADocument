@@ -104,9 +104,7 @@ a:actived{
 	left:365px;
 	top:180px;
 	background:#fff;
-	width:-webkit-calc(100% - 400px) !important; 
-	width:-moz-calc(100% - 400px) !important; 
-	width:calc(100% - 400px) !important; 
+	width:100%;
 	z-index:9999;
 	
 }
