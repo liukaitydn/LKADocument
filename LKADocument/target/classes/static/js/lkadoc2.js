@@ -27,10 +27,10 @@ let indexFlag = null
 let oldWidth = 340
 let oldLeft = 365
 function bindResize(el) {
-	console.log(el)
+	
 	  //初始化参数   
 	let menuBody = document.getElementById('menu')
-	let method_tables = $('.method-table')
+	
 	  var els = el.style,
 	    //鼠标的 X 和 Y 轴坐标   
 	    x = y = 0;
@@ -57,21 +57,22 @@ function bindResize(el) {
 	  //移动事件 
 	  let oldFeft_s = 0
 	  let oldWidth_s =0
+	  let minWidth = 235
+	  let maxWidth = 755
 	  function mouseMove(e) {		
 		  oldFeft_s   = oldLeft+ e.clientX - x
-		  if(oldFeft_s < 210){
-			  oldFeft_s = 210
-		  }
+		  
+		  oldFeft_s= oldFeft_s< (minWidth+25) ? (minWidth+25) : (oldFeft_s > (maxWidth+25) ? (maxWidth+25) : oldFeft_s)
 		  if(indexFlag != null){
-//			  let method_tables = $('.method-table')
-			let divs = method_tables[indexFlag].getElementsByTagName('div')[0]
+
+			let ids = '#method_'+indexFlag
+			let divs = $(ids)[0].getElementsByTagName('div')[0]
 			divs.style.left = oldFeft_s  + 'px'
 		  }
 	    //宇宙超级无敌运算中... 
 		  oldWidth_s = oldWidth+ e.clientX - x
-		  if(oldWidth_s < 185){
-			  oldWidth_s = 185
-		  }
+		 
+		  oldWidth_s=oldWidth_s<minWidth?minWidth:(oldWidth_s>maxWidth?maxWidth:oldWidth_s)
 		  console.log('左位移距离：'+oldFeft_s)
 		  console.log('宽度：'+oldWidth_s)
 		  menuBody.style.width = oldWidth_s+ 'px' //改变宽度
@@ -139,18 +140,20 @@ $(function(){
 								
 								setTimeout(()=>{
 									let uls = $('.secondary')
-									let method_tables = $('.method-table')
+									
 									for(let i = 0; i < uls.length;i++){
 										uls[i].onclick=function(){
-											indexFlag = i
+											
+											indexFlag = this.getAttribute("data")
 											for(let j = 0; j < uls.length;j++){
 												uls[j].className = 'secondary'
 											}
 											this.className = 'secondary active'
-											 
-												let divs = method_tables[indexFlag].getElementsByTagName('div')[0]
-												  
-												divs.style.left = oldLeft  + 'px'
+											
+											let ids = '#method_'+indexFlag
+											let divs = $(ids)[0].getElementsByTagName('div')[0]
+											  
+											divs.style.left = oldLeft  + 'px'
 											
 										}
 									}
@@ -287,6 +290,16 @@ $(function(){
 	
 	$("#changeProject").change(function(){
 		reloadDoc(getServerName());
+		indexFlag=null
+		$(".method-table").hide();
+		$(".welcome").show();
+		if($(this).find("div").attr('class')=='d4'){
+			$(this).find("div").removeClass("d4");
+			$(this).find("div").addClass("d3");
+		}else{
+			$(this).find("div").removeClass("d3");
+			$(this).find("div").addClass("d4");
+		}
 	});
 	
 	reloadDoc('');
@@ -454,6 +467,7 @@ $(function(){
 		for(let i = 0; i < uls.length;i++){
 			uls[i].className = 'secondary'
 		}
+		console.log('切换1')
 	})
 	
 	$(".navBox").on("click","li",function(){
@@ -465,7 +479,7 @@ $(function(){
 		$("#menu").height(rightH+20);
 		$("#menu #open").height(rightH+10);
 		
-		
+		console.log('切换2')
 	})
 	
 	$(".right-box").on("click",".add",function(){
@@ -1068,7 +1082,7 @@ function buildMenu(doc) {
     		var str2 ="<div id='method_"+met_index+"' class='method-table' hidden='hidden'><div>" +
     				"<ul class='method-ul'>" +
     				"<li><span class='method-name-pdf'>"+methods[i].name+"</span>&nbsp;&nbsp;<span>"+methods[i].description+"</span>&nbsp;&nbsp;<span>"+methods[i].version+"</span></li>"+
-    				"<li class='method-requestParamInfo'><span>Method Type：</span><span class='method-requestType'>"+methods[i].requestType+"</span>&nbsp;&nbsp;&nbsp;<span><b>URL：</b></span><span class='method-URL'>"+methods[i].url+"</span>&nbsp;&nbsp;&nbsp;<span><b>Content Type：</b></span><span class='content-TYPE'>"+methods[i].contentType+"</span></li>"+
+    				"<li class='method-requestParamInfo'><span>Method Type：</span><span class='method-requestType'>"+methods[i].requestType+"</span>&nbsp;&nbsp;&nbsp;<span><b>Content Type：</b></span><span class='content-TYPE'>"+methods[i].contentType+"</span></span>&nbsp;&nbsp;&nbsp;<span><b>URL：</b></span><span class='method-URL'>"+methods[i].url+"</li>"+
     				/*"<li class='method-requestParamInfo'><span>URL：</span><span class='method-URL'>"+methods[i].url+"</span></li>"+
     				"<li class='method-requestParamInfo'><span>Content Type：</span><span class='content-TYPE'>"+methods[i].contentType+"</span></li>"+*/
     				"<li class='method-requestParamInfo'><span></span><span><b>Author：</b>"+(methods[i].author==''?'未设置':methods[i].author)+"&nbsp;&nbsp;&nbsp;<b>CreateTime：</b>"+(methods[i].createTime==''?'未设置':methods[i].createTime)+"&nbsp;&nbsp;&nbsp;<b>UpdateTime：</b>"+(methods[i].updateTime==''?'未设置':methods[i].updateTime)+"</span></li>"+

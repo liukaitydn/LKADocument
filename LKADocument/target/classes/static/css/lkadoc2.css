@@ -96,7 +96,7 @@ a:actived{
 }
 #right-box-id >div{
 	position:relative;
-	padding-top:250px;
+	padding-top:190px;
 	width:100%;
 }
 #right-box-id >div>div:nth-of-type(1){
@@ -108,14 +108,14 @@ a:actived{
 	z-index:9999;
 	
 }
-#right-box-id >div>div:nth-of-type(2){
-	margin-top:24px;
-}
+
 
 #right-box-id >div  .method-ul{ 
 	padding:0 !important;  
 }
-
+#change-style select{
+	width:200px !important;
+}
 #menu #open {
     /*显示菜单样式*/
     width: auto;
