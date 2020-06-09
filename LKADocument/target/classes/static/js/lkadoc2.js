@@ -98,57 +98,198 @@ $(function(){
 	setTimeout(()=>{
 		bindResize(document.getElementById('line'));
 	})
-	$.ajax({
-	    url:"/lkad/doc",
-	    type:"get",
-	    dataType:"json",
-	    async:false,
-	    data:{},
-	    success:function(data){
-	    	if(data != null){
-	    		if(data.enabled == 'no'){
-	    			$("body").html("");
-	    			window.location = "lkad404.html";
-	    		}else{
-	    			if(data.error != null && data.error != ""){
-	    				$("body").html(data.error);
-	    			}else{
-						$("#projectName").html(data.projectName);
-						$("#description").html(data.description);
-						var doc = data.apiDoc;
-						if(doc != null && doc.length > 0){
-							for(var i = 0;i<doc.length;i++){
-								$(".navBox").append(buildMenu(doc[i]));
-							}
-							
-							setTimeout(()=>{
-								let uls = $('.secondary')
-								let method_tables = $('.method-table')
-								for(let i = 0; i < uls.length;i++){
-									uls[i].onclick=function(){
-										indexFlag = i
-										for(let j = 0; j < uls.length;j++){
-											uls[j].className = 'secondary'
+	
+	function reloadDoc(serverName){
+		$(".navBox").html('');
+		$.ajax({
+		    url:"/lkad/doc",
+		    type:"get",
+		    dataType:"json",
+		    async:false,
+		    data:{"serverName":serverName},
+		    success:function(data){
+		    	if(data != null){
+		    		if(data.enabled == 'no'){
+		    			$("body").html("");
+		    			window.location = "lkad404.html";
+		    		}else{
+		    			if(data.error != null && data.error != ""){
+		    				$("body").html(data.error);
+		    			}else{
+							$("#projectName").html(data.projectName);
+							$("#description").html(data.description);
+							if(serverName == '' && $("#changeProject").val() != 'now'){
+								if(data.serverNames == null || data.serverNames == ''){
+									$("#changeProject").append('<option value="now">当前项目</option>');
+								}else{
+									$("#changeProject").append('<option value="now">当前项目</option>');
+									var ips = data.serverNames.split(",");
+									if(ips.length > 0){
+										for(var i = 0;i<ips.length;i++){
+											$("#changeProject").append('<option value="'+ips[i]+'">'+ips[i]+'</option>');
 										}
-										this.className = 'secondary active'
-										 
-											let divs = method_tables[indexFlag].getElementsByTagName('div')[0]
-											  
-											divs.style.left = oldLeft  + 'px'
-										
 									}
 								}
-							},0)
-							
-						}
-	    			}
-	    		}
+							}
+							var doc = data.apiDoc;
+							if(doc != null && doc.length > 0){
+								for(var i = 0;i<doc.length;i++){
+									$(".navBox").append(buildMenu(doc[i]));
+								}
+								
+								setTimeout(()=>{
+									let uls = $('.secondary')
+									let method_tables = $('.method-table')
+									for(let i = 0; i < uls.length;i++){
+										uls[i].onclick=function(){
+											indexFlag = i
+											for(let j = 0; j < uls.length;j++){
+												uls[j].className = 'secondary'
+											}
+											this.className = 'secondary active'
+											 
+												let divs = method_tables[indexFlag].getElementsByTagName('div')[0]
+												  
+												divs.style.left = oldLeft  + 'px'
+											
+										}
+									}
+								},0)
+								
+							}
+		    			}
+		    		}
+				}
+		    },
+		    error:function(respose){
+		    	alert("status:"+respose.status+",statusText:"+respose.statusText);
+		    }
+		});
+		
+		$(".method-reqtype").each(function(){
+			if($(this).html() == 'PUT' || $(this).html() == 'put'){
+				$(this).css("background","#60dda0").css("color","#fff");
+				$(this).parent().css("background-image","linear-gradient(to right,#d3ffe3,#f8f8f8)");
+				
 			}
-	    },
-	    error:function(respose){
-	    	alert("status:"+respose.status+",statusText:"+respose.statusText);
-	    }
+			if($(this).html() == 'DELETE' || $(this).html() == 'delete'){
+				$(this).css("background","#a060dd").css("color","#fff");
+				$(this).parent().css("background-image","linear-gradient(to right,#e3d3ff,#f8f8f8)");
+			}
+			
+			if($(this).html() == 'GET' || $(this).html() == 'get' || $(this).html() == 'POST' || $(this).html() == 'post'){
+				$(this).css("background","#60a0dd").css("color","#fff");
+				$(this).parent().css("background-image","linear-gradient(to right,#d3e3ff,#f8f8f8)");
+			}
+			/*if($(this).html() == 'POST' || $(this).html() == 'post'){
+				//$(this).css("background","#dda060").css("color","#fff");
+				//$(this).parent().css("background-image","linear-gradient(to right,#ffe3d3,#f8f8f8)");
+				$(this).css("background","#a0dd60").css("color","#fff");
+				$(this).parent().css("background-image","linear-gradient(to right,#C7EDCC,#f8f8f8)");
+			}*/
+			if($(this).html() == '通用'){
+				$(this).css("background","#dda060").css("color","#fff");
+				$(this).parent().css("background-image","linear-gradient(to right,#ffe3d3,#f8f8f8)");
+			}
+			if($(this).html() == '未知'){
+				$(this).css("background","#dd60a0").css("color","#fff");
+				$(this).parent().css("background-image","linear-gradient(to right,#ffd3e3,#f8f8f8)");
+			}
+		})
+		
+		$(".isRequired").each(function(){
+		if($(this).html() == 'yes'){
+			$(this).css("color","#f00");
+		}
+		})
+		
+		
+		$(".paramType").each(function(){
+			if($(this).html() == 'header'){
+				$(this).css("color","#f00");
+			}
+			if($(this).html() == 'path'){
+				$(this).css("color","#0f0");
+			}
+		})
+		
+		$(".method-URL").each(function(){
+			if($(this).html() == '该API未设置请求路径'){
+				$(this).css("color","#f00");
+			}
+		})
+		
+		// 设置方法条color
+		$(".method-table").each(function(){
+			if($(this).find(".method-requestType").html() == 'PUT' || $(this).find(".method-requestType").html() == 'put'){
+				$(this).find(".method-requestType").css("background","#60dda0").css("color","#fff");
+				$(this).css("background","#f8f8f8");
+				$(this).find(".reqcls").css("backgroundColor","#d3ffe3")
+				$(this).find(".respcls").css("backgroundColor","#d3ffe3");
+				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#d3ffe3,#f8f8f8)");
+				
+			}
+			if($(this).find(".method-requestType").html() == 'DELETE' || $(this).find(".method-requestType").html() == 'delete'){
+				$(this).find(".method-requestType").css("background","#a060dd").css("color","#fff");
+				$(this).css("background","#f8f8f8");
+				$(this).find(".reqcls").css("backgroundColor","#e3d3ff");
+				$(this).find(".respcls").css("backgroundColor","#e3d3ff");
+				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#e3d3ff,#f8f8f8)");
+			}
+			
+			if($(this).find(".method-requestType").html() == 'GET' || $(this).find(".method-requestType").html() == 'get' ||$(this).find(".method-requestType").html() == 'POST' || $(this).find(".method-requestType").html() == 'post'){
+				$(this).find(".method-requestType").css("background","#60a0dd").css("color","#fff");
+				$(this).css("background","#f8f8f8");
+				$(this).find(".reqcls").css("backgroundColor","#d3e3ff");
+				$(this).find(".respcls").css("backgroundColor","#d3e3ff");
+				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#d3e3ff,#f8f8f8)");
+				
+			}
+			if($(this).find(".method-requestType").html() == '通用' ){
+				$(this).find(".method-requestType").css("background","#dda060").css("color","#fff");
+				$(this).css("background","#f8f8f8");
+				$(this).find(".reqcls").css("backgroundColor","#ffe3d3");
+				$(this).find(".respcls").css("backgroundColor","#ffe3d3");
+				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#ffe3d3,#f8f8f8)");
+
+				
+			}
+			/*if($(this).find(".method-requestType").html() == 'POST' || $(this).find(".method-requestType").html() == 'post'){
+				$(this).find(".method-requestType").css("background","#a0dd60").css("color","#fff");
+				$(this).css("background","#f8f8f8");
+				$(this).find(".reqcls").css("backgroundColor","#e3ffd3");
+				$(this).find(".respcls").css("backgroundColor","#e3ffd3");
+				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#e3ffd3,#f8f8f8)");
+
+				
+			}*/
+			if($(this).find(".method-requestType").html() == '未知'){
+				$(this).find(".method-requestType").css("background","#dd60a0").css("color","#fff");
+				$(this).css("background","#f8f8f8");
+				$(this).find(".reqcls").css("backgroundColor","#C7EDCC");
+				$(this).find(".respcls").css("backgroundColor","#C7EDCC");
+				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#C7EDCC,#f8f8f8)");	
+			}
+		});
+	}
+	
+	function getServerName(){
+		var serverName = $("#changeProject").val();
+		if(serverName == null || serverName == 'now'){
+			serverName = '';
+		}else{
+			if(!serverName.toLowerCase().startsWith("http://")){
+				serverName = "http://"+serverName;
+			}
+		}
+		return serverName;
+	}
+	
+	$("#changeProject").change(function(){
+		reloadDoc(getServerName());
 	});
+	
+	reloadDoc('');
 	
 	//生成复制按钮 复制属性名
 	$(".right-box").on("mouseenter",".addinfo",function(){
@@ -168,7 +309,7 @@ $(function(){
 	
 	//设置高亮参数判断
 	function getParamInfo(){
-		$.getJSON("/lkad/getParamInfo",{'random':Math.random()},function(data){
+		$.getJSON("/lkad/getParamInfo",{'random':Math.random(),'serverName':getServerName()},function(data){
 			if(data != null && data != 'null'){
 				$(".addinfo").each(function(){
 					try{
@@ -225,7 +366,7 @@ $(function(){
 					url:"/lkad/delParamInfo",
 				    type:"post",
 				    dataType:"text",
-				    data:{"value":value,"type":type,"url":methodurl,'random':Math.random()},
+				    data:{"value":value,"type":type,"url":methodurl,'random':Math.random(),'serverName':getServerName()},
 				    success:function(data){
 				    	getParamInfo();
 						alert(data);
@@ -251,7 +392,7 @@ $(function(){
 					url:"/lkad/addParamInfo",
 				    type:"post",
 				    dataType:"text",
-				    data:{"value":value,"type":type,"url":methodurl,"modaltype":modaltype,"content":modalcontent,'random':Math.random()},
+				    data:{"value":value,"type":type,"url":methodurl,"modaltype":modaltype,"content":modalcontent,'random':Math.random(),'serverName':getServerName()},
 				    success:function(data){
 				    	getParamInfo();
 						alert(data);
@@ -295,29 +436,6 @@ $(function(){
 	// 加载令牌
 	$(".headerKey").val($.cookie('tokenKey'));
 	$(".headerValue").val($.cookie('tokenValue'));
-	
-	$(".isRequired").each(function(){
-		if($(this).html() == 'yes'){
-			$(this).css("color","#f00");
-		}
-	})
-	
-	
-	$(".paramType").each(function(){
-		if($(this).html() == 'header'){
-			$(this).css("color","#f00");
-		}
-		if($(this).html() == 'path'){
-			$(this).css("color","#0f0");
-		}
-	})
-	
-	$(".method-URL").each(function(){
-		if($(this).html() == '该API未设置请求路径'){
-			$(this).css("color","#f00");
-		}
-	})
-	
 	
 	
 	$(".navBox").on("click","h3",function(){
@@ -523,7 +641,10 @@ $(function(){
 			tl = true;
 		}
 		
-		var queryData = contentType=="application/json;charset=utf-8"?JSON.stringify(queryJson):queryJson;
+		var queryData = contentType=="application/json"?JSON.stringify(queryJson):queryJson;
+		if(getServerName()!=null && !getServerName()==''){
+			queryData = queryJson;
+		}
 		/*
 		 * console.log(path); console.log(methodType); console.log(queryData);
 		 * console.log(headerJson); console.log(tl);
@@ -538,132 +659,89 @@ $(function(){
 			path = path+"?random="+Math.random();
 			delete headerJson['Content-Type'];
 		}
-		$.ajax({
-		    url:path,
-		    type:methodType=='通用'?'get':methodType,
-		    dataType:"text",
-		    async:true,
-		    data:queryData,
-		    headers:headerJson,
-		    traditional:tl, // 阻止深度序列化
-		    cache:false,
-		    processData:processData,
-		    contentType:contentTypeBool,
-		    success:function(data){
-		    	var options = {
-		    			collapsed:false,
-		    			withQuotes:false
-		    	}
-		    	try{
-		    		resposeData.jsonViewer(JSON.parse(data),options);
-		    	}catch{
-		    		resposeData.html(data);
-		    	}
-		    },
-		    error:function(respose){
-		    	var json = {};
-		    	json['status'] = respose.status;
-		    	json['statusText'] = respose.statusText;
-		    	json['responseText'] = respose.responseText;
-		    	if(respose.status == 0){
-		    		json['responseText'] = '连接服务器异常！';
-		    	}
-		    	var options = {
-		    			collapsed:false,
-		    			withQuotes:false
-		    	}
-		    	try{
-		    		resposeData.jsonViewer(json,options);
-		    	}catch{
-		    		resposeData.html(json);
-		    	}
-		    }
-		}); 
+		if(getServerName()==null || getServerName()==''){
+			$.ajax({
+			    url:path,
+			    type:methodType=='通用'?'get':methodType,
+			    dataType:"text",
+			    async:true,
+			    data:queryData,
+			    headers:headerJson,
+			    traditional:tl, // 阻止深度序列化
+			    cache:false,
+			    processData:processData,
+			    contentType:contentTypeBool,
+			    success:function(data){
+			    	var options = {
+			    			collapsed:false,
+			    			withQuotes:false
+			    	}
+			    	try{
+			    		resposeData.jsonViewer(JSON.parse(data),options);
+			    	}catch{
+			    		resposeData.html(data);
+			    	}
+			    },
+			    error:function(respose){
+			    	var json = {};
+			    	json['status'] = respose.status;
+			    	json['statusText'] = respose.statusText;
+			    	json['responseText'] = respose.responseText;
+			    	if(respose.status == 0){
+			    		json['responseText'] = '连接服务器异常！';
+			    	}
+			    	var options = {
+			    			collapsed:false,
+			    			withQuotes:false
+			    	}
+			    	try{
+			    		resposeData.jsonViewer(json,options);
+			    	}catch{
+			    		resposeData.html(json);
+			    	}
+			    }
+			}); 
+		}else{
+			$.ajax({
+			    url:"lkad/getServerApi",
+			    type:'get',
+			    dataType:"text",
+			    async:true,
+			    data:{"path":getServerName()+path,"contentType":contentType,"headerJson":JSON.stringify(headerJson),"queryData":JSON.stringify(queryData),"type":methodType=='通用'?'get':methodType},
+			    success:function(data){
+			    	var options = {
+			    			collapsed:false,
+			    			withQuotes:false
+			    	}
+			    	try{
+			    		resposeData.jsonViewer(JSON.parse(data),options);
+			    	}catch{
+			    		resposeData.html(data);
+			    	}
+			    },
+			    error:function(respose){
+			    	var json = {};
+			    	json['status'] = respose.status;
+			    	json['statusText'] = respose.statusText;
+			    	json['responseText'] = respose.responseText;
+			    	if(respose.status == 0){
+			    		json['responseText'] = '连接服务器异常！';
+			    	}
+			    	var options = {
+			    			collapsed:false,
+			    			withQuotes:false
+			    	}
+			    	try{
+			    		resposeData.jsonViewer(json,options);
+			    	}catch{
+			    		resposeData.html(json);
+			    	}
+			    }
+			}); 
+		}
 	})
 	
-	$(".method-reqtype").each(function(){
-		if($(this).html() == 'PUT' || $(this).html() == 'put'){
-			$(this).css("background","#60dda0").css("color","#fff");
-			$(this).parent().css("background-image","linear-gradient(to right,#d3ffe3,#f8f8f8)");
-			
-		}
-		if($(this).html() == 'DELETE' || $(this).html() == 'delete'){
-			$(this).css("background","#a060dd").css("color","#fff");
-			$(this).parent().css("background-image","linear-gradient(to right,#e3d3ff,#f8f8f8)");
-		}
-		
-		if($(this).html() == 'GET' || $(this).html() == 'get' || $(this).html() == 'POST' || $(this).html() == 'post'){
-			$(this).css("background","#60a0dd").css("color","#fff");
-			$(this).parent().css("background-image","linear-gradient(to right,#d3e3ff,#f8f8f8)");
-		}
-		/*if($(this).html() == 'POST' || $(this).html() == 'post'){
-			//$(this).css("background","#dda060").css("color","#fff");
-			//$(this).parent().css("background-image","linear-gradient(to right,#ffe3d3,#f8f8f8)");
-			$(this).css("background","#a0dd60").css("color","#fff");
-			$(this).parent().css("background-image","linear-gradient(to right,#C7EDCC,#f8f8f8)");
-		}*/
-		if($(this).html() == '通用'){
-			$(this).css("background","#dda060").css("color","#fff");
-			$(this).parent().css("background-image","linear-gradient(to right,#ffe3d3,#f8f8f8)");
-		}
-		if($(this).html() == '未知'){
-			$(this).css("background","#dd60a0").css("color","#fff");
-			$(this).parent().css("background-image","linear-gradient(to right,#ffd3e3,#f8f8f8)");
-		}
-	})
 	
-	// 设置方法条color
-	$(".method-table").each(function(){
-		if($(this).find(".method-requestType").html() == 'PUT' || $(this).find(".method-requestType").html() == 'put'){
-			$(this).find(".method-requestType").css("background","#60dda0").css("color","#fff");
-			$(this).css("background","#f8f8f8");
-			$(this).find(".reqcls").css("backgroundColor","#d3ffe3")
-			$(this).find(".respcls").css("backgroundColor","#d3ffe3");
-			$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#d3ffe3,#f8f8f8)");
-			
-		}
-		if($(this).find(".method-requestType").html() == 'DELETE' || $(this).find(".method-requestType").html() == 'delete'){
-			$(this).find(".method-requestType").css("background","#a060dd").css("color","#fff");
-			$(this).css("background","#f8f8f8");
-			$(this).find(".reqcls").css("backgroundColor","#e3d3ff");
-			$(this).find(".respcls").css("backgroundColor","#e3d3ff");
-			$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#e3d3ff,#f8f8f8)");
-		}
-		
-		if($(this).find(".method-requestType").html() == 'GET' || $(this).find(".method-requestType").html() == 'get' ||$(this).find(".method-requestType").html() == 'POST' || $(this).find(".method-requestType").html() == 'post'){
-			$(this).find(".method-requestType").css("background","#60a0dd").css("color","#fff");
-			$(this).css("background","#f8f8f8");
-			$(this).find(".reqcls").css("backgroundColor","#d3e3ff");
-			$(this).find(".respcls").css("backgroundColor","#d3e3ff");
-			$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#d3e3ff,#f8f8f8)");
-			
-		}
-		if($(this).find(".method-requestType").html() == '通用' ){
-			$(this).find(".method-requestType").css("background","#dda060").css("color","#fff");
-			$(this).css("background","#f8f8f8");
-			$(this).find(".reqcls").css("backgroundColor","#ffe3d3");
-			$(this).find(".respcls").css("backgroundColor","#ffe3d3");
-			$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#ffe3d3,#f8f8f8)");
-
-			
-		}
-		/*if($(this).find(".method-requestType").html() == 'POST' || $(this).find(".method-requestType").html() == 'post'){
-			$(this).find(".method-requestType").css("background","#a0dd60").css("color","#fff");
-			$(this).css("background","#f8f8f8");
-			$(this).find(".reqcls").css("backgroundColor","#e3ffd3");
-			$(this).find(".respcls").css("backgroundColor","#e3ffd3");
-			$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#e3ffd3,#f8f8f8)");
-
-			
-		}*/
-		if($(this).find(".method-requestType").html() == '未知'){
-			$(this).find(".method-requestType").css("background","#dd60a0").css("color","#fff");
-			$(this).css("background","#f8f8f8");
-			$(this).find(".reqcls").css("backgroundColor","#C7EDCC");
-			$(this).find(".respcls").css("backgroundColor","#C7EDCC");
-			$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#C7EDCC,#f8f8f8)");	
-		}
-	});
 	
 })
 

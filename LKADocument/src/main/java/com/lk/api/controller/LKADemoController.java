@@ -47,7 +47,7 @@ public class LKADemoController {
 	/**
 	 * 说明：如果aaa和bbb参数的父级节点是一样的，可以直接使用parentNames={"result"}或parentName="result"来指定
 	 * */
-	@LKAMethod("测试方法2")
+	@LKAMethod("测试方法测试方法测试方法测试方法测试方法测试方法2")
 	@LKAParam(names={"id-n","name","age"},values={"用户ID","用户姓名","用户年龄"},dataTypes={"Integer","String","Integer"})
 	@LKAResposes({
 		@LKARespose(names= {"aaa","bbb"},values= {"data1","data2"},parentNames= {"result","result"}),

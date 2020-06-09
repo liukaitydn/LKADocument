@@ -22,11 +22,18 @@ import java.util.Properties;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
@@ -76,10 +83,54 @@ public class LKADController {
 	/** 文档开关 */
 	@Value("${lkad.enabled:true}")
 	private Boolean enabled;
+	/**服务器名称*/
+	@Value("${lkad.serverNames:}")
+	private String serverNames;
 	
 	private int reqNum = 0,respNum = 0,proNum = 0;
 	
-	
+	@GetMapping("getServerApi")
+	public Object getServerApi(String path,String contentType,String headerJson,String queryData,String type) {
+		System.out.println(JsonUtils.toMap(headerJson));
+		System.out.println(JsonUtils.toMap(queryData));
+		System.out.println(path);
+		Map<String, Object> headerMap = JsonUtils.toMap(headerJson);
+		//Map<String, Object> queryMap = JsonUtils.toMap(queryData);
+		RestTemplate restTemplate = new RestTemplate();
+		//设置请求头
+		HttpHeaders requestHeaders = new HttpHeaders();
+		Set<String> hSet = headerMap.keySet();
+		for (String key : hSet) {
+			requestHeaders.add(key,headerMap.get(key)==null?"":headerMap.get(key).toString());
+		}
+		/*if(contentType.equals("application/json")) {
+			MediaType mtype = MediaType.parseMediaType("application/json; charset=UTF-8");
+			requestHeaders.setContentType(mtype);
+			requestHeaders.add("Accept", MediaType.APPLICATION_JSON.toString());
+		}*/
+		//设置参数
+        /*MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        Set<String> qSet = queryMap.keySet();
+        for (String key : qSet) {
+        	requestBody.add(key,queryMap.get(key)==null?"":queryMap.get(key).toString());
+		}*/
+        //HttpEntity
+        HttpEntity<String> requestEntity = new HttpEntity<>(queryData, requestHeaders);
+        Object object = null;
+        if("get".equals(type.toLowerCase())) {
+        	object = restTemplate.exchange(path,HttpMethod.GET,requestEntity,Object.class);
+        }
+        if("post".equals(type.toLowerCase())) {
+        	object = restTemplate.exchange(path,HttpMethod.POST,requestEntity, Object.class);
+        }
+        if("put".equals(type.toLowerCase())) {
+        	object = restTemplate.exchange(path,HttpMethod.PUT,requestEntity, Object.class);
+        }
+        if("delete".equals(type.toLowerCase())) {
+        	object = restTemplate.exchange(path,HttpMethod.DELETE,requestEntity, Object.class);
+        }
+		return object;
+	}
 	
 	/**
 	 * 加载接口文档所有信息
@@ -87,12 +138,22 @@ public class LKADController {
 	 * @throws Exception
 	 */
 	@GetMapping("doc")
-	public Map<String, Object> loadLKADocument() throws Exception {
+	public Map<String, Object> loadLKADocument(String serverName) throws Exception {
+		
+		if(serverName != null && !"".equals(serverName)) {
+			RestTemplate restTemplate = new RestTemplate();
+			System.out.println(serverName+"/lkad/doc");
+			Map forObject = restTemplate.getForObject(serverName+"/lkad/doc", Map.class);
+			System.out.println(forObject);
+			return forObject;
+		}
+		
 		Map<String, Object> map = new HashMap<String, Object>();
 		if(!"".equals(basePackages)) {
 			map.put("projectName", projectName);
 			map.put("description", description);
 			map.put("enabled", enabled?"yes":"no");
+			map.put("serverNames",serverNames);
 		}else {
 			Map<String, Object> beans = applicationContext.getBeansWithAnnotation(LKADocument.class);
 			boolean bool = false;
@@ -109,6 +170,7 @@ public class LKADController {
 					}
 					map.put("projectName", annotation.projectName());
 					map.put("description", annotation.description());
+					map.put("serverNames", annotation.serverNames());
 					if(!annotation.enabled()) {
 						basePackages = "";
 						map.put("error", "LKADocument接口文档功能已关闭");
@@ -149,6 +211,7 @@ public class LKADController {
 			}
 		}
 		map.put("apiDoc",typeModels);
+		basePackages = "";
 		return map;
 	}
 	
