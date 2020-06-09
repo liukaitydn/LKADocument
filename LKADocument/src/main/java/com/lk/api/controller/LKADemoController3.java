@@ -19,10 +19,10 @@ import com.lk.api.annotation.LKAType;
 import com.lk.api.annotation.Lkad;
 import com.lk.api.annotation.ParamType;
 
-@LKAType("测试类2")
+@LKAType("测试类3")
 @RestController
-@RequestMapping("demo2")
-public class LKADemoController2 {
+@RequestMapping("demo3")
+public class LKADemoController3 {
 	
 	/**
      *	说明：入参属性名后面加上'-n'代表不是必传字段,例如下面"id-n"那么代表入参id不是必须的

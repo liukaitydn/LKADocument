@@ -469,11 +469,11 @@ $(function(){
 		$(this).parents("table").find(".resposeData").show();
 		$(this).parents("table").find(".close-resposeData").parent().show();
 		// 获取请求方式
-		var methodType = $(this).parents("table").parent().parent().find(".method-requestParamInfo").eq(0).find("span").eq(1).html();
+		var methodType = $(this).parents("table").parent().parent().find(".method-requestType").html();
 		// 获取请求路径
-		var path = $(this).parents("table").parent().parent().find(".method-requestParamInfo").eq(1).find("span").eq(1).html();
+		var path = $(this).parents("table").parent().parent().find(".method-URL").html();
 		//contentType
-		var contentType =  $(this).parents("table").parent().parent().find(".method-requestParamInfo").eq(2).find("span").eq(1).html();
+		var contentType =  $(this).parents("table").parent().parent().find(".content-TYPE").html();
 		// 获取请求参数名称
 		var paramValues = $(this).parents("table").find(".paramValue");
 		// 获取请求参数位置
@@ -990,9 +990,9 @@ function buildMenu(doc) {
     		var str2 ="<div id='method_"+met_index+"' class='method-table' hidden='hidden'><div>" +
     				"<ul class='method-ul'>" +
     				"<li><span class='method-name-pdf'>"+methods[i].name+"</span>&nbsp;&nbsp;<span>"+methods[i].description+"</span>&nbsp;&nbsp;<span>"+methods[i].version+"</span></li>"+
-    				"<li class='method-requestParamInfo'><span>Method Type：</span><span class='method-requestType'>"+methods[i].requestType+"</span></li>"+
-    				"<li class='method-requestParamInfo'><span>URL：</span><span class='method-URL'>"+methods[i].url+"</span></li>"+
-    				"<li class='method-requestParamInfo'><span>Content Type：</span><span class='content-TYPE'>"+methods[i].contentType+"</span></li>"+
+    				"<li class='method-requestParamInfo'><span>Method Type：</span><span class='method-requestType'>"+methods[i].requestType+"</span>&nbsp;&nbsp;&nbsp;<span><b>URL：</b></span><span class='method-URL'>"+methods[i].url+"</span>&nbsp;&nbsp;&nbsp;<span><b>Content Type：</b></span><span class='content-TYPE'>"+methods[i].contentType+"</span></li>"+
+    				/*"<li class='method-requestParamInfo'><span>URL：</span><span class='method-URL'>"+methods[i].url+"</span></li>"+
+    				"<li class='method-requestParamInfo'><span>Content Type：</span><span class='content-TYPE'>"+methods[i].contentType+"</span></li>"+*/
     				"<li class='method-requestParamInfo'><span></span><span><b>Author：</b>"+(methods[i].author==''?'未设置':methods[i].author)+"&nbsp;&nbsp;&nbsp;<b>CreateTime：</b>"+(methods[i].createTime==''?'未设置':methods[i].createTime)+"&nbsp;&nbsp;&nbsp;<b>UpdateTime：</b>"+(methods[i].updateTime==''?'未设置':methods[i].updateTime)+"</span></li>"+
     				"</ul>"+
     				"</div><div>"+buildParams(request,"req","loc_method",1,methods[i].contentType)+"</div>";
