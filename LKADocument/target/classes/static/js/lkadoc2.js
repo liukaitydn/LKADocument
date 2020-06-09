@@ -31,8 +31,6 @@ function bindResize(el) {
 	  //初始化参数   
 	let menuBody = document.getElementById('menu')
 	let method_tables = $('.method-table')
-	/*let oldWidth = 340
-	let oldLeft = 365*/
 	  var els = el.style,
 	    //鼠标的 X 和 Y 轴坐标   
 	    x = y = 0;
@@ -61,16 +59,21 @@ function bindResize(el) {
 	  let oldWidth_s =0
 	  function mouseMove(e) {		
 		  oldFeft_s   = oldLeft+ e.clientX - x
+		  if(oldFeft_s < 210){
+			  oldFeft_s = 210
+		  }
 		  if(indexFlag != null){
 //			  let method_tables = $('.method-table')
 			let divs = method_tables[indexFlag].getElementsByTagName('div')[0]
-			  if(oldFeft_s < 185){
-				  oldFeft_s = 185
-			  }
 			divs.style.left = oldFeft_s  + 'px'
 		  }
 	    //宇宙超级无敌运算中... 
 		  oldWidth_s = oldWidth+ e.clientX - x
+		  if(oldWidth_s < 185){
+			  oldWidth_s = 185
+		  }
+		  console.log('左位移距离：'+oldFeft_s)
+		  console.log('宽度：'+oldWidth_s)
 		  menuBody.style.width = oldWidth_s+ 'px' //改变宽度
 //	      els.height = e.clientY - y + 'px' //改变高度 
 	  }
