@@ -16,7 +16,14 @@ public class MethodModel {
 	private String author;
 	private String createTime;
 	private String updateTime;
+	private boolean download;
 	
+	public boolean isDownload() {
+		return download;
+	}
+	public void setDownload(boolean download) {
+		this.download = download;
+	}
 	public String getAuthor() {
 		return author;
 	}

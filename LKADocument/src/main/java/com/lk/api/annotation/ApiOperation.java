@@ -36,4 +36,6 @@ public @interface ApiOperation {
 	String createTime() default "";
 	/**修改时间*/
 	String updateTime() default "";
+	/**是否是下载方法*/
+	boolean download() default false;
 }

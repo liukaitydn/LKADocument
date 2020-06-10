@@ -453,8 +453,8 @@ $(function(){
 	
 	$(".navBox").on("click","h3",function(){
 		$(this).next().toggle()
-		$(".method-table").hide();
-		$(".welcome").show();
+		//$(".method-table").hide();
+		//$(".welcome").show();
 		if($(this).find("div").attr('class')=='d4'){
 			$(this).find("div").removeClass("d4");
 			$(this).find("div").addClass("d3");
@@ -467,7 +467,6 @@ $(function(){
 		for(let i = 0; i < uls.length;i++){
 			uls[i].className = 'secondary'
 		}
-		console.log('切换1')
 	})
 	
 	$(".navBox").on("click","li",function(){
@@ -478,8 +477,6 @@ $(function(){
 		var rightH = $(".right-box").height();
 		$("#menu").height(rightH+20);
 		$("#menu #open").height(rightH+10);
-		
-		console.log('切换2')
 	})
 	
 	$(".right-box").on("click",".add",function(){
@@ -604,6 +601,8 @@ $(function(){
 		var methodType = $(this).parents("table").parent().parent().find(".method-requestType").html();
 		// 获取请求路径
 		var path = $(this).parents("table").parent().parent().find(".method-URL").html();
+		//获取是否是下载方法
+		var download = $(this).parents("table").parent().parent().find(".method-download").val();
 		//contentType
 		var contentType =  $(this).parents("table").parent().parent().find(".content-TYPE").html();
 		// 获取请求参数名称
@@ -673,11 +672,15 @@ $(function(){
 			path = path+"?random="+Math.random();
 			delete headerJson['Content-Type'];
 		}
+		var dtype = "text";
+		if(download == 'true'){
+			dtype = 'blob';
+		}
 		if(getServerName()==null || getServerName()==''){
 			$.ajax({
 			    url:path,
 			    type:methodType=='通用'?'get':methodType,
-			    dataType:"text",
+			    dataType:dtype,
 			    async:true,
 			    data:queryData,
 			    headers:headerJson,
@@ -686,14 +689,21 @@ $(function(){
 			    processData:processData,
 			    contentType:contentTypeBool,
 			    success:function(data){
-			    	var options = {
-			    			collapsed:false,
-			    			withQuotes:false
-			    	}
-			    	try{
-			    		resposeData.jsonViewer(JSON.parse(data),options);
-			    	}catch{
-			    		resposeData.html(data);
+			    	if(download == 'true'){
+			    		var a = document.createElement('a');
+			    		a.download = 'data';
+			    		a.href=window.URL.createObjectURL(data);
+			    		a.click();
+			    	}else{
+				    	var options = {
+				    			collapsed:false,
+				    			withQuotes:false
+				    	}
+				    	try{
+				    		resposeData.jsonViewer(JSON.parse(data),options);
+				    	}catch{
+				    		resposeData.html(data);
+				    	}
 			    	}
 			    },
 			    error:function(respose){
@@ -1085,7 +1095,7 @@ function buildMenu(doc) {
     				"<li class='method-requestParamInfo'><span>Method Type：</span><span class='method-requestType'>"+methods[i].requestType+"</span>&nbsp;&nbsp;&nbsp;<span><b>Content Type：</b></span><span class='content-TYPE'>"+methods[i].contentType+"</span></span>&nbsp;&nbsp;&nbsp;<span><b>URL：</b></span><span class='method-URL'>"+methods[i].url+"</li>"+
     				/*"<li class='method-requestParamInfo'><span>URL：</span><span class='method-URL'>"+methods[i].url+"</span></li>"+
     				"<li class='method-requestParamInfo'><span>Content Type：</span><span class='content-TYPE'>"+methods[i].contentType+"</span></li>"+*/
-    				"<li class='method-requestParamInfo'><span></span><span><b>Author：</b>"+(methods[i].author==null || methods[i].author==''?'未设置':methods[i].author)+"&nbsp;&nbsp;&nbsp;<b>CreateTime：</b>"+(methods[i].createTime==null || methods[i].createTime==''?'未设置':methods[i].createTime)+"&nbsp;&nbsp;&nbsp;<b>UpdateTime：</b>"+(methods[i].updateTime==null || methods[i].updateTime==''?'未设置':methods[i].updateTime)+"</span></li>"+
+    				"<li class='method-requestParamInfo'><span></span><span><b>Author：</b>"+(methods[i].author==null || methods[i].author==''?'未设置':methods[i].author)+"&nbsp;&nbsp;&nbsp;<b>CreateTime：</b>"+(methods[i].createTime==null || methods[i].createTime==''?'未设置':methods[i].createTime)+"&nbsp;&nbsp;&nbsp;<b>UpdateTime：</b>"+(methods[i].updateTime==null || methods[i].updateTime==''?'未设置':methods[i].updateTime)+"</span><input class='method-download' type='hidden' value='"+methods[i].download+"'></li>"+
     				"</ul>"+
     				"</div><div>"+buildParams(request,"req","loc_method",1,methods[i].contentType)+"</div>";
     		str2 +="<div>"+buildParams(respose,"resp","loc_method",1)+"</div></div>";

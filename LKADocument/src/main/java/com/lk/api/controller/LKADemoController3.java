@@ -5,10 +5,13 @@ import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lk.api.annotation.ApiOperation;
 import com.lk.api.annotation.ContentType;
+import com.lk.api.annotation.LKAGroup;
 import com.lk.api.annotation.LKAMethod;
 import com.lk.api.annotation.LKAModel;
 import com.lk.api.annotation.LKAParam;
@@ -18,6 +21,7 @@ import com.lk.api.annotation.LKAResposes;
 import com.lk.api.annotation.LKAType;
 import com.lk.api.annotation.Lkad;
 import com.lk.api.annotation.ParamType;
+import com.lk.api.demo.MiniUser;
 
 @LKAType("测试类3")
 @RestController
@@ -27,22 +31,17 @@ public class LKADemoController3 {
 	/**
      *	说明：入参属性名后面加上'-n'代表不是必传字段,例如下面"id-n"那么代表入参id不是必须的
 	 */
-	@LKAMethod(value="测试方法1",contentType=ContentType.JSON,author="刘凯",createTime="2020-6-5",updateTime="2020-6-5")
-	@LKAParam(names={"id-n","name","age"},values={"用户ID","用户姓名","用户年龄"},dataTypes={"Integer","String","Integer"},paramTypes= {ParamType.QUERY})
+	@PostMapping("/V1.0/mini/register")
+	@ApiOperation(value="小程序登录/注册",contentType=Lkad.JSON)
 	@LKAResposes({
-		@LKARespose(names= {"code","msg"},values= {"状态码","消息"}),
-		@LKARespose(type=User.class,parentName="result"),
+		@LKARespose(name="code",value="返回编码"),
+		@LKARespose(value="result",name="result"),
+		@LKARespose(value="前后端交互的唯一标识,请置于请求头中,作为接下来每个接口请求的认证标识",name="x-token",parentName="result"),
+		@LKARespose(value="用户ID",name="id",parentName="result"),
+		@LKARespose(value="用户类型(1-客户,2-招商员)",name="userType",parentName="result"),
 	})
-	@GetMapping("test1")
-	public Map<String,Object> test1(Integer id,String name,Integer age) {
+	public Map<String,Object> test1(@LKAGroup("A") @RequestBody MiniUser user) {
 		Map<String,Object> map = new HashMap<>();
-		User user = new User();
-		user.setId(id);
-		user.setAge(age);
-		user.setName(name);
-		map.put("code",200);
-		map.put("msg","操作成功");
-		map.put("result",user);
 		return map;
 	}
 	

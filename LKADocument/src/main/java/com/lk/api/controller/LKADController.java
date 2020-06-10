@@ -156,14 +156,13 @@ public class LKADController {
 		
 		if(serverName != null && !"".equals(serverName)) {
 			RestTemplate restTemplate = new RestTemplate();
-			System.out.println(serverName+"/lkad/doc");
 			Map forObject = restTemplate.getForObject(serverName+"/lkad/doc", Map.class);
-			System.out.println(forObject);
 			return forObject;
 		}
-		
+		String bpk = "";
 		Map<String, Object> map = new HashMap<String, Object>();
 		if(!"".equals(basePackages)) {
+			bpk = basePackages;
 			map.put("projectName", projectName);
 			map.put("description", description);
 			map.put("enabled", enabled?"yes":"no");
@@ -177,8 +176,8 @@ public class LKADController {
 					Object obj = beans.get(key);
 					Class<? extends Object> bootClass = obj.getClass();
 					LKADocument annotation = bootClass.getAnnotation(LKADocument.class);
-					basePackages = annotation.basePackages();
-					if("".equals(basePackages)) {
+					bpk = annotation.basePackages();
+					if("".equals(bpk)) {
 						bool = false;
 						break;
 					}
@@ -186,7 +185,7 @@ public class LKADController {
 					map.put("description", annotation.description());
 					map.put("serverNames", annotation.serverNames());
 					if(!annotation.enabled()) {
-						basePackages = "";
+						bpk = "";
 						map.put("error", "LKADocument接口文档功能已关闭");
 						return map;
 					}
@@ -196,7 +195,7 @@ public class LKADController {
 				}
 			}
 			if(!bool) {
-				basePackages = "";
+				bpk = "";
 				map.put("error", "没有设置要扫描的包路径");
 				return map;
 			}
@@ -205,7 +204,7 @@ public class LKADController {
 		//map.put("apiDoc", scanType(basePackage));
 		
 		//排序算法
-		List<TypeModel> typeModels = scanType(basePackages.split(","));
+		List<TypeModel> typeModels = scanType(bpk.split(","));
 		for (TypeModel typeModel : typeModels) {
 			List<MethodModel> methods = typeModel.getMethodModels();
 			for (MethodModel method : methods) {
@@ -225,7 +224,6 @@ public class LKADController {
 			}
 		}
 		map.put("apiDoc",typeModels);
-		basePackages = "";
 		return map;
 	}
 	
@@ -378,6 +376,7 @@ public class LKADController {
 							methodModel.setAuthor(lkaMethod.author());
 							methodModel.setCreateTime(lkaMethod.createTime());
 							methodModel.setUpdateTime(lkaMethod.updateTime());
+							methodModel.setDownload(lkaMethod.download());
 						}else {
 							ApiOperation lkaMethod  = method.getAnnotation(ApiOperation.class);
 							if(lkaMethod.hidden())continue;
@@ -394,6 +393,7 @@ public class LKADController {
 							methodModel.setAuthor(lkaMethod.author());
 							methodModel.setCreateTime(lkaMethod.createTime());
 							methodModel.setUpdateTime(lkaMethod.updateTime());
+							methodModel.setDownload(lkaMethod.download());
 						}
 						
 						for (Map<String, Object> map : methodURLs) {
@@ -470,8 +470,9 @@ public class LKADController {
 								Object[] arrays = null;
 								//合并数组
 								if(declaredField != null) {
-									List<Field> list = new ArrayList<>(Arrays.asList(fields));
-									list.addAll(Arrays.asList(declaredField));
+									/*List<Field> list = new ArrayList<>(Arrays.asList(fields));
+									list.addAll(Arrays.asList(declaredField));*/
+									List<Field> list = new ArrayList<>(Arrays.asList(declaredField));
 									arrays = list.toArray();
 								}else {
 									arrays = fields;
@@ -560,7 +561,9 @@ public class LKADController {
 						
 						
 						
-							
+						if(methodModel.getUrl().equals("/demo3/V1.0/mini/register")) {
+							System.out.println("ok");
+						}	
 						//自动判断入参类型是否是model对象
 						Class<?>[] parameterTypes = method.getParameterTypes();
 						Parameter[] parameters = method.getParameters();
@@ -2357,8 +2360,9 @@ public class LKADController {
 		Object[] arrays = null;
 		//合并数组
 		if(declaredField != null) {
-			List<Field> list = new ArrayList<>(Arrays.asList(fields));
-			list.addAll(Arrays.asList(declaredField));
+			/*List<Field> list = new ArrayList<>(Arrays.asList(fields));
+			list.addAll(Arrays.asList(declaredField));*/
+			List<Field> list = new ArrayList<>(Arrays.asList(declaredField));
 			arrays = list.toArray();
 		}else {
 			arrays = fields;
@@ -2528,8 +2532,9 @@ public class LKADController {
 		Object[] arrays = null;
 		//合并数组
 		if(declaredField != null) {
-			List<Field> list = new ArrayList<>(Arrays.asList(fields));
-			list.addAll(Arrays.asList(declaredField));
+			/*List<Field> list = new ArrayList<>(Arrays.asList(fields));
+			list.addAll(Arrays.asList(declaredField));*/
+			List<Field> list = new ArrayList<>(Arrays.asList(declaredField));
 			arrays = list.toArray();
 		}else {
 			arrays = fields;
@@ -2701,8 +2706,9 @@ public class LKADController {
 		Object[] arrays = null;
 		//合并数组
 		if(declaredField != null) {
-			List<Field> list = new ArrayList<>(Arrays.asList(fields));
-			list.addAll(Arrays.asList(declaredField));
+			/*List<Field> list = new ArrayList<>(Arrays.asList(fields));
+			list.addAll(Arrays.asList(declaredField));*/
+			List<Field> list = new ArrayList<>(Arrays.asList(declaredField));
 			arrays = list.toArray();
 		}else {
 			arrays = fields;
