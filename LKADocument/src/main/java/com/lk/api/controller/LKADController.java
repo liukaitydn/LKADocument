@@ -26,6 +26,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -91,11 +92,11 @@ public class LKADController {
 	
 	@GetMapping("getServerApi")
 	public Object getServerApi(String path,String contentType,String headerJson,String queryData,String type) {
-		System.out.println(JsonUtils.toMap(headerJson));
+		/*System.out.println(JsonUtils.toMap(headerJson));
 		System.out.println(JsonUtils.toMap(queryData));
-		System.out.println(path);
+		System.out.println(path);*/
 		Map<String, Object> headerMap = JsonUtils.toMap(headerJson);
-		//Map<String, Object> queryMap = JsonUtils.toMap(queryData);
+		Map<String, Object> queryMap = JsonUtils.toMap(queryData);
 		RestTemplate restTemplate = new RestTemplate();
 		//设置请求头
 		HttpHeaders requestHeaders = new HttpHeaders();
@@ -103,32 +104,45 @@ public class LKADController {
 		for (String key : hSet) {
 			requestHeaders.add(key,headerMap.get(key)==null?"":headerMap.get(key).toString());
 		}
-		/*if(contentType.equals("application/json")) {
-			MediaType mtype = MediaType.parseMediaType("application/json; charset=UTF-8");
-			requestHeaders.setContentType(mtype);
-			requestHeaders.add("Accept", MediaType.APPLICATION_JSON.toString());
-		}*/
-		//设置参数
-        /*MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        Set<String> qSet = queryMap.keySet();
-        for (String key : qSet) {
-        	requestBody.add(key,queryMap.get(key)==null?"":queryMap.get(key).toString());
-		}*/
+		
         //HttpEntity
-        HttpEntity<String> requestEntity = new HttpEntity<>(queryData, requestHeaders);
-        Object object = null;
-        if("get".equals(type.toLowerCase())) {
-        	object = restTemplate.exchange(path,HttpMethod.GET,requestEntity,Object.class);
-        }
-        if("post".equals(type.toLowerCase())) {
-        	object = restTemplate.exchange(path,HttpMethod.POST,requestEntity, Object.class);
-        }
-        if("put".equals(type.toLowerCase())) {
-        	object = restTemplate.exchange(path,HttpMethod.PUT,requestEntity, Object.class);
-        }
-        if("delete".equals(type.toLowerCase())) {
-        	object = restTemplate.exchange(path,HttpMethod.DELETE,requestEntity, Object.class);
-        }
+		Object object = null;
+		if("application/json".equals(contentType)) {
+	        HttpEntity<String> requestEntity = new HttpEntity<>(queryData, requestHeaders);
+	        
+	        if("get".equals(type.toLowerCase())) {
+	        	object = restTemplate.exchange(path,HttpMethod.GET,requestEntity,Object.class);
+	        }
+	        if("post".equals(type.toLowerCase())) {
+	        	object = restTemplate.exchange(path,HttpMethod.POST,requestEntity, Object.class);
+	        }
+	        if("put".equals(type.toLowerCase())) {
+	        	object = restTemplate.exchange(path,HttpMethod.PUT,requestEntity, Object.class);
+	        }
+	        if("delete".equals(type.toLowerCase())) {
+	        	object = restTemplate.exchange(path,HttpMethod.DELETE,requestEntity, Object.class);
+	        }
+		}else {
+			//设置参数
+	        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+	        Set<String> qSet = queryMap.keySet();
+	        for (String key : qSet) {
+	        	requestBody.add(key,queryMap.get(key)==null?"":queryMap.get(key).toString());
+			}
+	        HttpEntity<MultiValueMap> requestEntity = new HttpEntity<>(requestBody, requestHeaders);
+	        if("get".equals(type.toLowerCase())) {
+	        	object = restTemplate.exchange(path,HttpMethod.GET,requestEntity,Object.class);
+	        }
+	        if("post".equals(type.toLowerCase())) {
+	        	object = restTemplate.exchange(path,HttpMethod.POST,requestEntity, Object.class);
+	        }
+	        if("put".equals(type.toLowerCase())) {
+	        	object = restTemplate.exchange(path,HttpMethod.PUT,requestEntity, Object.class);
+	        }
+	        if("delete".equals(type.toLowerCase())) {
+	        	object = restTemplate.exchange(path,HttpMethod.DELETE,requestEntity, Object.class);
+	        }
+		}
 		return object;
 	}
 	
@@ -2825,7 +2839,22 @@ public class LKADController {
 	 * @return
 	 */
 	@PostMapping("addParamInfo")
-	public String addParamInfo(String value,String type,String url,String modaltype,String content){
+	public String addParamInfo(String value,String type,String url,String modaltype,String content,String serverName){
+		if(serverName != null && !"".equals(serverName)) {
+			RestTemplate restTemplate = new RestTemplate();
+			MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+	        requestBody.add("value",value);
+	        requestBody.add("type",type);
+	        requestBody.add("url",url);
+	        requestBody.add("modaltype",modaltype);
+	        requestBody.add("content",content);
+	        HttpHeaders requestHeaders = new HttpHeaders();
+	        requestHeaders.add("Content-Type","application/x-www-form-urlencoded");
+	        HttpEntity<MultiValueMap> requestEntity = new HttpEntity<>(requestBody,requestHeaders);
+			ResponseEntity<String> exchange = restTemplate.exchange(serverName+"/lkad/addParamInfo",HttpMethod.POST,requestEntity,String.class);
+			return exchange.getBody();
+		}
+		
 		File file = new File("lkadParamInfo.properties");
 		FileOutputStream outStream = null;
         try {
@@ -2856,7 +2885,21 @@ public class LKADController {
 	 * @return
 	 */
 	@PostMapping("delParamInfo")
-	public String delParamInfo(String value,String type,String url){
+	public String delParamInfo(String value,String type,String url,String serverName){
+		
+		if(serverName != null && !"".equals(serverName)) {
+			RestTemplate restTemplate = new RestTemplate();
+			MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+	        requestBody.add("value",value);
+	        requestBody.add("type",type);
+	        requestBody.add("url",url);
+	        HttpHeaders requestHeaders = new HttpHeaders();
+			requestHeaders.add("Content-Type","application/x-www-form-urlencoded");
+	        HttpEntity<MultiValueMap> requestEntity = new HttpEntity<>(requestBody, requestHeaders);
+			ResponseEntity<String> exchange = restTemplate.exchange(serverName+"/lkad/delParamInfo",HttpMethod.POST,requestEntity, String.class);
+			return exchange.getBody();
+		}
+		
 		File file = new File("lkadParamInfo.properties");
 		FileOutputStream outStream = null;
 		FileInputStream inStream = null;
@@ -2894,7 +2937,14 @@ public class LKADController {
 	 * @return
 	 */
 	@GetMapping("getParamInfo")
-	public Map<Object, Object> getParamInfo(){
+	public Map<Object, Object> getParamInfo(String serverName){
+		
+		if(serverName != null && !"".equals(serverName)) {
+			RestTemplate restTemplate = new RestTemplate();
+			Map forObject = restTemplate.getForObject(serverName+"/lkad/getParamInfo", Map.class);
+			return forObject;
+		}
+		
 		Map<Object, Object> map = new HashMap<Object, Object>();
 		File file = new File("lkadParamInfo.properties");
 		FileInputStream inStream = null;

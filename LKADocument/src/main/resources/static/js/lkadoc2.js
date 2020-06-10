@@ -329,7 +329,7 @@ $(function(){
 						//let value = $(this).html();
 						let value = this.firstChild.nodeValue;
 						let type = $(this).parents(".hovertable").find(".reqcls").length > 0 ?1:2;
-						let methodurl = $(this).parents(".hovertable").parent().parent().find("div:eq(0)").find(".method-ul").find("li:eq(2)").find("span:eq(1)").html();
+						let methodurl = $(this).parents(".hovertable").parent().parent().find(".method-URL").html();
 						let content = methodurl+"."+type+"."+value;
 						let str = data[content];
 						if(str != null && str.length>0){
@@ -369,7 +369,7 @@ $(function(){
 		//let value = $(this).html();
 		let value = this.firstChild.nodeValue;
 		let type = $(this).parents(".hovertable").find(".reqcls").length > 0 ?1:2;
-		let methodurl = $(this).parents(".hovertable").parent().parent().find("div:eq(0)").find(".method-ul").find("li:eq(2)").find("span:eq(1)").html();
+		let methodurl = $(this).parents(".hovertable").parent().parent().find(".method-URL").html();
 		let content = methodurl+"."+type+"."+value;
 		//console.log(content);
 		if(tit != '双击可添加参数修改信息'){
