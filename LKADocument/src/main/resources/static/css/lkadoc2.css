@@ -12,10 +12,9 @@ body {
   overflow: hidden;
 }
 .active{
-	background:#0066ff !important;
-	color:#fff !important;
-	font-size:22px;
-	font-weight:600;
+	background:#d3e3ff !important;
+	color:#000 !important;
+	font-size:20px;
 }
 
 #canvas{
@@ -145,7 +144,7 @@ a:actived{
   	font-weight:700;
 }
 .obtain:hover{
-	background-color:#aaa;
+	background-color:#d3e3ff;
 }
 
 h5{
@@ -227,7 +226,7 @@ h5{
 }
 
 #menu #open .navBox ul li:hover{
-    background-color: #aaa;
+    background-color: #d3e3ff;
 }
 #menu #open .navBox ul li:first-child{
 	margin-top:-15px;

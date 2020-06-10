@@ -1104,11 +1104,11 @@ function buildParams(doc,type,loc,flag,contentType){
 	if(loc == "loc_method"){
 	 	str = "<table class='hovertable'>";
 		if(type=="req" || type=="param"){
-			str += "<thead class='reqcls'><tr><td colspan='7'>Parameters</td></tr>"
+			str += "<thead class='reqcls'><tr><td colspan='7'>请求参数</td></tr>"
 			str += "<tr><td>名称</td><td>作用</td><td>是否必须</td><td>数据类型</td><td>参数类型</td><td>测试数据</td><td>描述</td></tr>"
 			str +="</thead><tbody>"
 		}else if(type=="resp"){
-			str += "<thead class='respcls'><tr><td colspan='4'>Responses</td></tr>"
+			str += "<thead class='respcls'><tr><td colspan='4'>响应参数</td></tr>"
 			str += "<tr class='resposeDataJson' hidden='hidden'><td colspan='4'></td></tr>"
 			str += "<tr class='resposeDataTable'><td>名称</td><td>作用</td><td>数据类型</td><td>描述</td></tr>"
 			str +="</thead><tbody class='resposeDataTable'>"
@@ -1183,7 +1183,7 @@ function buildParams(doc,type,loc,flag,contentType){
 		}
 	}else if(loc == "loc_method"){
 		if(type=="req" || type=="param"){
-			str+="<tr><td colspan='7' style='color:red'>该API没有设置请求参数相关注解</td></tr>"
+			str+="<tr><td colspan='7' style='color:red'>该接口没有设置请求参数</td></tr>"
 				str+="<tr class='testSend'><td colspan='7'>"+
 				"<input type='button' class='testSendButton' value='测试API请求'>&nbsp;&nbsp;"+
 				/*"<label><input type='radio' name='conType"+radioRandom+"' class='app-form' "+(contentType=='application/x-www-form-urlencoded'?"checked='true'":"")+" value='application/x-www-form-urlencoded;charset=utf-8'>application/x-www-form-urlencoded</label>&nbsp;&nbsp;"+
@@ -1195,7 +1195,7 @@ function buildParams(doc,type,loc,flag,contentType){
 				str+="<tr><td colspan='7' class='resposeData' hidden='hidden'></td></tr>"
 				str+="<tr hidden='hidden'><td colspan='7' class='close-resposeData' align='center'><a style='font-size:24'>▲</a></td></tr>"
 		}else{
-			str+="<tr><td colspan='4' style='color:red'>该API没有设置响应参数相关注解</td></tr>"
+			str+="<tr><td colspan='4' style='color:red'>该接口没有设置响应参数</td></tr>"
 		}
 	}
 	if(loc == "loc_method"){
