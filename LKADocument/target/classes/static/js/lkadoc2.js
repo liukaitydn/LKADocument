@@ -1085,7 +1085,7 @@ function buildMenu(doc) {
     				"<li class='method-requestParamInfo'><span>Method Type：</span><span class='method-requestType'>"+methods[i].requestType+"</span>&nbsp;&nbsp;&nbsp;<span><b>Content Type：</b></span><span class='content-TYPE'>"+methods[i].contentType+"</span></span>&nbsp;&nbsp;&nbsp;<span><b>URL：</b></span><span class='method-URL'>"+methods[i].url+"</li>"+
     				/*"<li class='method-requestParamInfo'><span>URL：</span><span class='method-URL'>"+methods[i].url+"</span></li>"+
     				"<li class='method-requestParamInfo'><span>Content Type：</span><span class='content-TYPE'>"+methods[i].contentType+"</span></li>"+*/
-    				"<li class='method-requestParamInfo'><span></span><span><b>Author：</b>"+(methods[i].author==''?'未设置':methods[i].author)+"&nbsp;&nbsp;&nbsp;<b>CreateTime：</b>"+(methods[i].createTime==''?'未设置':methods[i].createTime)+"&nbsp;&nbsp;&nbsp;<b>UpdateTime：</b>"+(methods[i].updateTime==''?'未设置':methods[i].updateTime)+"</span></li>"+
+    				"<li class='method-requestParamInfo'><span></span><span><b>Author：</b>"+(methods[i].author==null || methods[i].author==''?'未设置':methods[i].author)+"&nbsp;&nbsp;&nbsp;<b>CreateTime：</b>"+(methods[i].createTime==null || methods[i].createTime==''?'未设置':methods[i].createTime)+"&nbsp;&nbsp;&nbsp;<b>UpdateTime：</b>"+(methods[i].updateTime==null || methods[i].updateTime==''?'未设置':methods[i].updateTime)+"</span></li>"+
     				"</ul>"+
     				"</div><div>"+buildParams(request,"req","loc_method",1,methods[i].contentType)+"</div>";
     		str2 +="<div>"+buildParams(respose,"resp","loc_method",1)+"</div></div>";
