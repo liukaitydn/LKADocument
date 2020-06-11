@@ -309,7 +309,7 @@ $(function(){
 		$(this).append('<input type="button" class="copyText" onclick="copyVal(this)" value="复制">');
 	})
 	$(".right-box").on("mouseleave",".addinfo",function(){
-		$(this).find("input").remove();
+		$(this).find(".copyText").remove();
 	})
 	
 	//生成复制按钮 复制属性名
@@ -317,7 +317,7 @@ $(function(){
 		$(this).find(".method-URL").after('<input type="button" class="copyText" onclick="copyUrl(this)" value="复制">');
 	})
 	$(".right-box").on("mouseleave",".method-requestParamInfo",function(){
-		$(this).find("input").remove();
+		$(this).find(".copyText").remove();
 	})
 	
 	//设置高亮参数判断
@@ -603,6 +603,10 @@ $(function(){
 		var path = $(this).parents("table").parent().parent().find(".method-URL").html();
 		//获取是否是下载方法
 		var download = $(this).parents("table").parent().parent().find(".method-download").val();
+		var fileName='fileName.xls';
+		if(download == 'true'){
+			fileName=window.prompt("请输入要下载的文件名称：","fileName.xls");
+		}
 		//contentType
 		var contentType =  $(this).parents("table").parent().parent().find(".content-TYPE").html();
 		// 获取请求参数名称
@@ -658,10 +662,6 @@ $(function(){
 		if(getServerName()!=null && !getServerName()==''){
 			queryData = queryJson;
 		}
-		/*
-		 * console.log(path); console.log(methodType); console.log(queryData);
-		 * console.log(headerJson); console.log(tl);
-		 */
 		var fileInput = $(this).parents("table").find(".upload");
 		var processData = true;
 		var contentTypeBool = true;
@@ -672,29 +672,89 @@ $(function(){
 			path = path+"?random="+Math.random();
 			delete headerJson['Content-Type'];
 		}
-		var dtype = "text";
-		if(download == 'true'){
-			dtype = 'blob';
-		}
+		
 		if(getServerName()==null || getServerName()==''){
-			$.ajax({
-			    url:path,
-			    type:methodType=='通用'?'get':methodType,
-			    dataType:dtype,
-			    async:true,
-			    data:queryData,
-			    headers:headerJson,
-			    traditional:tl, // 阻止深度序列化
-			    cache:false,
-			    processData:processData,
-			    contentType:contentTypeBool,
-			    success:function(data){
-			    	if(download == 'true'){
-			    		var a = document.createElement('a');
-			    		a.download = 'data';
-			    		a.href=window.URL.createObjectURL(data);
-			    		a.click();
-			    	}else{
+			if(download == 'true'){//下载API
+				var url = path;
+				var xhr = new XMLHttpRequest();
+				var mType = methodType=='通用'?'get':methodType;
+				// 组装参数
+				var data = "random="+Math.random();
+				for (var val in queryJson) {
+					data += '&'+val+"="+queryJson[val];
+				}
+				if(mType == 'get'){
+					url = url+"?"+data;
+				}
+				xhr.open(mType,url,true);
+				// 设置请求头
+				for (var val in headerJson) {
+					xhr.setRequestHeader(val,headerJson[val]);
+				}
+				xhr.responseType = "blob";
+				xhr.onreadystatechange = function () {
+					// 请求完成
+					if (this.status === 200) {
+						var blob = this.response;
+						var reader = new FileReader();
+						// 转换为base64，可以直接放入a表情href
+						reader.readAsDataURL(blob);  
+						reader.onload = function (e) {
+							// 转换完成，创建一个a标签用于下载
+							var a = document.createElement('a');
+							a.download = fileName;
+							a.href = e.target.result;
+							// 修复firefox中无法触发click
+							$("body").append(a);  
+							a.click();
+							$(a).remove();
+					    }
+					}
+					console.log(xhr);
+					if(this.readyState == 4){
+						var json = {};
+						if(this.status == 200){
+							json['status'] = this.status;
+					    	json['statusText'] = "操作成功！(此提示仅代表此次调用API状态，并不是返回值)";
+						}else{
+							json['status'] = this.status;
+					    	json['statusText'] = "操作失败！(此提示仅代表此次调用API状态，并不是返回值，具体错误信息可查看浏览器开发者工具里面的调试信息)";
+							
+						}
+				    	var options = {
+				    			collapsed:false,
+				    			withQuotes:false
+				    	}
+				    	try{
+				    		resposeData.jsonViewer(json,options);
+				    	}catch{
+				    		resposeData.html(json);
+				    	}
+					}
+				};
+				//发送ajax请求
+				if(mType == 'get'){
+					xhr.send()
+				}else{
+					if(contentType=='application/json'){
+						xhr.send(JSON.stringify(queryJson))
+					}else{
+						xhr.send(data)
+					}
+				}
+			}else{
+				$.ajax({
+				    url:path,
+				    type:methodType=='通用'?'get':methodType,
+				    dataType:"text",
+				    async:true,
+				    data:queryData,
+				    headers:headerJson,
+				    traditional:tl, // 阻止深度序列化
+				    cache:false,
+				    processData:processData,
+				    contentType:contentTypeBool,
+				    success:function(data){
 				    	var options = {
 				    			collapsed:false,
 				    			withQuotes:false
@@ -704,27 +764,27 @@ $(function(){
 				    	}catch{
 				    		resposeData.html(data);
 				    	}
-			    	}
-			    },
-			    error:function(respose){
-			    	var json = {};
-			    	json['status'] = respose.status;
-			    	json['statusText'] = respose.statusText;
-			    	json['responseText'] = respose.responseText;
-			    	if(respose.status == 0){
-			    		json['responseText'] = '连接服务器异常！';
-			    	}
-			    	var options = {
-			    			collapsed:false,
-			    			withQuotes:false
-			    	}
-			    	try{
-			    		resposeData.jsonViewer(json,options);
-			    	}catch{
-			    		resposeData.html(json);
-			    	}
-			    }
-			}); 
+				    },
+				    error:function(respose){
+				    	var json = {};
+				    	json['status'] = respose.status;
+				    	json['statusText'] = respose.statusText;
+				    	json['responseText'] = respose.responseText;
+				    	if(respose.status == 0){
+				    		json['responseText'] = '连接服务器异常！';
+				    	}
+				    	var options = {
+				    			collapsed:false,
+				    			withQuotes:false
+				    	}
+				    	try{
+				    		resposeData.jsonViewer(json,options);
+				    	}catch{
+				    		resposeData.html(json);
+				    	}
+				    }
+				});
+			}
 		}else{
 			$.ajax({
 			    url:"lkad/getServerApi",
@@ -1095,7 +1155,7 @@ function buildMenu(doc) {
     				"<li class='method-requestParamInfo'><span>Method Type：</span><span class='method-requestType'>"+methods[i].requestType+"</span>&nbsp;&nbsp;&nbsp;<span><b>Content Type：</b></span><span class='content-TYPE'>"+methods[i].contentType+"</span></span>&nbsp;&nbsp;&nbsp;<span><b>URL：</b></span><span class='method-URL'>"+methods[i].url+"</li>"+
     				/*"<li class='method-requestParamInfo'><span>URL：</span><span class='method-URL'>"+methods[i].url+"</span></li>"+
     				"<li class='method-requestParamInfo'><span>Content Type：</span><span class='content-TYPE'>"+methods[i].contentType+"</span></li>"+*/
-    				"<li class='method-requestParamInfo'><span></span><span><b>Author：</b>"+(methods[i].author==null || methods[i].author==''?'未设置':methods[i].author)+"&nbsp;&nbsp;&nbsp;<b>CreateTime：</b>"+(methods[i].createTime==null || methods[i].createTime==''?'未设置':methods[i].createTime)+"&nbsp;&nbsp;&nbsp;<b>UpdateTime：</b>"+(methods[i].updateTime==null || methods[i].updateTime==''?'未设置':methods[i].updateTime)+"</span><input class='method-download' type='hidden' value='"+methods[i].download+"'></li>"+
+    				"<li class='method-requestParamInfo'><span></span><span><b>Author：</b>"+(methods[i].author==null || methods[i].author==''?'未设置':methods[i].author)+"&nbsp;&nbsp;&nbsp;<b>CreateTime：</b>"+(methods[i].createTime==null || methods[i].createTime==''?'未设置':methods[i].createTime)+"&nbsp;&nbsp;&nbsp;<b>UpdateTime：</b>"+(methods[i].updateTime==null || methods[i].updateTime==''?'未设置':methods[i].updateTime)+"</span><span><input class='method-download' type='hidden' value='"+methods[i].download+"'></span></li>"+
     				"</ul>"+
     				"</div><div>"+buildParams(request,"req","loc_method",1,methods[i].contentType)+"</div>";
     		str2 +="<div>"+buildParams(respose,"resp","loc_method",1)+"</div></div>";
