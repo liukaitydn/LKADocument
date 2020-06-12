@@ -76,10 +76,10 @@ public class LKADController {
 	@Value("${lkad.basePackages:}")
 	private String basePackages;
 	/** 项目名称 */
-	@Value("${lkad.projectName:LKADocument智能接口文档}")
+	@Value("${lkad.projectName:LKADocument接口文档}")
 	private String projectName;
 	/** 项目描述 */
-	@Value("${lkad.description:为智能、便捷、高效而生！}")
+	@Value("${lkad.description:智能、便捷、高效！}")
 	private String description;
 	/** 文档开关 */
 	@Value("${lkad.enabled:true}")
@@ -559,11 +559,6 @@ public class LKADController {
 							}
 						}		
 						
-						
-						
-						if(methodModel.getUrl().equals("/demo3/V1.0/mini/register")) {
-							System.out.println("ok");
-						}	
 						//自动判断入参类型是否是model对象
 						Class<?>[] parameterTypes = method.getParameterTypes();
 						Parameter[] parameters = method.getParameters();

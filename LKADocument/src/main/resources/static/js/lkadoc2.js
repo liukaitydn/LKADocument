@@ -180,16 +180,16 @@ $(function(){
 				$(this).parent().css("background-image","linear-gradient(to right,#e3d3ff,#f8f8f8)");
 			}
 			
-			if($(this).html() == 'GET' || $(this).html() == 'get' || $(this).html() == 'POST' || $(this).html() == 'post'){
-				$(this).css("background","#60a0dd").css("color","#fff");
+			/*if($(this).html() == 'GET' || $(this).html() == 'get' || $(this).html() == 'POST' || $(this).html() == 'post'){
+				$(this).css("background","#44b549").css("color","#f8f8f8");
 				$(this).parent().css("background-image","linear-gradient(to right,#d3e3ff,#f8f8f8)");
-			}
-			/*if($(this).html() == 'POST' || $(this).html() == 'post'){
+			}*/
+			if($(this).html() == 'GET' || $(this).html() == 'get' || $(this).html() == 'POST' || $(this).html() == 'post'){
 				//$(this).css("background","#dda060").css("color","#fff");
 				//$(this).parent().css("background-image","linear-gradient(to right,#ffe3d3,#f8f8f8)");
 				$(this).css("background","#a0dd60").css("color","#fff");
 				$(this).parent().css("background-image","linear-gradient(to right,#C7EDCC,#f8f8f8)");
-			}*/
+			}
 			if($(this).html() == '通用'){
 				$(this).css("background","#dda060").css("color","#fff");
 				$(this).parent().css("background-image","linear-gradient(to right,#ffe3d3,#f8f8f8)");
@@ -240,14 +240,14 @@ $(function(){
 				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#e3d3ff,#f8f8f8)");
 			}
 			
-			if($(this).find(".method-requestType").html() == 'GET' || $(this).find(".method-requestType").html() == 'get' ||$(this).find(".method-requestType").html() == 'POST' || $(this).find(".method-requestType").html() == 'post'){
+			/*if($(this).find(".method-requestType").html() == 'GET' || $(this).find(".method-requestType").html() == 'get' ||$(this).find(".method-requestType").html() == 'POST' || $(this).find(".method-requestType").html() == 'post'){
 				$(this).find(".method-requestType").css("background","#60a0dd").css("color","#fff");
 				$(this).css("background","#f8f8f8");
 				$(this).find(".reqcls").css("backgroundColor","#d3e3ff");
 				$(this).find(".respcls").css("backgroundColor","#d3e3ff");
 				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#d3e3ff,#f8f8f8)");
 				
-			}
+			}*/
 			if($(this).find(".method-requestType").html() == '通用' ){
 				$(this).find(".method-requestType").css("background","#dda060").css("color","#fff");
 				$(this).css("background","#f8f8f8");
@@ -257,15 +257,15 @@ $(function(){
 
 				
 			}
-			/*if($(this).find(".method-requestType").html() == 'POST' || $(this).find(".method-requestType").html() == 'post'){
-				$(this).find(".method-requestType").css("background","#a0dd60").css("color","#fff");
+			if($(this).find(".method-requestType").html() == 'GET' || $(this).find(".method-requestType").html() == 'get' ||$(this).find(".method-requestType").html() == 'POST' || $(this).find(".method-requestType").html() == 'post'){
+				$(this).find(".method-requestType").css("background","#44b549").css("color","#fff");
 				$(this).css("background","#f8f8f8");
 				$(this).find(".reqcls").css("backgroundColor","#e3ffd3");
 				$(this).find(".respcls").css("backgroundColor","#e3ffd3");
 				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#e3ffd3,#f8f8f8)");
 
 				
-			}*/
+			}
 			if($(this).find(".method-requestType").html() == '未知'){
 				$(this).find(".method-requestType").css("background","#dd60a0").css("color","#fff");
 				$(this).css("background","#f8f8f8");
@@ -397,8 +397,7 @@ $(function(){
 		    
 		    $("#modalconfirm").click(function(){
 		    	let modaltype = $("#modaltype").val();
-		    	let modalcontent = $("#modalcontent").val();
-				//console.log(value+"-"+type+"-"+methodurl+"-"+modaltype+"-"+modalcontent);
+		    	let modalcontent = $("#modaltext").val();
 				$('#modalconfirm').off(); //解除所有绑定事件
 				modal.style.display = "none";
 				$.ajax({
@@ -1139,14 +1138,14 @@ function buildMenu(doc) {
 	// var str =
 	// "<h2><span>"+doc.value+"</span><span>"+doc.name+"</span><span>"+doc.description+"</span><div
 	// class='d3'></div></h2>";
-	var str = "<h3 class='obtain'><img src='img/file.gif' height='30px' width='30px'>&nbsp;<span>"+doc.name+"</span><span>"+doc.description+"</span><div class='d3'></div></h3>";
+	var str = "<h3 class='obtain'><img src='img/file.gif' height='30px' width='30px'>&nbsp;<span>"+doc.name+"</span><span>"+doc.description+"</span></h3>";
 	var methods =doc.methodModels;
     if(methods != null && methods.length>0){
     	str +="<ul hidden='hidden'>"
     	for(var i = 0;i<methods.length;i++){
     		met_index++;
     		//str += "<li data='"+met_index+"' class='secondary'><h5><span class='method-reqtype'>"+methods[i].requestType+"</span><span>"+methods[i].name+"</span></h5></li>";
-    		str += "<li data='"+met_index+"' class='secondary'><h5><img src='img/f.gif' height='30px' width='30px'>&nbsp;<span>"+methods[i].name+"</span></h5></li>";
+    		str += "<li data='"+met_index+"' class='secondary'><h5><img src='img/f.gif' height='25px' width='25px'>&nbsp;<span>"+methods[i].name+"</span></h5></li>";
     		var request = methods[i].request;
     		var respose = methods[i].respose;
     		var str2 ="<div id='method_"+met_index+"' class='method-table' hidden='hidden'><div>" +

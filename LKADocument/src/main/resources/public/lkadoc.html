@@ -41,7 +41,7 @@
 	  			<option value='2' selected>树版</option>
 	  		</select> -->
 	  		<span>项目切换：</span>
-	  		<select id='changeProject'>
+	  		<select id='changeProject' class="m-wrap">
 
 	  		</select>
 		</div>
@@ -80,19 +80,19 @@
             </div>
             <div class="modal-body">
                <table>
-               		<tr><td>type：</td><td>
+               		<tr><td align="right">修改类型：</td><td>
                			<select id='modaltype'>
-				  			<option value='1' selected>add</option>
-				  			<option value='2'>update</option>
-				  			<option value='3'>del</option>
-				  			<option value='4'>other</option>
+				  			<option value='1' selected>新增</option>
+				  			<option value='2'>更新</option>
+				  			<option value='3'>删除</option>
+				  			<option value='4'>其它</option>
 			  			</select>
                		</td></tr>
-               		<tr><td>content：</td><td><textarea rows="3" cols="30" id='modalcontent'></textarea></td></tr>
+               		<tr><td align="right" class='modalcontent'>修改说明：</td><td class='modalcontent'><input id="modaltext" type="text" placeholder="请输入参数修改信息"></td></tr>
                </table>
             </div>
             <div class="modal-footer">
-                <input type="button" id='modalconfirm' value="确定/confirm"><input type="button" id='modalcancel' value="取消/cancel">
+                <input type="button" id='modalconfirm' value="确定"><input type="button" id='modalcancel' value="取消">
             </div>
         </div>
     </div>

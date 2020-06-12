@@ -12,9 +12,8 @@ body {
   overflow: hidden;
 }
 .active{
-	background:#d3e3ff !important;
-	color:#000 !important;
-	font-size:20px;
+	background:#44b549 !important;
+	color:#ffffff !important;
 }
 
 #canvas{
@@ -25,7 +24,7 @@ body {
 /* 导航条 */
 .topnav {
   overflow: hidden;
-   background-color: #000; 
+   background-color: #44b549;
  /*  background-color: rgba(0, 0, 0, 0.0); */ 
  /*  color: #8ac007; */
   color: #f8f8f8;
@@ -40,7 +39,7 @@ body {
 }
 
 a:link{
-        color:yellow;
+        color:#f8f8f8;
         /* text-decoration: none; */ 
    	}
 a:visited{
@@ -48,7 +47,7 @@ a:visited{
    	/* text-decoration: underline;  */
 	}
 a:hover{
-    	color:#f8f8f8;
+    	color:yellow;
     	/* text-decoration: none; */ 
 	}
 a:actived{
@@ -69,7 +68,7 @@ a:actived{
 #line{
 	width:5px;
 	height:100%;
-	background:#000;
+	background:#aaa;
 	cursor: e-resize
 }
 #menu {
@@ -110,6 +109,7 @@ a:actived{
 
 #right-box-id >div  .method-ul{ 
 	padding:0 !important;  
+	z-index: 5;
 }
 #change-style select{
 	width:200px !important;
@@ -131,23 +131,26 @@ a:actived{
 }
 .obtain{
 	background-color:#ffffff;
-	padding-bottom:10px;
-  	padding-top:10px;
+	padding-bottom:13px;
+  	padding-top:13px;
   	padding-left:15px;
   	margin-top:15px;
   	margin-bottom:-14px;
   	color: #000;
-  	/* border-top:3px solid #000;*/
-  	border-radius:5px;
+  	border-top:1px solid #aaa;
+  	border-radius:2px;
   	cursor:pointer;
   	font-size:16px;
   	font-weight:700;
 }
 .obtain:hover{
-	background-color:#d3e3ff;
+	background-color:#e3ffd3;
 }
-
+#menu #open .obtain img,#menu #open .obtain span{
+	vertical-align:middle;
+}
 h5{
+	padding-top:10px;
 	display: -webkit-box;
     display: -moz-box;
     white-space: pre-wrap;
@@ -158,27 +161,6 @@ h5{
     -webkit-line-clamp:1;   /*显示行数*/
     font-weight:400;
 }
-/* .d3{
- float:right;
- width: 0;
- height: 0;
- margin-top:5px;
- margin-right:10px;
- border-width: 10px;
- border-style: solid;
- border-color:#000 transparent transparent transparent;
-}
-.d4{
- float:right;
- width: 0;
- height: 0;
- margin-bottom:20px;
- margin-top:-10px;
- margin-right:10px;
- border-width: 10px;
- border-style: solid;
- border-color:transparent transparent #000 transparent;
-} */
 .welcome{
 	margin-left:20px;
 }
@@ -220,13 +202,12 @@ h5{
 	padding-left:5px;
 	background-color:#fff;
 }
-#menu #open .navBox ul li img{
-	margin-top:10px;
-	vertical-align:bottom;
+#menu #open .navBox ul li img,#menu #open .navBox ul li span{
+	vertical-align:middle;
 }
 
 #menu #open .navBox ul li:hover{
-    background-color: #d3e3ff;
+    background-color: #e3ffd3;
 }
 #menu #open .navBox ul li:first-child{
 	margin-top:-15px;
@@ -269,13 +250,13 @@ h5{
 	font-weight:700;
 }
 .method-ul li:first-child span:first-child{
-	font-size:24px;
+	font-size:18px;
 }
 .method-ul li:first-child span:last-child{
 	padding:5px;
 	border-radius:50px;
-	background-color: #daf057;
-	color:#000;
+	background-color: #44b549;
+	color:#fff;
 	font-size:12px;
 }
 .method-requestType{
@@ -296,7 +277,7 @@ table.hovertable {
 	font-size:12px;
 	color:#000;
 	border-width: 1px;
-	border-color: #999999;
+	border-color: #aaa;
 	border-collapse: collapse;
 	width: 98%;
 	margin:0 auto;
@@ -310,8 +291,7 @@ table.hovertable thead tr{
 	border-width: 1px;
 	padding: 8px;
 	font-size: 16px;
-	font-weight:700;
-	color:#055;
+	color:#000;
 }
 table.hovertable thead tr td{
 	padding: 12px;
@@ -322,19 +302,19 @@ table.hovertable tbody tr {
 table.hovertable tbody tr td {
 	border-width: 1px;
 	padding: 12px;
-	border-bottom:1px solid #000;
+	border-bottom:1px solid #aaa;
 	word-wrap:break-word;
 }
 table thead tr:first-child{
 	text-align: center;
-	border-bottom:3px solid #055;
+	border-bottom:3px solid #44b549;
 }
 table thead tr td:first-child{
 	width:25%;
 }
 table thead tr:nth-child(2){
 	font-size:13px;
-	border-bottom:2px solid #888;
+	border-bottom:2px solid #aaa;
 }
 /* table:tbody tr:nth-child(odd){
 	background: #fee;
@@ -343,15 +323,18 @@ table tbody tr:nth-child(even){
 	background: #eef;
 } */
 .respcls{
-	background: #fff;
+	background: #f8f8f8;
 }
 .reqcls{
-	background: #fff;
+	background: #f8f8f8;
 }
 .tokenDiv{
-	color: #daf057;
+	color: #f8f8f8;
 	font-weight:400;
 	line-height:30px;
+}
+.tokenDiv span,.tokenDiv input,.tokenDiv select{
+	vertical-align:middle;
 }
 
 /* 按钮样式 */
@@ -359,7 +342,6 @@ table tbody tr:nth-child(even){
 	width: 25%; /* 宽度 */
 	height: 40px; /* 高度 */
 	border-width: 0px; /* 边框宽度 */
-	border-radius: 3px; /* 边框半径 */
 	background-color:#3385ff;
 	cursor: pointer; /* 鼠标移入按钮范围时出现手势 */
 	outline: none; /* 不显示轮廓线 */
@@ -372,7 +354,6 @@ table tbody tr:nth-child(even){
 	width: 20px; 
 	height: 20px; 
 	border-width: 0px; 
-	border-radius: 10px; 
 	background-color:#3385ff;
 	cursor: pointer; 
 	outline: none; 
@@ -382,20 +363,7 @@ table tbody tr:nth-child(even){
 	font-weight:700;
 
 }
-.saveToken{ 
-	width: 50px; 
-	height: 25px; 
-	border-width: 0px; 
-	border-radius: 10px; 
-	background-color:#3385ff;
-	cursor: pointer; 
-	outline: none; 
-	color: #fff; 
-	font-family: Microsoft YaHei; /* 设置字体 */
-	margin-left:5px;
-	font-weight:700;
 
-}
 .switch-resp-json,.request-json{
 	width: 180px; 
 	height: 25px; 
@@ -424,12 +392,12 @@ table tbody tr:nth-child(even){
 	padding: 6px 12px;
 	font-size: 14px;
 	line-height: 1.428571429;
-	color: #055;
+	color: #000;
 	vertical-align: middle;
 	background-color: #ffffff;
-	opacity:0.5;
+	/* opacity:0.5; */
 	border: 1px solid #cccccc;
-	border-radius: 4px;
+	/* border-radius: 4px; */
 	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); 
 	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); 
 	-webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
@@ -440,15 +408,15 @@ table tbody tr:nth-child(even){
 	border: 0px solid #cccccc;
 }
 .testData:disabled,.prevData:disabled,.headerKey:disabled,.headerValue:disabled{
-	color: #333;
-	background-color: #888;
-	opacity:0.5;
+	color: #000;
+	background-color: #ccc;
+	/* opacity:0.5; */
 }
-.testData:focus,.prevData:focus,.headerKey:focus,.headerValue:focus{
+.testData:focus,.prevData:focus,.headerKey:focus,.headerValue:focus,#modaltype:focus,#modaltext:focus{
 	border-color: #66afe9;
 	outline: 0;
 	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6); 
-	box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6); 
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6);
 }
 .parentParam td{
 	color:#000;
@@ -466,7 +434,6 @@ table tbody tr:nth-child(even){
 	width: 50px; 
 	height: 25px; 
 	border-width: 0px; 
-	border-radius: 10px; 
 	background-color:#3385ff;
 	/* background-color: rgba(0,0,0,0.0); */
 	/* opacity:0.6; */
@@ -482,7 +449,6 @@ table tbody tr:nth-child(even){
 	width: 250px; 
 	height: 25px; 
 	border-width: 0px; 
-	border-radius: 10px; 
 	background-color:#3385ff;
 	/* opacity:0.6; */
 	cursor: pointer; 
@@ -495,7 +461,8 @@ table tbody tr:nth-child(even){
 
 .saveToken:hover,#exportPdf:hover{
 	color:fff;
-	box-shadow: 0px 0px 10px 2px #fff;
+	/* box-shadow: 0px 0px 5px 2px #fff; */
+	background-color:#53a5ff;
 }
 
 #change-style{
@@ -505,7 +472,9 @@ table tbody tr:nth-child(even){
 #change-style select{
 	width:100px;
 	height:25px;
-	opacity:0.5;
+	border-width: 0px; 
+	background-color:#f8f8f8;
+	/* opacity:0.5; */
 }
 #projectName{
 	font-size:24px;
@@ -513,80 +482,100 @@ table tbody tr:nth-child(even){
 }
 
 .modal{
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-            background-color: rgba(0, 0, 0,0.5);
-        }
-        .modal-content{
-            background-color: #f4f4f4;
-            margin: 15% auto;
-            width: 45%;
-            box-shadow: 0 5px 8px 0 rgba(0, 0, 0,0.2), 0 7px 20px 0 rgba(0, 0, 0,0.2);
-            animation-name: modalopen;
-            animation-duration: 1s;
-        }
-        .modal-header h2,.modal-footer h3{
-            margin: 0;
-        }
-        .modal-header{
-            background-color: #333;
-            padding: 10px;
-            color: #fff;
-            font-size:12px;
-        }
-        .closeBtn{
-            color: #fff;
-            float: right;
-            font-size: 20px;
-        }
-        .closeBtn:hover,.closeBtn:focus{
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .modal-body{
-            padding:10px 20px; 
-        }
-        .modal-footer{
-            color: #fff;
-            background-color: #333;
-            padding: 10px;
-            text-align: center;
-        }
-        @keyframes modalopen{
-            from {opacity: 0}
-            to {opacity: 1}
-        }
-        
-        #modalconfirm,#modalcancel { /* 按钮美化 */
-			width: 25%; /* 宽度 */
-			height: 30px; /* 高度 */
-			border-width: 0px; /* 边框宽度 */
-			border-radius: 3px; /* 边框半径 */
-			background-color:#aaa; 
-			cursor: pointer; /* 鼠标移入按钮范围时出现手势 */
-			outline: none; /* 不显示轮廓线 */
-			font-family: Microsoft YaHei; /* 设置字体 */
-			color: #000; /* 字体颜色 */
-			font-size: 17px; /* 字体大小 */
-			font-weight:700;
-			margin-right:20px;
-		}
-		.copyText{ /* 按钮美化 */
-			border-width: 0px; /* 边框宽度 */
-			border-radius: 3px; /* 边框半径 */
-			background-color:#ddd; 
-			cursor: pointer; /* 鼠标移入按钮范围时出现手势 */
-			outline: none; /* 不显示轮廓线 */
-			font-family: Microsoft YaHei; /* 设置字体 */
-			color: #000; /* 字体颜色 */
-			font-size: 12px; /* 字体大小 */
-			font-weight:400;
-			margin-left:10px;
-		}
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0,0.0);
+}
+.modal-content{
+    background-color: #f8f8f8;
+    margin: 15% auto;
+    width: 30%;
+    box-shadow: 0 5px 8px 0 rgba(0, 0, 0,0.4), 0 7px 20px 0 rgba(0, 0, 0,0.4);
+    animation-name: modalopen;
+    animation-duration: 1s;
+}
+.modal-header h2,.modal-footer h3{
+    margin: 0;
+}
+.modal-header{
+    background-color: #44b549;
+    padding: 10px;
+    color: #f8f8f8;
+    font-size:12px;
+}
+.closeBtn{
+    color: #f8f8f8;
+    float: right;
+    font-size: 20px;
+}
+.closeBtn:hover,.closeBtn:focus{
+    color: #f8f8f8;
+    text-decoration: none;
+    cursor: pointer;
+}
+.modal-body table{
+	width:100%;
+}
+.modal-body table tr td:first-child{
+	width:20%;
+}
+.modal-body table tr td:last-child{
+	width:80%;
+}
+.modal-body{
+    padding:20px 20px;
+}
+#modaltype{
+	width:30%;
+	border:1px solid #aaa;
+}
+.modal-body table tr .modalcontent{
+	padding-top:20px;
+}
+#modaltext{
+	width:100%;
+	border:1px solid #aaa;
+}
+.modal-footer{
+    color: #f8f8f8;
+    background-color: #44b549;
+    padding: 10px;
+    text-align: center;
+}
+@keyframes modalopen{
+    from {opacity: 0}
+    to {opacity: 1}
+}
+
+#modalconfirm,#modalcancel { /* 按钮美化 */
+width: 25%; /* 宽度 */
+height: 30px; /* 高度 */
+border-width: 0px; /* 边框宽度 */
+border-radius: 3px; /* 边框半径 */
+background-color:#3385ff; 
+cursor: pointer; /* 鼠标移入按钮范围时出现手势 */
+outline: none; /* 不显示轮廓线 */
+font-family: Microsoft YaHei; /* 设置字体 */
+color: #f8f8f8; /* 字体颜色 */
+font-size: 17px; /* 字体大小 */
+	font-weight:700;
+	margin-right:20px;
+}
+.copyText{ /* 按钮美化 */
+border-width: 0px; /* 边框宽度 */
+border-radius: 3px; /* 边框半径 */
+background-color:#3385ff; 
+cursor: pointer; /* 鼠标移入按钮范围时出现手势 */
+outline: none; /* 不显示轮廓线 */
+font-family: Microsoft YaHei; /* 设置字体 */
+color: #f8f8f8; /* 字体颜色 */
+font-size: 12px; /* 字体大小 */
+	font-weight:400;
+	margin-left:10px;
+}
