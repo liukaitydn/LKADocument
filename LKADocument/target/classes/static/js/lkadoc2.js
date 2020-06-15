@@ -140,16 +140,16 @@ $(function(){
 								
 								setTimeout(()=>{
 									let uls = $('.secondary')
-									
 									for(let i = 0; i < uls.length;i++){
 										uls[i].onclick=function(){
 											
 											indexFlag = this.getAttribute("data")
 											for(let j = 0; j < uls.length;j++){
 												uls[j].className = 'secondary'
+												//$(uls[j]).find("img").attr("src","img/f.gif")
 											}
 											this.className = 'secondary active'
-											
+											//$(this).find("img").attr("src","img/fw.gif")
 											let ids = '#method_'+indexFlag
 											let divs = $(ids)[0].getElementsByTagName('div')[0]
 											  
@@ -346,11 +346,11 @@ $(function(){
 								$(this).css("color","#3385ff");
 							}else{
 								$(this).css("color","#000").css("text-decoration","none");
-								$(this).attr("title",'双击可添加参数修改信息');
+								$(this).attr("title",'双击可添加参数标签信息');
 							}
 						}else{
 							$(this).css("color","#000").css("text-decoration","none");
-							$(this).attr("title",'双击可添加参数修改信息');
+							$(this).attr("title",'双击可添加参数标签信息');
 						}
 					}catch{
 						return false;
@@ -372,8 +372,8 @@ $(function(){
 		let methodurl = $(this).parents(".hovertable").parent().parent().find(".method-URL").html();
 		let content = methodurl+"."+type+"."+value;
 		//console.log(content);
-		if(tit != '双击可添加参数修改信息'){
-			var bool = confirm("您确定已经了解修改参数的相关信息吗？");
+		if(tit != '双击可添加参数标签信息'){
+			var bool = confirm("您确定要删除参数标签信息吗？");
 			if(bool){
 				$.ajax({
 					url:"/lkad/delParamInfo",
@@ -443,6 +443,132 @@ $(function(){
 		    }
 		}
 	})
+	
+	
+	/*************************接口标签设置***************************/
+	//设置高亮参数判断
+	function getParamInfo2(){
+		$.getJSON("/lkad/getParamInfo",{'random':Math.random(),'serverName':getServerName()},function(data){
+			if(data != null && data != 'null'){
+				$(".secondary").each(function(){
+					try{
+						let value = $(this).find("input").val();
+						let type = 3;
+						let methodurl = "method-api";
+						let content = methodurl+"."+type+"."+value;
+						let str = data[content];
+						if(str != null && str.length>0){
+							var arrs = str.split("-");
+							//匹配上，设置样式
+							$(this).attr("title",arrs[1]);
+							if(arrs[0] == 1){
+								$(this).css("color","#a00");
+							}else if(arrs[0] == 2){
+								$(this).css("color","#0a0");
+							}else if(arrs[0] == 3){
+								$(this).css("color","#555").css("text-decoration","line-through");
+							}else if(arrs[0] == 4){
+								$(this).css("color","#3385ff");
+							}else{
+								$(this).css("color","#000").css("text-decoration","none");
+								$(this).attr("title",'双击可添加接口标签信息');
+							}
+						}else{
+							$(this).css("color","#000").css("text-decoration","none");
+							$(this).attr("title",'双击可添加接口标签信息');
+						}
+					}catch{
+						return false;
+					}
+				})
+			}
+		});
+	}
+	getParamInfo2();
+	
+	//双击属性弹出窗体
+	$(".navBox").off("dblclick",".secondary");
+	$(".navBox").on("dblclick",".secondary",function(){
+		var tit = $(this).attr("title");
+		//获取要保存的属性
+		//let value = $(this).html();
+		let value = $(this).find("input").val();
+		let type = 3;
+		let methodurl = "method-api";
+		let content = methodurl+"."+type+"."+value;
+		//console.log(content);
+		if(tit != '双击可添加接口标签信息'){
+			var bool = confirm("您确定要删除接口标签信息吗？");
+			if(bool){
+				$.ajax({
+					url:"/lkad/delParamInfo",
+				    type:"post",
+				    dataType:"text",
+				    data:{"value":value,"type":type,"url":methodurl,'random':Math.random(),'serverName':getServerName()},
+				    success:function(data){
+				    	getParamInfo2();
+						alert(data);
+				    },
+				    error:function(){
+				    	alert("连接服务器异常");
+				    }
+				})
+			}
+		}else{
+			//获取弹窗元素
+			let modal = document.getElementById("simpleModal");
+		    
+		    modal.style.display = "block";
+		    
+		    $("#modalconfirm").click(function(){
+		    	let modaltype = $("#modaltype").val();
+		    	let modalcontent = $("#modaltext").val();
+				$('#modalconfirm').off(); //解除所有绑定事件
+				modal.style.display = "none";
+				$.ajax({
+					url:"/lkad/addParamInfo",
+				    type:"post",
+				    dataType:"text",
+				    data:{"value":value,"type":type,"url":methodurl,"modaltype":modaltype,"content":modalcontent,'random':Math.random(),'serverName':getServerName()},
+				    success:function(data){
+				    	getParamInfo2();
+						alert(data);
+				    },
+				    error:function(){
+				    	alert("连接服务器异常");
+				    }
+				})
+		    });
+		    
+		    //获取关闭弹窗按钮元素
+		    let closeBtn = document.getElementsByClassName("closeBtn")[0];
+		 
+		    //监听关闭弹窗事件
+		    closeBtn.addEventListener("click",closeModal);
+		 
+		    //监听window关闭弹窗事件
+		    window.addEventListener("click",outsideClick);
+		 
+		    //关闭弹框事件
+		    function closeModal () {
+		        modal.style.display = "none";
+		        $('#modalconfirm').off(); //解除所有绑定事件
+		    }
+		    $("#modalcancel").click(function(){
+		    	 modal.style.display = "none";
+		    	 $('#modalconfirm').off(); //解除所有绑定事件
+		    });
+		    
+		    //outsideClick
+		    function outsideClick (e) {
+		        if(e.target == modal){
+		            modal.style.display = "none";
+		            $('#modalconfirm').off(); //解除所有绑定事件
+		        }
+		    }
+		}
+	})
+	/****************************************************************/
 	
 	
 	// 加载令牌
@@ -1135,17 +1261,17 @@ function assembleJson2(paramNames,testDatas,dataTypes,paramTypes,type){// 参数
 
 var met_index = 0;
 function buildMenu(doc) {
-	// var str =
-	// "<h2><span>"+doc.value+"</span><span>"+doc.name+"</span><span>"+doc.description+"</span><div
-	// class='d3'></div></h2>";
 	var str = "<h3 class='obtain'><img src='img/file.gif' height='30px' width='30px'>&nbsp;<span>"+doc.name+"</span><span>"+doc.description+"</span></h3>";
 	var methods =doc.methodModels;
     if(methods != null && methods.length>0){
     	str +="<ul hidden='hidden'>"
     	for(var i = 0;i<methods.length;i++){
     		met_index++;
-    		//str += "<li data='"+met_index+"' class='secondary'><h5><span class='method-reqtype'>"+methods[i].requestType+"</span><span>"+methods[i].name+"</span></h5></li>";
-    		str += "<li data='"+met_index+"' class='secondary'><h5><img src='img/f.gif' height='25px' width='25px'>&nbsp;<span>"+methods[i].name+"</span></h5></li>";
+    		var createTime = methods[i].createTime;
+    		var updateTime = methods[i].updateTime;
+    		str += "<li data='"+met_index+"' class='secondary' title='双击可添加接口标签信息'>" +
+    				"<input type='hidden' value='"+methods[i].name+"-"+methods[i].url+"'>" +
+    				"<h5><img src='img/f.gif' height='25px' width='25px'>&nbsp;<span>"+methods[i].name+"</span></h5></li>";
     		var request = methods[i].request;
     		var respose = methods[i].respose;
     		var str2 ="<div id='method_"+met_index+"' class='method-table' hidden='hidden'><div>" +
@@ -1154,7 +1280,7 @@ function buildMenu(doc) {
     				"<li class='method-requestParamInfo'><span>Method Type：</span><span class='method-requestType'>"+methods[i].requestType+"</span>&nbsp;&nbsp;&nbsp;<span><b>Content Type：</b></span><span class='content-TYPE'>"+methods[i].contentType+"</span></span>&nbsp;&nbsp;&nbsp;<span><b>URL：</b></span><span class='method-URL'>"+methods[i].url+"</li>"+
     				/*"<li class='method-requestParamInfo'><span>URL：</span><span class='method-URL'>"+methods[i].url+"</span></li>"+
     				"<li class='method-requestParamInfo'><span>Content Type：</span><span class='content-TYPE'>"+methods[i].contentType+"</span></li>"+*/
-    				"<li class='method-requestParamInfo'><span></span><span><b>Author：</b>"+(methods[i].author==null || methods[i].author==''?'未设置':methods[i].author)+"&nbsp;&nbsp;&nbsp;<b>CreateTime：</b>"+(methods[i].createTime==null || methods[i].createTime==''?'未设置':methods[i].createTime)+"&nbsp;&nbsp;&nbsp;<b>UpdateTime：</b>"+(methods[i].updateTime==null || methods[i].updateTime==''?'未设置':methods[i].updateTime)+"</span><span><input class='method-download' type='hidden' value='"+methods[i].download+"'></span></li>"+
+    				"<li class='method-requestParamInfo'><span></span><span><b>Author：</b>"+(methods[i].author==null || methods[i].author==''?'未设置':methods[i].author)+"&nbsp;&nbsp;&nbsp;<b>CreateTime：</b>"+(createTime==null || createTime==''?'未设置':createTime)+"&nbsp;&nbsp;&nbsp;<b>UpdateTime：</b>"+(updateTime==null || updateTime==''?'未设置':updateTime)+"</span><span><input class='method-download' type='hidden' value='"+methods[i].download+"'></span></li>"+
     				"</ul>"+
     				"</div><div>"+buildParams(request,"req","loc_method",1,methods[i].contentType)+"</div>";
     		str2 +="<div>"+buildParams(respose,"resp","loc_method",1)+"</div></div>";
@@ -1222,7 +1348,7 @@ function buildParams(doc,type,loc,flag,contentType){
 				}else{
 					var val = array != null && (array==true || array=='true')?value+'[]':value;
 					if(type=="req" || type=="param" || type=="params"){
-						str+="<tr><td class='paramValue addinfo' title='双击可添加参数修改信息'>"+val+"</td><td class='paramInfo'>"+name+"</td><td class='isRequired'>"+
+						str+="<tr><td class='paramValue addinfo' title='双击可添加参数标签信息'>"+val+"</td><td class='paramInfo'>"+name+"</td><td class='isRequired'>"+
 						(required==true?'yes':'no')+"</td><td class='dataType'>"+
 						dataType+"</td><td class='paramType'>"+
 						paramType+"</td><td>"+
@@ -1230,7 +1356,7 @@ function buildParams(doc,type,loc,flag,contentType){
 						"<input type='file' name='"+value+"'>"+"</form>":"<input class='testData' type='text' value='"+testData+"'>"+
 						(dataType==null?"":dataType.indexOf('[]')==-1?"":"<input type='button' class='subtract' value='-'><input type='button' class='add' value='+'>")+"</td><td>"+description+"</td></tr>")
 					}else{
-						str+="<tr><td class='respValue addinfo' title='双击可添加参数修改信息'>"+val+"</td><td class='respInfo'>"+name+"</td><td class='respType'><input class='reqdatatype' disabled='disabled' type='text' value='"+dataType+"'></td><td>"+description+"</td></tr>"
+						str+="<tr><td class='respValue addinfo' title='双击可添加参数标签信息'>"+val+"</td><td class='respInfo'>"+name+"</td><td class='respType'><input class='reqdatatype' disabled='disabled' type='text' value='"+dataType+"'></td><td>"+description+"</td></tr>"
 					}
 				}
 			}
