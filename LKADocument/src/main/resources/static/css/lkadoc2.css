@@ -579,3 +579,7 @@ font-size: 12px; /* 字体大小 */
 	font-weight:400;
 	margin-left:10px;
 }
+
+input[disabled]{
+	color:#000;opacity:1;background-color:#fff;
+}

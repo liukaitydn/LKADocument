@@ -24,7 +24,7 @@ public @interface ApiOperation {
 	/**方法描述*/
 	String notes() default "";
 	/**版本号*/
-	String version() default "none";
+	String version() default "暂无";
 	/**contentType类型*/
 	String contentType() default "application/x-www-form-urlencoded";
 	

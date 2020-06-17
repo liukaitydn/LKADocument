@@ -1,9 +1,7 @@
 package com.lk.api.domain;
 
-import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +11,15 @@ public class TypeModel {
 	private String description;
 	List<MethodModel> methodModels = new ArrayList<MethodModel>();
 	private String value;
+	private String version;
+	
+	
+	public String getVersion() {
+		return version;
+	}
+	public void setVersion(String version) {
+		this.version = version;
+	}
 	public String getValue() {
 		return value;
 	}

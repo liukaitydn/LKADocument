@@ -119,6 +119,7 @@ $(function(){
 		    			}else{
 							$("#projectName").html(data.projectName);
 							$("#description").html(data.description);
+							var tVersion = data.version;//获取总版本号
 							if(serverName == '' && $("#changeProject").val() != 'now'){
 								if(data.serverNames == null || data.serverNames == ''){
 									$("#changeProject").append('<option value="now">当前项目</option>');
@@ -135,7 +136,7 @@ $(function(){
 							var doc = data.apiDoc;
 							if(doc != null && doc.length > 0){
 								for(var i = 0;i<doc.length;i++){
-									$(".navBox").append(buildMenu(doc[i]));
+									$(".navBox").append(buildMenu(doc[i],tVersion));
 								}
 								
 								setTimeout(()=>{
@@ -191,8 +192,10 @@ $(function(){
 				$(this).parent().css("background-image","linear-gradient(to right,#C7EDCC,#f8f8f8)");
 			}
 			if($(this).html() == '通用'){
-				$(this).css("background","#dda060").css("color","#fff");
-				$(this).parent().css("background-image","linear-gradient(to right,#ffe3d3,#f8f8f8)");
+				/*$(this).css("background","#dda060").css("color","#fff");
+				$(this).parent().css("background-image","linear-gradient(to right,#ffe3d3,#f8f8f8)");*/
+				$(this).css("background","#a0dd60").css("color","#fff");
+				$(this).parent().css("background-image","linear-gradient(to right,#C7EDCC,#f8f8f8)");
 			}
 			if($(this).html() == '未知'){
 				$(this).css("background","#dd60a0").css("color","#fff");
@@ -249,13 +252,18 @@ $(function(){
 				
 			}*/
 			if($(this).find(".method-requestType").html() == '通用' ){
-				$(this).find(".method-requestType").css("background","#dda060").css("color","#fff");
+				/*$(this).find(".method-requestType").css("background","#dda060").css("color","#fff");
 				$(this).css("background","#f8f8f8");
 				$(this).find(".reqcls").css("backgroundColor","#ffe3d3");
 				$(this).find(".respcls").css("backgroundColor","#ffe3d3");
 				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#ffe3d3,#f8f8f8)");
+*/
+				$(this).find(".method-requestType").css("background","#44b549").css("color","#fff");
+				$(this).css("background","#f8f8f8");
+				$(this).find(".reqcls").css("backgroundColor","#e3ffd3");
+				$(this).find(".respcls").css("backgroundColor","#e3ffd3");
+				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#e3ffd3,#f8f8f8)");
 
-				
 			}
 			if($(this).find(".method-requestType").html() == 'GET' || $(this).find(".method-requestType").html() == 'get' ||$(this).find(".method-requestType").html() == 'POST' || $(this).find(".method-requestType").html() == 'post'){
 				$(this).find(".method-requestType").css("background","#44b549").css("color","#fff");
@@ -1260,18 +1268,31 @@ function assembleJson2(paramNames,testDatas,dataTypes,paramTypes,type){// 参数
 }
 
 var met_index = 0;
-function buildMenu(doc) {
-	var str = "<h3 class='obtain'><img src='img/file.gif' height='30px' width='30px'>&nbsp;<span>"+doc.name+"</span><span>"+doc.description+"</span></h3>";
+function buildMenu(doc,tVersion) {
 	var methods =doc.methodModels;
+	var vbool = false;
+	if(methods != null && methods.length>0){
+		for(var i = 0;i<methods.length;i++){
+			var mVersion = methods[i].version;
+			if(mVersion == tVersion){
+				vbool = true;
+				break;
+			}
+		}
+	}
+	var cImgName = vbool?"file2.gif":"file.gif";
+	var str = "<h3 class='obtain'><img src='img/"+cImgName+"' height='30px' width='30px'>&nbsp;<span>"+doc.name+"</span><span>"+doc.description+"</span></h3>";
     if(methods != null && methods.length>0){
     	str +="<ul hidden='hidden'>"
     	for(var i = 0;i<methods.length;i++){
     		met_index++;
     		var createTime = methods[i].createTime;
     		var updateTime = methods[i].updateTime;
+    		var mVersion = methods[i].version;
+    		var imgName = mVersion == tVersion?"f4.gif":"f.gif";
     		str += "<li data='"+met_index+"' class='secondary' title='双击可添加接口标签信息'>" +
     				"<input type='hidden' value='"+methods[i].name+"-"+methods[i].url+"'>" +
-    				"<h5><img src='img/f.gif' height='25px' width='25px'>&nbsp;<span>"+methods[i].name+"</span></h5></li>";
+    				"<h5><img src='img/"+imgName+"' height='25px' width='25px'>&nbsp;<span>"+methods[i].name+"</span></h5></li>";
     		var request = methods[i].request;
     		var respose = methods[i].respose;
     		var str2 ="<div id='method_"+met_index+"' class='method-table' hidden='hidden'><div>" +

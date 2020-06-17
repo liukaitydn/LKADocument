@@ -26,4 +26,6 @@ public @interface Api {
 	
 	/**是否隐藏**/
 	boolean hidden() default false;
+	
+	//String version() default "v1.0";
 }

@@ -27,5 +27,6 @@ public @interface LKADocument {
 	String projectName() default "LKADocument接口文档";
 	String description() default "智能、便捷、高效！";
 	String serverNames() default "";
+	String version() default "";
 	boolean enabled() default true;
 }

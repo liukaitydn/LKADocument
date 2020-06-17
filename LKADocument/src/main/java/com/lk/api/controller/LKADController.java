@@ -87,6 +87,9 @@ public class LKADController {
 	/**服务器名称*/
 	@Value("${lkad.serverNames:}")
 	private String serverNames;
+	/**项目版本号*/
+	@Value("${lkad.version:}")
+	private String version;
 	
 	private int reqNum = 0,respNum = 0,proNum = 0;
 	
@@ -167,6 +170,7 @@ public class LKADController {
 			map.put("description", description);
 			map.put("enabled", enabled?"yes":"no");
 			map.put("serverNames",serverNames);
+			map.put("version",version);
 		}else {
 			Map<String, Object> beans = applicationContext.getBeansWithAnnotation(LKADocument.class);
 			boolean bool = false;
@@ -184,6 +188,7 @@ public class LKADController {
 					map.put("projectName", annotation.projectName());
 					map.put("description", annotation.description());
 					map.put("serverNames", annotation.serverNames());
+					map.put("version",annotation.version());
 					if(!annotation.enabled()) {
 						bpk = "";
 						map.put("error", "LKADocument接口文档功能已关闭");
@@ -338,15 +343,19 @@ public class LKADController {
 					if(lkaType.hidden())continue;
 					String cName = lkaType.value();
 					String cDescription = lkaType.description();
+					//String cVersion = lkaType.version();
 					typeModel.setName(cName);
 					typeModel.setDescription(cDescription);
+					//typeModel.setVersion(cVersion);
 				}else {
 					Api api = cls.getAnnotation(Api.class);
 					if(api.hidden())continue;
 					String cName = api.tags();
 					String cDescription = api.description();
+					//String cVersion = api.version();
 					typeModel.setName(cName);
 					typeModel.setDescription(cDescription);
+					//typeModel.setVersion(cVersion);
 				}
 				// 获取类描述信息
 				typeModel.setValue(cls.getSimpleName());

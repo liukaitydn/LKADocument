@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lk.api.annotation.ContentType;
@@ -25,13 +26,13 @@ public class LKADemoController {
 	/**
      *	说明：入参属性名后面加上'-n'代表不是必传字段,例如下面"id-n"那么代表入参id不是必须的
 	 */
-	@LKAMethod(value="测试方法1",contentType=ContentType.JSON,author="刘凯",createTime="2020-6-5",updateTime="2020-6-5")
+	@LKAMethod(value="测试方法1",contentType=ContentType.JSON,author="刘凯",createTime="2020-6-5",updateTime="2020-6-5",version="1.0")
 	@LKAParam(names={"id-n","name","age"},values={"用户ID","用户姓名","用户年龄"},dataTypes={"Integer","String","Integer"},paramTypes= {ParamType.QUERY})
 	@LKAResposes({
 		@LKARespose(names= {"code","msg"},values= {"状态码","消息"}),
 		@LKARespose(type=User.class,parentName="result"),
 	})
-	@GetMapping("test1")
+	@RequestMapping("test1")
 	public Map<String,Object> test1(Integer id,String name,Integer age) {
 		Map<String,Object> map = new HashMap<>();
 		User user = new User();
