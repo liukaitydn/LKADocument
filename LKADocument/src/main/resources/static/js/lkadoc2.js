@@ -295,22 +295,70 @@ $(function(){
 		}
 		return serverName;
 	}
-	
+
 	$("#changeProject").change(function(){
 		reloadDoc(getServerName());
 		indexFlag=null
 		$(".method-table").hide();
 		$(".welcome").show();
-		if($(this).find("div").attr('class')=='d4'){
-			$(this).find("div").removeClass("d4");
-			$(this).find("div").addClass("d3");
-		}else{
-			$(this).find("div").removeClass("d3");
-			$(this).find("div").addClass("d4");
-		}
 	});
 	
 	reloadDoc('');
+	
+	//导出PDF文档
+	$("#exportPdf").click(function(){
+		if($("#changeProject").val() != 'now' && $("#changeProject").val()!=null){
+			alert("因远程调用文档数据结构对象发生变化，目前只支持生成本地项目PDF接口文档，暂不支持远程服务器生成PDF文档！");
+		}else{
+			/*$.ajax({
+				url:"/lkad/exportPdf",
+			    type:"post",
+			    dataType:"json",
+			    data:{'random':Math.random(),'serverName':getServerName()},
+			    success:function(data){
+					alert(data.msg);
+			    },
+			    error:function(){
+			    	alert("连接服务器异常");
+			    }
+			})*/
+			var xhr = new XMLHttpRequest();
+			xhr.open("post","/lkad/exportPdf",true);
+			// 设置请求头
+			xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+			xhr.responseType = "blob";
+			xhr.onreadystatechange = function () {
+				// 请求完成
+			if (this.status === 200) {
+				var blob = this.response;
+				var reader = new FileReader();
+				// 转换为base64，可以直接放入a表情href
+			reader.readAsDataURL(blob);
+			reader.onload = function (e) {
+				// 转换完成，创建一个a标签用于下载
+			var a = document.createElement('a');
+			a.download = $("#projectName").html()+".pdf";
+			a.href = e.target.result;
+			// 修复firefox中无法触发click
+			$("body").append(a);  
+					a.click();
+					$(a).remove();
+			    }
+			}
+			console.log(xhr);
+			if(this.readyState == 4){
+				if(this.status == 200){
+					alert("生成成功！")
+			}else{
+				alert("生成失败！");
+						
+					}
+				}
+			};
+			//发送ajax请求
+			xhr.send({'random':Math.random(),'serverName':getServerName()})
+		}
+	})
 	
 	//生成复制按钮 复制属性名
 	$(".right-box").on("mouseenter",".addinfo",function(){
@@ -1337,12 +1385,9 @@ function buildParams(doc,type,loc,flag,contentType){
 			var arr = new Array();
 			filter(value,doc,arr);
 			value = flag == 2?(loc+"."+value):flag == 3 && loc.lastIndexOf(".")!=-1?(loc.substring(0,loc.lastIndexOf(".")+1)+value):value;
-			// console.log(value);
 			if(arr != null && arr.length > 0){
 				var val = array != null && (array==true || array=='true')?value+'[]':value;
 				if(type=="req" || type=="param"){
-					// str+="<tr><td>"+val+"</td><td>"+doc[i].name+"</td><td>"+doc[i].description+"</td><td>"+doc[i].required+"</td><td>"+doc[i].dataType+"</td><td
-					// colspan='2'>"+doc[i].paramType+"</td></tr>"
 					str+=buildParams(arr,"param",val,2);
 				}else{
 					str+="<tr class='parentParam'><td>"+val+"</td><td>"+name+"</td><td>"+description+"</td><td></td></tr>"
@@ -1353,10 +1398,8 @@ function buildParams(doc,type,loc,flag,contentType){
 				if(model != null && model != "null"){
 					var val = array != null && (array==true || array=='true')?value+'[]':value;
 					if(type=="req" || type=="param"){
-						// str+="<tr><td>"+val+"</td><td>"+doc[i].name+"</td><td>"+doc[i].description+"</td><td>"+doc[i].required+"</td><td>"+doc[i].dataType+"</td><td>"+doc[i].paramType+"</td></tr>"
 						str+=buildParams(model.propertyModels,"params",val,3);
 					}else if(type=="resp"){
-						// str+="<tr><td>"+val+"</td><td>"+doc[i].name+"</td><td>"+doc[i].description+"</td><td>"+doc[i].dataType+"</td></tr>"
 						str+=buildParams(model.propertyModels,"resps",val,3);
 					}
 					if(type=="params"){
@@ -1546,7 +1589,7 @@ function filter(value,doc,arr){
 })*/
 
 // 导出成PDF
-function getmes() {
+/*function getmes() {
 	//console.log(-1);
 	html2canvas(document.getElementById("right-box-id"),// 为页面内容所在元素的ID
 		{
@@ -1588,4 +1631,4 @@ function getmes() {
 			// 背景设为白色（默认为黑色）
 			background: "#fff"
 		})
-}
+}*/
