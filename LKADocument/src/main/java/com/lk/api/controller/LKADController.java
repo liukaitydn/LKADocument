@@ -3039,14 +3039,13 @@ public class LKADController {
 		//创建document
 		String projectName = data.get("projectName").toString();
 		Document doc = createPdf(projectName+".pdf");
-		
+		int chNum = 1;
 		//添加项目信息
 		doc.add(PdfFontUtils.getFont(1,projectName));
 		doc.add(PdfFontUtils.getFont(6,"项目描述："+data.get("description").toString()));
 		if(data.get("version") != null) {
 			doc.add(PdfFontUtils.getFont(6,"项目版本："+data.get("version").toString()));
 		}
-		
 		//获取类信息
 		Object object = data.get("apiDoc");
 		if(object == null) {
@@ -3066,11 +3065,7 @@ public class LKADController {
 			result.put("msg","没有找到接口信息!");
 			return result;
 		}
-		int chNum = 1;
 		for (Object typeObj : typeModels) {
-			//doc.add(PdfFontUtils.getFont(2,"")); //加两个空行
-			//doc.add(PdfFontUtils.getFont(2,""));
-			//doc.add(PdfFontUtils.getFont(2,""));
 			if(!(typeObj instanceof TypeModel)) {
 				continue;
 			}
@@ -3113,10 +3108,6 @@ public class LKADController {
 				if(updateTime == null || "".equals(updateTime)) {
 					updateTime = "未设置";
 				}
-				//section.add(PdfFontUtils.getFont(2,"")); //加2个空行
-				//section.add(PdfFontUtils.getFont(6,""));
-				//section.add(PdfFontUtils.getFont(6,""));
-				//section.add(PdfFontUtils.getFont(3,methodName)); //添加方法说明和描述
 				section.add(PdfFontUtils.getFont(6,"版本号："+methodModel.getVersion()));
 				section.add(PdfFontUtils.getFont(6,"Method Type："+methodModel.getRequestType()));
 				section.add(PdfFontUtils.getFont(6,"Url："+methodModel.getUrl()));
@@ -3229,9 +3220,13 @@ public class LKADController {
 			        requestTable.addCell(cell);
 		        }
 		        section.add(responseTable);
-		        doc.add(chapter);
-				//doc.add(responseTable);
+		        section.add(PdfFontUtils.getFont(6,""));
+				section.add(PdfFontUtils.getFont(6,""));
+				section.add(PdfFontUtils.getFont(6,""));
+				section.add(PdfFontUtils.getFont(6,""));
+				section.add(PdfFontUtils.getFont(6,""));
 			}
+			doc.add(chapter);
 		}
 		
 		//关闭
@@ -3596,24 +3591,6 @@ public class LKADController {
 				}
 	    	}
 	 }
-	 
-	 /*public void filter(String value,List<ResposeModel> rms,List<ResposeModel> arr) {
-		 	if(rms == null || rms.size() == 0 || value == null || "".equals(value)) {
-		 		return;
-		 	}
-	    	Iterator<ResposeModel> iterator = rms.iterator();
-	    	String var = "";
-	    	while(iterator.hasNext()) {
-	    		ResposeModel rm = iterator.next();
-	    		if(value.equals(rm.getParentName())) {
-	    			var = rm.getValue();
-	    			arr.add(rm);
-	    			iterator.remove();
-	    			break;
-	    		}
-	    	}
-	    	filter(var, rms, arr);
-	 }*/
 	
 	/**
      * 创建一个pdf并打开
