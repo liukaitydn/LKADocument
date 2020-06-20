@@ -382,7 +382,6 @@ $(function(){
 			if(data != null && data != 'null'){
 				$(".addinfo").each(function(){
 					try{
-						//let value = $(this).html();
 						let value = this.firstChild.nodeValue;
 						let type = $(this).parents(".hovertable").find(".reqcls").length > 0 ?1:2;
 						let methodurl = $(this).parents(".hovertable").parent().parent().find(".method-URL").html();
@@ -408,7 +407,7 @@ $(function(){
 							$(this).css("color","#000").css("text-decoration","none");
 							$(this).attr("title",'双击可添加参数标签信息');
 						}
-					}catch{
+					}catch(e){
 						return false;
 					}
 				})
@@ -533,7 +532,7 @@ $(function(){
 							$(this).css("color","#000").css("text-decoration","none");
 							$(this).attr("title",'双击可添加接口标签信息');
 						}
-					}catch{
+					}catch(e){
 						return false;
 					}
 				})
@@ -666,6 +665,17 @@ $(function(){
 	
 	$(".right-box").on("click",".subtract",function(){
 		if($(this).prev().attr('class')=='prevData'){
+			$(this).prev().remove();
+		}
+	})
+	
+	$(".right-box").on("click",".addFile",function(){
+		var value = $(this).parent().find(".fileValue").val()
+		$(this).prev().before("<input class='prevFileData' type='file' name='"+value+"'/>");
+	})
+	
+	$(".right-box").on("click",".subFile",function(){
+		if($(this).prev().attr('class')=='prevFileData'){
 			$(this).prev().remove();
 		}
 	})
@@ -908,7 +918,7 @@ $(function(){
 				    	}
 				    	try{
 				    		resposeData.jsonViewer(json,options);
-				    	}catch{
+				    	}catch(e){
 				    		resposeData.html(json);
 				    	}
 					}
@@ -942,7 +952,7 @@ $(function(){
 				    	}
 				    	try{
 				    		resposeData.jsonViewer(JSON.parse(data),options);
-				    	}catch{
+				    	}catch(e){
 				    		resposeData.html(data);
 				    	}
 				    },
@@ -960,7 +970,7 @@ $(function(){
 				    	}
 				    	try{
 				    		resposeData.jsonViewer(json,options);
-				    	}catch{
+				    	}catch(e){
 				    		resposeData.html(json);
 				    	}
 				    }
@@ -980,7 +990,7 @@ $(function(){
 			    	}
 			    	try{
 			    		resposeData.jsonViewer(JSON.parse(data),options);
-			    	}catch{
+			    	}catch(e){
 			    		resposeData.html(data);
 			    	}
 			    },
@@ -998,7 +1008,7 @@ $(function(){
 			    	}
 			    	try{
 			    		resposeData.jsonViewer(json,options);
-			    	}catch{
+			    	}catch(e){
 			    		resposeData.html(json);
 			    	}
 			    }
@@ -1020,7 +1030,7 @@ function assembleJson(paramNames,testDatas,dataTypes,paramTypes,type){// 参数�
 		try{
 			dataType = dataTypes.eq(i);
 			paramType = paramTypes.eq(i);
-		}catch{
+		}catch(e){
 			dataType = dataTypes[i];
 			paramType = paramTypes[i];
 		}
@@ -1034,7 +1044,7 @@ function assembleJson(paramNames,testDatas,dataTypes,paramTypes,type){// 参数�
 						var testData;
 						try{
 							testData = testDatas.eq(i);
-						}catch{
+						}catch(e){
 							testData = testDatas[i];
 						}
 						paramJson[paramName] = testData.val();// 设置数据
@@ -1055,7 +1065,7 @@ function assembleJson(paramNames,testDatas,dataTypes,paramTypes,type){// 参数�
 								td = testDatas.eq(j);
 								dt = dataTypes.eq(j);
 								pt = paramTypes.eq(j);
-							}catch{
+							}catch(e){
 								td = testDatas[j];
 								dt = dataTypes[j];
 								pt = paramTypes[j];
@@ -1088,7 +1098,7 @@ function assembleJson(paramNames,testDatas,dataTypes,paramTypes,type){// 参数�
 						var td;
 						try{
 							td = testDatas.eq(i);
-						}catch{
+						}catch(e){
 							td = testDatas[i];
 						}
 						if(td.val() != null && td.val() !=''){
@@ -1126,7 +1136,7 @@ function assembleJson(paramNames,testDatas,dataTypes,paramTypes,type){// 参数�
 								td = testDatas.eq(j);
 								dt = dataTypes.eq(j);
 								pt = paramTypes.eq(j);
-							}catch{
+							}catch(e){
 								td = testDatas[j];
 								dt = dataTypes[j];
 								pt = paramTypes[j];
@@ -1168,7 +1178,7 @@ function assembleJson2(paramNames,testDatas,dataTypes,paramTypes,type){// 参数
 		try{
 			dataType = dataTypes.eq(i);
 			paramType = paramTypes.eq(i);
-		}catch{
+		}catch(e){
 			dataType = dataTypes[i];
 			paramType = paramTypes[i];
 		}
@@ -1182,7 +1192,7 @@ function assembleJson2(paramNames,testDatas,dataTypes,paramTypes,type){// 参数
 						var testData;
 						try{
 							testData = testDatas.eq(i);
-						}catch{
+						}catch(e){
 							testData = testDatas[i];
 						}
 						paramJson[paramName] = testData.html();// 设置数据
@@ -1203,7 +1213,7 @@ function assembleJson2(paramNames,testDatas,dataTypes,paramTypes,type){// 参数
 								td = testDatas.eq(j);
 								dt = dataTypes.eq(j);
 								pt = paramTypes.eq(j);
-							}catch{
+							}catch(e){
 								td = testDatas[j];
 								dt = dataTypes[j];
 								pt = paramTypes[j];
@@ -1236,7 +1246,7 @@ function assembleJson2(paramNames,testDatas,dataTypes,paramTypes,type){// 参数
 						var td;
 						try{
 							td = testDatas.eq(i);
-						}catch{
+						}catch(e){
 							td = testDatas[i];
 						}
 						if(td.val() != null && td.val() !=''){
@@ -1279,7 +1289,7 @@ function assembleJson2(paramNames,testDatas,dataTypes,paramTypes,type){// 参数
 								td = testDatas.eq(j);
 								dt = dataTypes.eq(j);
 								pt = paramTypes.eq(j);
-							}catch{
+							}catch(e){
 								td = testDatas[j];
 								dt = dataTypes[j];
 								pt = paramTypes[j];
@@ -1329,7 +1339,7 @@ function buildMenu(doc,tVersion) {
 		}
 	}
 	var cImgName = vbool?"file2.gif":"file.gif";
-	var str = "<h3 class='obtain'><img src='img/"+cImgName+"' height='30px' width='30px'>&nbsp;<span>"+doc.name+"</span><span>"+doc.description+"</span></h3>";
+	var str = "<h3 class='obtain'><img src='img/"+cImgName+"' height='30px' width='30px'>&nbsp;<span>"+doc.name+"</span>&nbsp;&nbsp;<span class='docDescription'>"+doc.description+"</span></h3>";
     if(methods != null && methods.length>0){
     	str +="<ul hidden='hidden'>"
     	for(var i = 0;i<methods.length;i++){
@@ -1345,7 +1355,7 @@ function buildMenu(doc,tVersion) {
     		var respose = methods[i].respose;
     		var str2 ="<div id='method_"+met_index+"' class='method-table' hidden='hidden'><div>" +
     				"<ul class='method-ul'>" +
-    				"<li><span class='method-name-pdf'>"+methods[i].name+"</span>&nbsp;&nbsp;<span>"+methods[i].description+"</span>&nbsp;&nbsp;<span>"+methods[i].version+"</span></li>"+
+    				"<li><span class='method-name-pdf'>"+methods[i].name+"</span>&nbsp;&nbsp;<span class='docDescription'>"+methods[i].description+"</span>&nbsp;&nbsp;<span>"+methods[i].version+"</span></li>"+
     				"<li class='method-requestParamInfo'><span>Method Type：</span><span class='method-requestType'>"+methods[i].requestType+"</span>&nbsp;&nbsp;&nbsp;<span><b>Content Type：</b></span><span class='content-TYPE'>"+methods[i].contentType+"</span></span>&nbsp;&nbsp;&nbsp;<span><b>URL：</b></span><span class='method-URL'>"+methods[i].url+"</li>"+
     				/*"<li class='method-requestParamInfo'><span>URL：</span><span class='method-URL'>"+methods[i].url+"</span></li>"+
     				"<li class='method-requestParamInfo'><span>Content Type：</span><span class='content-TYPE'>"+methods[i].contentType+"</span></li>"+*/
@@ -1417,7 +1427,9 @@ function buildParams(doc,type,loc,flag,contentType){
 						dataType+"</td><td class='paramType'>"+
 						paramType+"</td><td>"+
 						(dataType=='file'?"<form class='upload' enctype='multipart/form-data'>"+
-						"<input type='file' name='"+value+"'>"+"</form>":"<input class='testData' type='text' value='"+testData+"'>"+
+						"<input type='file' name='"+value+"'>"+"</form>":
+							dataType=='file[]'?"<form class='upload' enctype='multipart/form-data'>"+
+						"<input type='hidden' value='"+value+"' class='fileValue'><input type='file' name='"+value+"'><input type='button' class='subFile' value='-'><input type='button' class='addFile' value='+'></form>":"<input class='testData' type='text' value='"+testData+"'>"+
 						(dataType==null?"":dataType.indexOf('[]')==-1?"":"<input type='button' class='subtract' value='-'><input type='button' class='add' value='+'>")+"</td><td>"+description+"</td></tr>")
 					}else{
 						str+="<tr><td class='respValue addinfo' title='双击可添加参数标签信息'>"+val+"</td><td class='respInfo'>"+name+"</td><td class='respType'><input class='reqdatatype' disabled='disabled' type='text' value='"+dataType+"'></td><td>"+description+"</td></tr>"

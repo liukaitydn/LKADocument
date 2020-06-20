@@ -583,3 +583,6 @@ font-size: 12px; /* 字体大小 */
 input[disabled]{
 	color:#000;opacity:1;background-color:#fff;
 }
+.docDescription{
+	color:#6a6;
+}
