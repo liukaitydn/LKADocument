@@ -745,14 +745,14 @@ $(function(){
     $(".right-box").on("click",".switch-resp-json",function (){
     	var resposeDataJson = $(this).parents("table").parent().next().find("table").find(".resposeDataJson");
 		var resposeDataTable = $(this).parents("table").parent().next().find("table").find(".resposeDataTable");
-    	if($(this).val()=='表格展示响应内容'){
+    	if($(this).val()=='表格展示响应参数'){
     		resposeDataTable.show();
     		resposeDataJson.hide();
-    		$(this).val('树状展示响应内容');
-    	}else if($(this).val()=='树状展示响应内容'){
+    		$(this).val('树状展示响应参数');
+    	}else if($(this).val()=='树状展示响应参数'){
     		resposeDataTable.hide();
     		resposeDataJson.show();
-    		$(this).val('表格展示响应内容');
+    		$(this).val('表格展示响应参数');
     		// 获取请求参数名称
 			var respValues = $(this).parents("table").parent().next().find("table").find(".respValue");
 			// 获取参数说明
@@ -1446,7 +1446,7 @@ function buildParams(doc,type,loc,flag,contentType){
 				"<label><input type='radio' name='conType"+radioRandom+"' class='app-json' "+(contentType=='application/json'?"checked='true'":"")+" value='application/json;charset=utf-8'>application/json</label>&nbsp;&nbsp;"+*/
 				"<label><input type='checkbox' class='app-traditional' value='1'>阻止深度序列化</label>&nbsp;&nbsp;"+
 				"<input type='button' class='request-json' value='树状展示请求参数'>&nbsp;&nbsp;"+
-				"<input type='button' class='switch-resp-json' value='树状展示响应内容'>"+
+				"<input type='button' class='switch-resp-json' value='树状展示响应参数'>"+
 				"</td></tr>"
 				str+="<tr><td colspan='7' class='resposeData' hidden='hidden'></td></tr>"
 				str+="<tr hidden='hidden'><td colspan='7' class='close-resposeData' align='center'><a style='font-size:24'>▲</a></td></tr>"
@@ -1461,7 +1461,7 @@ function buildParams(doc,type,loc,flag,contentType){
 				"<label><input type='radio' name='conType"+radioRandom+"' class='app-json' "+(contentType=='application/json'?"checked='true'":"")+" value='application/json;charset=utf-8'>application/json</label>&nbsp;&nbsp;"+*/
 				"<label><input type='checkbox' class='app-traditional' value='1'>阻止深度序列化</label>&nbsp;&nbsp;"+
 				"<input type='button' class='request-json' value='树状展示请求参数'>&nbsp;&nbsp;"+
-				"<input type='button' class='switch-resp-json' value='树状展示响应内容'>"+
+				"<input type='button' class='switch-resp-json' value='树状展示响应参数'>"+
 				"</td></tr>"
 				str+="<tr><td colspan='7' class='resposeData' hidden='hidden'></td></tr>"
 				str+="<tr hidden='hidden'><td colspan='7' class='close-resposeData' align='center'><a style='font-size:24'>▲</a></td></tr>"

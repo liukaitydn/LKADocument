@@ -8,7 +8,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +30,7 @@ import com.lk.api.annotation.LKAMethod;
 import com.lk.api.annotation.LKAModel;
 import com.lk.api.annotation.LKAParam;
 import com.lk.api.annotation.LKAParams;
+import com.lk.api.annotation.LKAProperty;
 import com.lk.api.annotation.LKARespose;
 import com.lk.api.annotation.LKAResposes;
 import com.lk.api.annotation.LKAType;
@@ -266,5 +269,68 @@ public class LKADemoController {
 		map.put("code",200);
 		map.put("msg","登录成功，欢迎"+name+"光临本系统");
 		return map;
+	}
+	
+	/*
+	 * 响应参数复杂的Map结构用法
+	 * type属性：用来指定对象，如果该对象带有@LKAModel注解和@LKAProperty会被自动扫描到
+	 * parentName属性：用来指定父级节点的属性名，凡是parent开头的都是父级节点属性
+	 * grandpaName属性：用来指定爷级节点的属性名，凡是grandpa开头的都是爷级节点属性
+	 * 通过parent和grandPa开头相关属性用一条@LKARespose注解只能一次性描述1到3级节点，如果有5级或者10级节点该怎么办？
+	 * 也有解决办法，非常简单，但注解可能会比较多，例如有这么一个结构{a:{b:{c:{d:1}}}},我们可以这么做:
+	 * @LKARespose(name="a",value="一级"),
+	 * @LKARespose(name="b",value="二级",parentName="a"),
+	 * @LKARespose(name="c",value="三级",parentName="b"),
+	 * @LKARespose(name="d",value="四级",parentName="c")
+	 */
+	@LKAMethod(value="响应参数复杂的Map结构用法")
+	@LKAResposes({
+		@LKARespose(names= {"code","msg"},values= {"状态码","消息"}),
+		@LKARespose(name="total",value="总记录数",parentName="result",parentValue="响应数据"),
+		@LKARespose(type=User.class,parentName="users",parentIsArray=true,parentValue="用户对象列表",grandpaName="result"),
+	})
+	@PostMapping("getMap")
+	public Map<String,Object> getMap() {
+		Map<String,Object> map = new HashMap<>();
+		map.put("code",200);
+		map.put("msg","操作成功！");
+		Map<String,Object> data = new HashMap<>();
+		data.put("total",10);
+		List<User> users = new ArrayList<>();
+		User user1 = new User();
+		user1.setName("张三");
+		User user2 = new User();
+		user2.setName("李四");
+		users.add(user1);
+		users.add(user2);
+		data.put("users",users);
+		map.put("result",data);
+		return map;
+	}
+	
+	
+	/*
+	 * 响应参数复杂的对象结构用法
+	 * 这个方法其实和上面的那个方法响应参数结构是一样的，不一样的地方是一个是Map,一个是ApiResut对象。
+	 * 但是我们发现这个方法在响应参数描述是少用一个@LKARespose(names= {"code","msg"},values= {"状态码","消息"})注解，
+	 * 这是因为ApiResult对象已经通过@LKAProperty注解描述过"code","msg"属性了，LKADocument会去自动扫描带有@LKAModel注解的响应对象。
+	 * 还有如果@LKARespose注解描述的参数和响应对象里面的属性有重复的话，@LKARespose注解描述的参数会覆盖掉响应对象里面的属性
+	 * group属性：也可以实现响应参数分组，使用原理和请求参数分组是一样的。
+	 */
+	@LKAMethod(value="响应参数复杂的对象结构用法")
+	@LKAResposes({
+		@LKARespose(name="total",value="总记录数",parentName="result",parentValue="响应数据"),
+		@LKARespose(type=User.class,parentName="users",group="a",parentIsArray=true,parentValue="用户对象列表",grandpaName="result"),
+	})
+	@PostMapping("getObj")
+	public ApiResult getObj() {
+		List<User> users = new ArrayList<>();
+		User user1 = new User();
+		user1.setName("张三");
+		User user2 = new User();
+		user2.setName("李四");
+		users.add(user1);
+		users.add(user2);
+		return ApiResult.put("total",10).put("users",users);
 	}
 }
