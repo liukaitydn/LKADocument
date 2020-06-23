@@ -977,11 +977,24 @@ $(function(){
 				});
 			}
 		}else{
+			if(download == 'true'){
+				resposeData.html('暂时不支持远程项目下载调试!')
+				return;
+			}
+			if(fileInput != null && fileInput.length > 0){
+				resposeData.html('暂时不支持远程项目上传调试!')
+				return;
+			}
+			if(tl){
+				resposeData.html('暂时不支持远程项目数组传参调试!')
+				return;
+			}
 			$.ajax({
 			    url:"lkad/getServerApi",
 			    type:'get',
 			    dataType:"text",
 			    async:true,
+			    traditional:tl, // 阻止深度序列化
 			    data:{"path":getServerName()+path,"contentType":contentType,"headerJson":JSON.stringify(headerJson),"queryData":JSON.stringify(queryData),"type":methodType=='通用'?'get':methodType},
 			    success:function(data){
 			    	var options = {
