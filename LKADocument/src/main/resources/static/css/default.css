@@ -12,8 +12,8 @@ body {
   overflow: hidden;
 }
 .active{
-	background:#44b549 !important;
-	color:#ffffff !important;
+	background:RGB(230,233,237) !important;
+	color:#000 !important;
 }
 
 #canvas{
@@ -24,10 +24,8 @@ body {
 /* 导航条 */
 .topnav {
   overflow: hidden;
-   background-color: #44b549;
- /*  background-color: rgba(0, 0, 0, 0.0); */ 
- /*  color: #8ac007; */
-  color: #f8f8f8;
+   background-color: RGB(220,223,227);
+  color: #000;
   padding-bottom:24px;
   padding-left:30px;
   /* margin-bottom:16px; */
@@ -39,19 +37,19 @@ body {
 }
 
 a:link{
-        color:#f8f8f8;
+        color:#000;
         /* text-decoration: none; */ 
    	}
 a:visited{
-   	color:yellow;
+   	color:blue;
    	/* text-decoration: underline;  */
 	}
 a:hover{
-    	color:yellow;
+    	color:blue;
     	/* text-decoration: none; */ 
 	}
 a:actived{
-     color:#f8f8f8;
+     color:#000;
     /*  text-decoration: none;  */
   }
 
@@ -68,7 +66,7 @@ a:actived{
 #line{
 	width:5px;
 	height:100%;
-	background:#aaa;
+	background:RGB(220,223,227);
 	cursor: e-resize
 }
 #menu {
@@ -137,15 +135,13 @@ a:actived{
   	margin-top:15px;
   	margin-bottom:-14px;
   	color: #000;
-  	border-top:1px solid #aaa;
+  	border-top:1px solid RGB(220,223,227);
   	border-radius:2px;
   	cursor:pointer;
   	font-size:16px;
   	font-weight:700;
 }
-.obtain:hover{
-	background-color:#e3ffd3;
-}
+
 #menu #open .obtain img,#menu #open .obtain span{
 	vertical-align:middle;
 }
@@ -206,9 +202,6 @@ h5{
 	vertical-align:middle;
 }
 
-#menu #open .navBox ul li:hover{
-    background-color: #e3ffd3;
-}
 #menu #open .navBox ul li:first-child{
 	margin-top:-15px;
 }
@@ -255,8 +248,8 @@ h5{
 .method-ul li:first-child span:last-child{
 	padding:5px;
 	border-radius:50px;
-	background-color: #44b549;
-	color:#fff;
+	background-color: #ddd;
+	color:#000;
 	font-size:12px;
 }
 .method-requestType{
@@ -277,7 +270,7 @@ table.hovertable {
 	font-size:12px;
 	color:#000;
 	border-width: 1px;
-	border-color: #aaa;
+	border-color: RGB(220,223,227);
 	border-collapse: collapse;
 	width: 98%;
 	margin:0 auto;
@@ -302,19 +295,19 @@ table.hovertable tbody tr {
 table.hovertable tbody tr td {
 	border-width: 1px;
 	padding: 12px;
-	border-bottom:1px solid #aaa;
+	border-bottom:1px solid RGB(220,223,227);
 	word-wrap:break-word;
 }
 table thead tr:first-child{
 	text-align: center;
-	border-bottom:3px solid #44b549;
+	border-bottom:3px solid #ddd;
 }
 table thead tr td:first-child{
 	width:25%;
 }
 table thead tr:nth-child(2){
 	font-size:13px;
-	border-bottom:2px solid #aaa;
+	border-bottom:2px solid RGB(220,223,227);
 }
 /* table:tbody tr:nth-child(odd){
 	background: #fee;
@@ -329,7 +322,7 @@ table tbody tr:nth-child(even){
 	background: #f8f8f8;
 }
 .tokenDiv{
-	color: #f8f8f8;
+	color: #000;
 	font-weight:400;
 	line-height:30px;
 }
@@ -342,7 +335,7 @@ table tbody tr:nth-child(even){
 	width: 25%; /* 宽度 */
 	height: 40px; /* 高度 */
 	border-width: 0px; /* 边框宽度 */
-	background-color:#3385ff;
+	background-color:RGB(188,188,186);
 	cursor: pointer; /* 鼠标移入按钮范围时出现手势 */
 	outline: none; /* 不显示轮廓线 */
 	font-family: Microsoft YaHei; /* 设置字体 */
@@ -354,7 +347,7 @@ table tbody tr:nth-child(even){
 	width: 20px; 
 	height: 20px; 
 	border-width: 0px; 
-	background-color:#3385ff;
+	background-color:RGB(188,188,186);
 	cursor: pointer; 
 	outline: none; 
 	color: #fff; 
@@ -369,7 +362,7 @@ table tbody tr:nth-child(even){
 	height: 25px; 
 	border-width: 0px; 
 	border-radius: 10px; 
-	background-color:#3385ff;
+	background-color:RGB(188,188,186);
 	cursor: pointer; 
 	outline: none; 
 	color: #fff; 
@@ -379,7 +372,7 @@ table tbody tr:nth-child(even){
 
 }
 .add:hover,.subtract:hover,.testSendButton:hover,.switch-resp-json:hover,.request-json:hover,#modalconfirm:hover,#modalcancel:hover,.copyText:hover { /* 鼠标移入按钮范围时改变颜色 */
-	background: #53a5ff;
+	background: RGB(128,128,124);
 	color:#fff;
 }
 .testSend td{
@@ -418,11 +411,6 @@ table tbody tr:nth-child(even){
 	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6); 
 	box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6);
 }
-.parentParam td{
-	color:#000;
-	/* font-weight:700; */
-	background-color:#eeffee;
-}
 .resposeData,.requestData,.resposeDataJson td{
 	background-color:#000;
 	color:#fff;
@@ -434,7 +422,7 @@ table tbody tr:nth-child(even){
 	width: 50px; 
 	height: 25px; 
 	border-width: 0px; 
-	background-color:#3385ff;
+	background-color:RGB(188,188,186);
 	/* background-color: rgba(0,0,0,0.0); */
 	/* opacity:0.6; */
 	cursor: pointer; 
@@ -449,7 +437,7 @@ table tbody tr:nth-child(even){
 	width: 250px; 
 	height: 25px; 
 	border-width: 0px; 
-	background-color:#3385ff;
+	background-color:RGB(188,188,186);
 	/* opacity:0.6; */
 	cursor: pointer; 
 	outline: none; 
@@ -462,7 +450,7 @@ table tbody tr:nth-child(even){
 .saveToken:hover,#exportPdf:hover{
 	color:fff;
 	/* box-shadow: 0px 0px 5px 2px #fff; */
-	background-color:#53a5ff;
+	background-color:RGB(148,148,144)
 }
 
 #change-style{
@@ -504,7 +492,7 @@ table tbody tr:nth-child(even){
     margin: 0;
 }
 .modal-header{
-    background-color: #44b549;
+    background-color: #ddd;
     padding: 10px;
     color: #f8f8f8;
     font-size:12px;
@@ -533,18 +521,18 @@ table tbody tr:nth-child(even){
 }
 #modaltype{
 	width:30%;
-	border:1px solid #aaa;
+	border:1px solid RGB(220,223,227);
 }
 .modal-body table tr .modalcontent{
 	padding-top:20px;
 }
 #modaltext{
 	width:100%;
-	border:1px solid #aaa;
+	border:1px solid RGB(220,223,227);
 }
 .modal-footer{
     color: #f8f8f8;
-    background-color: #44b549;
+    background-color: #ddd;
     padding: 10px;
     text-align: center;
 }
@@ -558,7 +546,7 @@ width: 25%; /* 宽度 */
 height: 30px; /* 高度 */
 border-width: 0px; /* 边框宽度 */
 border-radius: 3px; /* 边框半径 */
-background-color:#3385ff; 
+background-color:RGB(188,188,186); 
 cursor: pointer; /* 鼠标移入按钮范围时出现手势 */
 outline: none; /* 不显示轮廓线 */
 font-family: Microsoft YaHei; /* 设置字体 */
@@ -570,7 +558,7 @@ font-size: 17px; /* 字体大小 */
 .copyText{ /* 按钮美化 */
 border-width: 0px; /* 边框宽度 */
 border-radius: 3px; /* 边框半径 */
-background-color:#3385ff; 
+background-color:RGB(188,188,186); 
 cursor: pointer; /* 鼠标移入按钮范围时出现手势 */
 outline: none; /* 不显示轮廓线 */
 font-family: Microsoft YaHei; /* 设置字体 */
@@ -583,6 +571,36 @@ font-size: 12px; /* 字体大小 */
 input[disabled]{
 	color:#000;opacity:1;background-color:#fff;
 }
+
+
+.parentParam td{
+	color:#888;
+	font-weight:700;
+	background-color:RGB(240,243,247);
+}
 .docDescription{
-	color:#6a6;
+	color:RGB(150,153,157);
+}
+
+.method-table{
+	background:#f8f8f8;
+}
+.method-table .method-requestType{
+	background:RGB(188,188,186);
+	color:#000;
+}
+.method-table .reqcls{
+	background-color:RGB(230,233,237);
+}
+.method-table .respcls{
+	background-color:RGB(230,233,237);
+}
+.method-table .method-requestParamInfo{
+	background-image:linear-gradient(to right,RGB(230,233,237),#f8f8f8);
+}
+.obtain:hover{
+	background-color:RGB(230,233,237);
+}
+#menu #open .navBox ul li:hover{
+    background-color: RGB(235,238,242);
 }

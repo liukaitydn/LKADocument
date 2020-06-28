@@ -1,3 +1,10 @@
+
+function changeStyle(sel){
+	css=document.getElementById("cssfile");
+	css.href='/css/'+sel.value+'.css';
+	$.cookie('styleName',sel.value);
+}
+
 //复制属性
 function copyVal(btn){
 	var a = btn.parentNode.firstChild;
@@ -96,6 +103,29 @@ function bindResize(el) {
 	  }
 	}   
 $(function(){
+	//加载风格
+	css=document.getElementById("cssfile");
+	var styleName = $.cookie('styleName');
+	if(styleName == null){
+		css.href='/css/green.css';
+		$("#changeStyle").find("option").eq(0).prop("selected",true)
+	}else{
+		css.href='/css/'+styleName+'.css';
+		if(styleName == 'black'){
+			$("#changeStyle").find("option").eq(1).prop("selected",true)
+		}
+		if(styleName == 'red'){
+			$("#changeStyle").find("option").eq(2).prop("selected",true)
+		}
+		if(styleName == 'blue'){
+			$("#changeStyle").find("option").eq(3).prop("selected",true)
+		}
+		if(styleName == 'default'){
+			$("#changeStyle").find("option").eq(4).prop("selected",true)
+		}
+	}
+	
+	
 	setTimeout(()=>{
 		bindResize(document.getElementById('line'));
 	})
@@ -170,7 +200,7 @@ $(function(){
 		    }
 		});
 		
-		$(".method-reqtype").each(function(){
+		/*$(".method-reqtype").each(function(){
 			if($(this).html() == 'PUT' || $(this).html() == 'put'){
 				$(this).css("background","#60dda0").css("color","#fff");
 				$(this).parent().css("background-image","linear-gradient(to right,#d3ffe3,#f8f8f8)");
@@ -181,10 +211,10 @@ $(function(){
 				$(this).parent().css("background-image","linear-gradient(to right,#e3d3ff,#f8f8f8)");
 			}
 			
-			/*if($(this).html() == 'GET' || $(this).html() == 'get' || $(this).html() == 'POST' || $(this).html() == 'post'){
+			if($(this).html() == 'GET' || $(this).html() == 'get' || $(this).html() == 'POST' || $(this).html() == 'post'){
 				$(this).css("background","#44b549").css("color","#f8f8f8");
 				$(this).parent().css("background-image","linear-gradient(to right,#d3e3ff,#f8f8f8)");
-			}*/
+			}
 			if($(this).html() == 'GET' || $(this).html() == 'get' || $(this).html() == 'POST' || $(this).html() == 'post'){
 				//$(this).css("background","#dda060").css("color","#fff");
 				//$(this).parent().css("background-image","linear-gradient(to right,#ffe3d3,#f8f8f8)");
@@ -192,8 +222,8 @@ $(function(){
 				$(this).parent().css("background-image","linear-gradient(to right,#C7EDCC,#f8f8f8)");
 			}
 			if($(this).html() == '通用'){
-				/*$(this).css("background","#dda060").css("color","#fff");
-				$(this).parent().css("background-image","linear-gradient(to right,#ffe3d3,#f8f8f8)");*/
+				$(this).css("background","#dda060").css("color","#fff");
+				$(this).parent().css("background-image","linear-gradient(to right,#ffe3d3,#f8f8f8)");
 				$(this).css("background","#a0dd60").css("color","#fff");
 				$(this).parent().css("background-image","linear-gradient(to right,#C7EDCC,#f8f8f8)");
 			}
@@ -201,7 +231,7 @@ $(function(){
 				$(this).css("background","#dd60a0").css("color","#fff");
 				$(this).parent().css("background-image","linear-gradient(to right,#ffd3e3,#f8f8f8)");
 			}
-		})
+		})*/
 		
 		$(".isRequired").each(function(){
 		if($(this).html() == 'yes'){
@@ -226,7 +256,7 @@ $(function(){
 		})
 		
 		// 设置方法条color
-		$(".method-table").each(function(){
+		/*$(".method-table").each(function(){
 			if($(this).find(".method-requestType").html() == 'PUT' || $(this).find(".method-requestType").html() == 'put'){
 				$(this).find(".method-requestType").css("background","#60dda0").css("color","#fff");
 				$(this).css("background","#f8f8f8");
@@ -243,21 +273,21 @@ $(function(){
 				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#e3d3ff,#f8f8f8)");
 			}
 			
-			/*if($(this).find(".method-requestType").html() == 'GET' || $(this).find(".method-requestType").html() == 'get' ||$(this).find(".method-requestType").html() == 'POST' || $(this).find(".method-requestType").html() == 'post'){
+			if($(this).find(".method-requestType").html() == 'GET' || $(this).find(".method-requestType").html() == 'get' ||$(this).find(".method-requestType").html() == 'POST' || $(this).find(".method-requestType").html() == 'post'){
 				$(this).find(".method-requestType").css("background","#60a0dd").css("color","#fff");
 				$(this).css("background","#f8f8f8");
 				$(this).find(".reqcls").css("backgroundColor","#d3e3ff");
 				$(this).find(".respcls").css("backgroundColor","#d3e3ff");
 				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#d3e3ff,#f8f8f8)");
 				
-			}*/
+			}
 			if($(this).find(".method-requestType").html() == '通用' ){
-				/*$(this).find(".method-requestType").css("background","#dda060").css("color","#fff");
+				$(this).find(".method-requestType").css("background","#dda060").css("color","#fff");
 				$(this).css("background","#f8f8f8");
 				$(this).find(".reqcls").css("backgroundColor","#ffe3d3");
 				$(this).find(".respcls").css("backgroundColor","#ffe3d3");
 				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#ffe3d3,#f8f8f8)");
-*/
+
 				$(this).find(".method-requestType").css("background","#44b549").css("color","#fff");
 				$(this).css("background","#f8f8f8");
 				$(this).find(".reqcls").css("backgroundColor","#e3ffd3");
@@ -281,7 +311,7 @@ $(function(){
 				$(this).find(".respcls").css("backgroundColor","#C7EDCC");
 				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#C7EDCC,#f8f8f8)");	
 			}
-		});
+		});*/
 	}
 	
 	function getServerName(){
@@ -1504,11 +1534,6 @@ function filter(value,doc,arr){
 } 
 
 
-
-
-
-
-
 /*$(function(){
 	var canvas = document.getElementById('canvas'), 
 	  ctx = canvas.getContext('2d'), 
@@ -1612,48 +1637,3 @@ function filter(value,doc,arr){
 	 
 	animation();
 })*/
-
-// 导出成PDF
-/*function getmes() {
-	//console.log(-1);
-	html2canvas(document.getElementById("right-box-id"),// 为页面内容所在元素的ID
-		{
-			dpi: 300, // 导出pdf清晰度
-			onrendered: function (canvas) {
-				//console.log(0);
-				var contentWidth = canvas.width;
-				var contentHeight = canvas.height;
-				// 一页pdf显示html页面生成的canvas高度;
-				var pageHeight = contentWidth / 592.28 * 841.89;
-				// 未生成pdf的html页面高度
-				var leftHeight = contentHeight;
-				// pdf页面偏移
-				var position = 0;
-				// html页面生成的canvas在pdf中图片的宽高（a4纸的尺寸[595.28,841.89]）
-				var imgWidth = 595.28;
-				var imgHeight = 592.28 / contentWidth * contentHeight;
-				var pageData = canvas.toDataURL('image/jpeg', 1.0);
-				var pdf = new jsPDF('', 'pt', 'a4');
-				// 有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
-				// 当内容未超过pdf一页显示的范围，无需分页
-				if (leftHeight < pageHeight) {
-					pdf.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight);
-				} else {
-					while (leftHeight > 0) {
-						pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
-						leftHeight -= pageHeight;
-						position -= 841.89;
-						// 避免添加空白页
-						if (leftHeight > 0) {
-							pdf.addPage();
-						}
-					}
-				}
-				//console.log(1);
-				pdf.save($("#right-box-id").find(".method-name-pdf:visible").html()+'.pdf');
-				//console.log(2);
-			},
-			// 背景设为白色（默认为黑色）
-			background: "#fff"
-		})
-}*/
