@@ -53,7 +53,6 @@ import com.itextpdf.text.Chapter;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.Section;
@@ -83,6 +82,11 @@ import com.lk.api.domain.PropertyModel;
 import com.lk.api.domain.ResposeModel;
 import com.lk.api.domain.TypeModel;
 
+/**
+ * 文档信息处理类
+ * @author liukai
+ *
+ */
 @RestController
 @RequestMapping("lkad")
 public class LKADController {
@@ -90,22 +94,22 @@ public class LKADController {
 	@Autowired
 	private WebApplicationContext applicationContext;
 	
-	/** 扫描包路径 */
+	/* 扫描包路径 */
 	@Value("${lkad.basePackages:}")
 	private String basePackages;
-	/** 项目名称 */
+	/* 项目名称 */
 	@Value("${lkad.projectName:LKADocument接口文档}")
 	private String projectName;
-	/** 项目描述 */
+	/* 项目描述 */
 	@Value("${lkad.description:智能、便捷、高效！}")
 	private String description;
-	/** 文档开关 */
+	/* 文档开关 */
 	@Value("${lkad.enabled:true}")
 	private Boolean enabled;
-	/**服务器名称*/
+	/*服务器名称*/
 	@Value("${lkad.serverNames:}")
 	private String serverNames;
-	/**项目版本号*/
+	/*项目版本号*/
 	@Value("${lkad.version:}")
 	private String version;
 	
@@ -113,12 +117,12 @@ public class LKADController {
 	
 	/**
 	 * 调试其它项目的接口
-	 * @param path
-	 * @param contentType
-	 * @param headerJson
-	 * @param queryData
-	 * @param type
-	 * @return
+	 * @param path 路径
+	 * @param contentType 内容
+	 * @param headerJson 请求头
+	 * @param queryData 请求数据
+	 * @param type 类型
+	 * @return Object 对象
 	 */
 	@GetMapping("getServerApi")
 	public Object getServerApi(String path,String contentType,String headerJson,String queryData,String type) {
@@ -175,8 +179,9 @@ public class LKADController {
 	
 	/**
 	 * 加载接口文档所有信息
-	 * @return
-	 * @throws Exception
+	 * @param serverName 服务器名称
+	 * @return Map 集合
+	 * @throws Exception 异常
 	 */
 	@GetMapping("doc")
 	public Map<String, Object> loadLKADocument(String serverName) throws Exception {
@@ -284,8 +289,8 @@ public class LKADController {
 	/**
 	 * 根据包名获取文件对象
 	 * 
-	 * @param basePackage
-	 * @return
+	 * @param basePackages 包名
+	 * @return list 集合
 	 */
 	public List<File> getFile(String[] basePackages) {
 		List<File> packageFiles = new ArrayList<File>();
@@ -307,8 +312,8 @@ public class LKADController {
 	
 	/**
 	 * 扫描所有子包
-	 * @param baseFile
-	 * @return
+	 * @param baseFile 基础包名
+	 * @return list 集合
 	 */
 	public List<File> queryFiles(File baseFile) {
 		File[] files = baseFile.listFiles();
@@ -331,8 +336,8 @@ public class LKADController {
 	/**
 	 * 扫描所有满足条件的接口，获取它们的入参出参相关信息
 	 * @param basePackages 要扫描的包
-	 * @return
-	 * @throws Exception
+	 * @return list 集合
+	 * @throws Exception 异常
 	 */
 	public List<TypeModel> scanType(String[] basePackages) throws Exception {
 		List<TypeModel> typeModels = new ArrayList<TypeModel>();
@@ -2288,7 +2293,7 @@ public class LKADController {
 	
 	/**
 	 * 获取所有方法的请求方式，请求路径等相关信息
-	 * @return
+	 * @return list 集合
 	 */
 	public List<Map<String,Object>> getMethodURL() {
 		RequestMappingHandlerMapping requestMappingHandlerMapping = applicationContext
@@ -2337,9 +2342,10 @@ public class LKADController {
 	
 	/**
 	 * 解析请求参数的LKAModel对象注解
-	 * 
-	 * @param modelCls
-	 * @throws Exception
+	 * @param typeCls 类型
+	 * @param group 组名
+	 * @return ParamModel 对象
+	 * @throws Exception 异常
 	 */
 	public ParamModel analysisModel(Class<?> typeCls,String group) throws Exception {
 		reqNum++; //防止递归死循环
@@ -2508,10 +2514,11 @@ public class LKADController {
 	}
 
 	/**
-	 * 解析对象属性的LKAModel对象注解
-	 * 
-	 * @param modelCls
-	 * @throws Exception
+	 * 解析对象属性的PropertyModel对象注解
+	 * @param typeCls 类型
+	 * @param group 组名
+	 * @return PropertyModel 对象
+	 * @throws Exception 异常
 	 */
 	public PropertyModel analysisProModel(Class<?> typeCls,String group) throws Exception {
 		proNum++;
@@ -2681,10 +2688,12 @@ public class LKADController {
 	}
 
 	/**
-	 *  解析响应参数的LKAModel对象注解
+	 *  解析响应参数的ResposeModel对象注解
 	 * 
-	 * @param modelCls
-	 * @throws Exception
+	 * @param typeCls 类型
+	 * @param group 组名
+	 * @return ResposeModel 对象
+	 * @throws Exception 异常
 	 */
 	public ResposeModel analysisResModel(Class<?> typeCls,String group) throws Exception {
 		respNum++;
@@ -2861,7 +2870,8 @@ public class LKADController {
 	 * @param url 请求地址
 	 * @param modaltype 修改类型(1.添加 2.修改 3.删除 4.other)
 	 * @param content 备注信息
-	 * @return
+	 * @return String 结果消息
+	 * @param serverName 服务器名称
 	 */
 	@PostMapping("addParamInfo")
 	public String addParamInfo(String value,String type,String url,String modaltype,String content,String serverName){
@@ -2907,7 +2917,8 @@ public class LKADController {
 	 * @param value 字段值
 	 * @param type type 字段类型(1.请求参数 2.响应参数)
 	 * @param url 请求地址
-	 * @return
+	 * @param serverName 服务器名称
+	 * @return String 结果消息
 	 */
 	@PostMapping("delParamInfo")
 	public String delParamInfo(String value,String type,String url,String serverName){
@@ -2959,7 +2970,8 @@ public class LKADController {
 	
 	/**
 	 * 获取字段备注信息 
-	 * @return
+	 * @param serverName 服务器名称
+	 * @return map 集合
 	 */
 	@GetMapping("getParamInfo")
 	public Map<Object, Object> getParamInfo(String serverName){
@@ -2999,8 +3011,8 @@ public class LKADController {
     
 	/**
 	 * July_wonderful兄优化方案(支持多层继承)
-	 * @param object
-	 * @return
+	 * @param object 对象
+	 * @return Field 属性对象
 	 */
     public  Field[] getDeclaredField(Object object) {
     	Class<?> clazz = object.getClass();
@@ -3024,10 +3036,11 @@ public class LKADController {
     
     /**
 	 * 导出PDF文档
-	 * @param serverName
-	 * @return
-	 * @throws DocumentException 
-	 * @throws Exception 
+	 * @param serverName 服务器名称
+	 * @param response 响应对象
+	 * @return object 对象
+	 * @throws DocumentException 异常
+	 * @throws Exception 异常
 	 */
 	@PostMapping("exportPdf")
 	public Object exportPdf(String serverName,HttpServletResponse response) throws Exception {
@@ -3235,6 +3248,11 @@ public class LKADController {
 		return null;
 	}
 	
+	/**
+	 * 下载
+	 * @param path 路径
+	 * @param response 响应对象
+	 */
 	public void download(String path, HttpServletResponse response) {
 	    try {
 	      // path是指欲下载的文件的路径。
@@ -3264,6 +3282,14 @@ public class LKADController {
 	    }
 	  }
 	
+	/**
+	 * 创建请求信息
+	 * @param rms 参数对象
+	 * @param loc 前缀
+	 * @param cell pdfcell
+	 * @param requestTable 表格
+	 * @param type 类型
+	 */
 	public void buildRequests(List<ParamModel> rms,String loc,PdfPCell cell,PdfPTable requestTable,String type) {
 		if(rms != null && rms.size() > 0){
 			for (ParamModel resp : rms) {
@@ -3339,7 +3365,15 @@ public class LKADController {
 		}
 	}
 	
-	
+	/**
+	 * 创建参数信息
+	 * @param rms 对象
+	 * @param loc loc
+	 * @param cell cell
+	 * @param responseTable responseTable
+	 * @param type type
+	 * @param valueRecord valueRecord
+	 */
 	public void buildParams(List<ResposeModel> rms,String loc,PdfPCell cell,PdfPTable responseTable,String type,List<String> valueRecord) {
 		try {
 			if(rms != null && rms.size() > 0){
@@ -3461,6 +3495,14 @@ public class LKADController {
 		}
 	}
 	
+	/**
+	 * 创建对象属性信息
+	 * @param rms rms
+	 * @param loc loc
+	 * @param cell cell
+	 * @param responseTable responseTable
+	 * @param type type
+	 */
 	public void buildPropertys(List<PropertyModel> rms,String loc,PdfPCell cell,PdfPTable responseTable,String type) {
 		if(rms != null && rms.size() > 0){
 			for (PropertyModel resp : rms) {
@@ -3570,7 +3612,12 @@ public class LKADController {
 		}
 	}
 	
-	
+	/**
+	 * 过滤器
+	 * @param value 值
+	 * @param rms rms
+	 * @param arr arr
+	 */
 	 public void filter(String value,List<ResposeModel> rms,List<ResposeModel> arr) {
 		 	if(rms == null || rms.size() == 0 || value == null || "".equals(value)) {
 		 		return;
@@ -3593,9 +3640,11 @@ public class LKADController {
 	 }
 	
 	/**
-     * 创建一个pdf并打开
-     * @param outpath  pdf路径
-     */
+	 * 创建PDF
+	 * @param outpath 输出路径
+	 * @return document 文档对象
+	 * @throws Exception 异常
+	 */
     public Document createPdf(String outpath) throws Exception{
         //页面大小
         Rectangle rect = new Rectangle(PageSize.A4);//文档竖方向

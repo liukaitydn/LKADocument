@@ -1,12 +1,8 @@
 package com.lk.api.controller;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,28 +10,38 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.jar.JarInputStream;
-import java.util.zip.ZipInputStream;
 
+/**
+ * 扫描包工具类
+ * @author liukai
+ *
+ */
 public class SconPackage implements SconPackageInterface{
-   // private Logger logger = LoggerFactory.getLogger(SconPackage.class);
     private String basePackage;
     private ClassLoader cl;
 
     /**
-     * 初始化
-     * @param basePackage
+     * 初始化1
+     * @param basePackage 基础包名
      */
     public SconPackage(String basePackage) {
         this.basePackage = basePackage;
         this.cl = getClass().getClassLoader();
     }
+    
+    /**
+     * 初始化2
+     * @param basePackage 基础包名
+     * @param cl 类装载器
+     */
     public SconPackage(String basePackage, ClassLoader cl) {
         this.basePackage = basePackage;
         this.cl = cl;
     }
+    
     /**
-     *获取指定包下的所有字节码文件的全类名
+     * 获取指定包下的所有字节码文件的全类名
+     * @return list 字节码文件名集合
      */
     public List<String> getFullyQualifiedClassNameList() throws IOException {
         //logger.info("开始扫描包{}下的所有类", basePackage);
@@ -44,10 +50,10 @@ public class SconPackage implements SconPackageInterface{
 
     /**
      *doScan函数
-     * @param basePackage
-     * @param nameList
-     * @return
-     * @throws IOException
+     * @param basePackage 基础包名
+     * @param nameList 名称列表
+     * @return list 字节码文件名集合
+     * @throws IOException 异常
      */
     private List<String> doScan(String basePackage, List<String> nameList) throws IOException {
         String splashPath = StringUtil.dotToSplash(basePackage);
@@ -81,14 +87,27 @@ public class SconPackage implements SconPackageInterface{
         }*/
         return nameList;
     }
-
+    
+    /**
+     * 文件路径格式转换
+     * @param shortName shortName
+     * @param basePackage basePackage
+     * @return string string
+     */
     private String toFullyQualifiedName(String shortName, String basePackage) {
         StringBuilder sb = new StringBuilder(basePackage);
         sb.append('.');
         sb.append(StringUtil.trimExtension(shortName));
         return sb.toString();
     }
-
+    
+    /**
+     * 读取jar里面的文件
+     * @param jarPath jar包名
+     * @param splashedPackageName jar包路径
+     * @return list 集合
+     * @throws IOException 异常
+     */
     private List<String> readFromJarFile(String jarPath, String splashedPackageName) throws IOException {
     	JarFile jarFile = new JarFile(new File(jarPath));
         Enumeration<JarEntry> entries = jarFile.entries();
@@ -103,7 +122,12 @@ public class SconPackage implements SconPackageInterface{
         }
         return nameList;
     }
-
+    
+    /**
+     * 读取指定目录里的文件
+     * @param path 路径
+     * @return list 集合
+     */
     private List<String> readFromDirectory(String path) {
     	if(path == null) return new ArrayList<String>();
         File file = new File(path);
@@ -115,40 +139,24 @@ public class SconPackage implements SconPackageInterface{
 
         return Arrays.asList(names);
     }
-
+    
+    /**
+     * 判断是否是字节码文件
+     * @param name 文件名
+     * @return boolean
+     */
     private boolean isClassFile(String name) {
     	if(name == null) return false;
         return name.endsWith(".class");
     }
-
+    
+    /**
+     * 判断是否是jar包文件
+     * @param name
+     * @return boolean
+     */
     private boolean isJarFile(String name) {
     	if(name == null) return false;
         return name.endsWith(".jar");
-    }
-
-    /**
-     * For test purpose.
-     */
-    public static void main(String[] args) throws Exception {
-    	/*InputStream is = new FileInputStream("G:\\yqz.jar");
-    	System.out.println(is.available());
-    	//JarInputStream jar = new JarInputStream(is,false);
-    	ZipInputStream jar = new ZipInputStream(is);
-    	jar.available();
-		//JarEntry entry = jar.getNextJarEntry();
-        System.out.println("96->"+"---->"+jar.available()+"---->");*/
-    	
-    	JarFile jarFile = new JarFile(new File("G:/yqz.jar"));
-        Enumeration<JarEntry> entries = jarFile.entries();
-        while (entries.hasMoreElements()) {
-
-            JarEntry entry = entries.nextElement();
-            String entryName = entry.getName();
-            //读取文件后缀名为.java的文件
-            if (!entry.isDirectory() && entryName.endsWith(".class")){
-            	//System.out.println(entryName); 
-            }
-
-        }
     }
 }

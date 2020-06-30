@@ -12,20 +12,18 @@ import java.lang.annotation.Target;
  * 	用在controller类上的注解
  * 	作用：标识接口类型
  * @author liukai
- * @date 2019-12-11
  */
 @Documented
 @Target(ElementType.TYPE)
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Api {
-	/**类名称*/
+	/*类名称*/
 	String tags()  default "";
-	/**类描述*/
+	/*类描述*/
 	String description() default "";
 	
-	/**是否隐藏**/
+	/*是否隐藏*/
 	boolean hidden() default false;
 	
-	//String version() default "v1.0";
 }

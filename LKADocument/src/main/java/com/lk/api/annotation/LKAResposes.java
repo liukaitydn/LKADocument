@@ -11,13 +11,12 @@ import java.lang.annotation.Target;
  * 	用在方法上的注解
  * 	作用：标识出参
  * @author liukai
- * @date 2019-12-11
  */
 @Documented
 @Target({ElementType.METHOD})
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 public @interface LKAResposes {
-	/**参数名称*/
+	/*参数名称*/
 	LKARespose[] value() default {};
 }

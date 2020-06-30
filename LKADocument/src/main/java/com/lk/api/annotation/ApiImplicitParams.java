@@ -11,13 +11,12 @@ import java.lang.annotation.Target;
  * 	用在Controller方法上的注解
  * 	作用：标识参数集
  * @author liukai
- * @date 2019-12-11
  */
 @Documented
 @Target({ElementType.METHOD})
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiImplicitParams {
-	/**入参的参数集*/
+	/*入参的参数集*/
 	ApiImplicitParam[] value() default {};
 }

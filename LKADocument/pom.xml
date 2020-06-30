@@ -11,6 +11,24 @@
         <relativePath/>
    </parent>
   
+  <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+  	<developers>
+        <developer>
+            <name>liukai</name>
+            <email>281257787@qq.com</email>
+        </developer>
+    </developers>
+	<scm>
+		<tag>master</tag>
+		<url>https://github.com/liukaitydn/LKADocument.git</url>
+		<connection>scm:git:https://github.com/liukaitydn/LKADocument.git</connection>
+		<developerConnection>scm:git:https://github.com/liukaitydn/LKADocument.git</developerConnection>
+	</scm>
   <dependencies>
   	<dependency>
       <groupId>org.springframework.boot</groupId>
@@ -21,6 +39,7 @@
 	    <artifactId>itextpdf</artifactId>
 	    <version>5.5.13</version>
 	</dependency>
+
   </dependencies>
   
 	<distributionManagement>
@@ -37,6 +56,45 @@
   <build>
   	<defaultGoal>compile</defaultGoal>
 	<plugins>
+	<!-- Source -->
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <executions>
+              <execution>
+                  <phase>package</phase>
+                  <goals>
+                      <goal>jar-no-fork</goal>
+                  </goals>
+              </execution>
+          </executions>
+      </plugin>
+      <!-- javadoc -->
+      <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-javadoc-plugin</artifactId>
+         <executions>
+             <execution>
+                 <phase>package</phase>
+                 <goals>
+                     <goal>jar</goal>
+                 </goals>
+             </execution>
+         </executions>
+     </plugin>
+     <!-- GPG -->
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <executions>
+              <execution>
+                  <phase>verify</phase>
+                  <goals>
+                      <goal>sign</goal>
+                  </goals>
+              </execution>
+          </executions>
+      </plugin>
 	  <plugin>
 		 <groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-jar-plugin</artifactId>

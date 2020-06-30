@@ -15,7 +15,6 @@ import com.lk.api.controller.LKADController;
  * 	用在SpringBoot项目的启动类上的注解
  * 	作用：开启全局接口文档注解扫描
  * @author liukai
- * @date 2019-12-11
  */
 @Documented
 @Target(ElementType.TYPE)

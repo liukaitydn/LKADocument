@@ -2,13 +2,24 @@ package com.lk.api.controller;
 
 import java.net.URL;
 
+/**
+ * 字符串处理工具类
+ * @author liukai
+ *
+ */
 public class StringUtil {
+	
+	/**
+	 * 私有构造方法
+	 */
     private StringUtil() {
 
     }
+    
     /**
-     * "file:/home/whf/cn/fh" -> "/home/whf/cn/fh"
-     * "jar:file:/home/whf/foo.jar!cn/fh" -> "/home/whf/foo.jar"
+     * 获取根路径
+     * @param url url
+     * @return string
      */
     public static String getRootPath(URL url) {
     	if(url == null) {
@@ -25,16 +36,18 @@ public class StringUtil {
     }
 
     /**
-     * "cn.fh.lightning" -> "cn/fh/lightning"
-     * @param name
-     * @return
+     * dotToSplash
+     * @param name 名称
+     * @return string
      */
     public static String dotToSplash(String name) {
         return name.replaceAll("\\.", "/");
     }
 
     /**
-     * "Apple.class" -> "Apple"
+     * trimExtension
+     * @param name 名称
+     * @return string
      */
     public static String trimExtension(String name) {
         int pos = name.indexOf('.');
@@ -46,9 +59,9 @@ public class StringUtil {
     }
 
     /**
-     * /application/home -> /home
-     * @param uri
-     * @return
+     * trimURI
+     * @param uri uri
+     * @return string
      */
     public static String trimURI(String uri) {
         String trimmed = uri.substring(1);

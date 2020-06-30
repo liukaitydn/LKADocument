@@ -12,30 +12,29 @@ import java.lang.annotation.Target;
  * 	用在Controller方法上的注解
  * 	作用：标识方法
  * @author liukai
- * @date 2019-12-11
  */
 @Documented
 @Target(ElementType.METHOD)
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiOperation {
-	/**方法名称*/
+	/*方法名称*/
 	String value() default "";
-	/**方法描述*/
+	/*方法描述*/
 	String notes() default "";
-	/**版本号*/
+	/*版本号*/
 	String version() default "暂无";
-	/**contentType类型*/
+	/*contentType类型*/
 	String contentType() default "application/x-www-form-urlencoded";
 	
-	/**是否隐藏**/
+	/*是否隐藏*/
 	boolean hidden() default false;
-	/**作者*/
+	/*作者*/
 	String author() default "";
-	/**创建时间*/
+	/*创建时间*/
 	String createTime() default "";
-	/**修改时间*/
+	/*修改时间*/
 	String updateTime() default "";
-	/**是否是下载方法*/
+	/*是否是下载方法*/
 	boolean download() default false;
 }

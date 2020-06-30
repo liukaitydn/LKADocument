@@ -11,13 +11,12 @@ import java.lang.annotation.Target;
  * 	用在Controller方法上的注解
  * 	作用：标识方法的入参
  * @author liukai
- * @date 2019-12-27
  */
 @Documented
 @Target({ElementType.PARAMETER})
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 public @interface LKAGroup {
-	/**入参的参数集*/
+	/*入参的参数集*/
 	String value() default "";
 }

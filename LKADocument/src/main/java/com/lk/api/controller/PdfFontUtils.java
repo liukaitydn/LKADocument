@@ -8,6 +8,11 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.BaseFont;
 
+/**
+ * PDF工具类
+ * @author liukai
+ *
+ */
 public class PdfFontUtils {
 
     // 字体
@@ -43,6 +48,8 @@ public class PdfFontUtils {
     /**
      * 文档超级  排版
      * @param type 1-标题 2-标题一  3-标题二 4-标题三  5-正文  6-左对齐
+     * @param text 文本
+     * @return Paragraph 对象
      */
     public static Paragraph getFont(int type, String text){
         Font font = new Font(baseFont);
