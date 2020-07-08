@@ -20,8 +20,8 @@ public class MethodModel implements Comparable<MethodModel>{
 	
 	/**
      * 将对象按名称典序升序排序
-     * @param o
-     * @return
+     * @param o 当前对象
+     * @return int
      */
     @Override
     public int compareTo(MethodModel o) {

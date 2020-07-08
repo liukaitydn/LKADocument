@@ -834,7 +834,13 @@ $(function(){
 		var processData = true;
 		var contentTypeBool = true;
 		if(fileInput != null && fileInput.length > 0){
-			queryData = new FormData(fileInput[0]);
+			var formData = new FormData(fileInput[0]);
+			console.log(queryData)
+			Object.keys(queryData).forEach((key) => {
+				formData.append(key, queryData[key]);
+			});
+			queryData = formData;
+			console.log(queryData);
 			processData=false;   // jQuery不要去处理发送的数据
 			contentTypeBool=false;   // jQuery不要去设置Content-Type请求头
 			path = path+"?random="+Math.random();
@@ -1347,8 +1353,6 @@ function buildMenu(doc,tVersion) {
     				"<ul class='method-ul'>" +
     				"<li><span class='method-name-pdf'>"+methods[i].name+"</span>&nbsp;&nbsp;<span class='docDescription'>"+methods[i].description+"</span>&nbsp;&nbsp;<span>"+methods[i].version+"</span></li>"+
     				"<li class='method-requestParamInfo'><span>Method Type：</span><span class='method-requestType'>"+methods[i].requestType+"</span>&nbsp;&nbsp;&nbsp;<span><b>Content Type：</b></span><span class='content-TYPE'>"+methods[i].contentType+"</span></span>&nbsp;&nbsp;&nbsp;<span><b>URL：</b></span><span class='method-URL'>"+methods[i].url+"</li>"+
-    				/*"<li class='method-requestParamInfo'><span>URL：</span><span class='method-URL'>"+methods[i].url+"</span></li>"+
-    				"<li class='method-requestParamInfo'><span>Content Type：</span><span class='content-TYPE'>"+methods[i].contentType+"</span></li>"+*/
     				"<li class='method-requestParamInfo'><span></span><span><b>Author：</b>"+(methods[i].author==null || methods[i].author==''?'未设置':methods[i].author)+"&nbsp;&nbsp;&nbsp;<b>CreateTime：</b>"+(createTime==null || createTime==''?'未设置':createTime)+"&nbsp;&nbsp;&nbsp;<b>UpdateTime：</b>"+(updateTime==null || updateTime==''?'未设置':updateTime)+"</span><span><input class='method-download' type='hidden' value='"+methods[i].download+"'></span></li>"+
     				"</ul>"+
     				"</div><div>"+buildParams(request,"req","loc_method",1,methods[i].contentType)+"</div>";
@@ -1413,13 +1417,9 @@ function buildParams(doc,type,loc,flag,contentType){
 					var val = array != null && (array==true || array=='true')?value+'[]':value;
 					if(type=="req" || type=="param" || type=="params"){
 						str+="<tr><td class='paramValue addinfo' title='双击可添加参数标签信息'>"+val+"</td><td class='paramInfo'>"+name+"</td><td class='isRequired'>"+
-						(required==true?'yes':'no')+"</td><td class='dataType'>"+
-						dataType+"</td><td class='paramType'>"+
-						paramType+"</td><td>"+
-						(dataType=='file'?"<form class='upload' enctype='multipart/form-data'>"+
-						"<input type='file' name='"+value+"'>"+"</form>":
-							dataType=='file[]'?"<form class='upload' enctype='multipart/form-data'>"+
-						"<input type='hidden' value='"+value+"' class='fileValue'><input type='file' name='"+value+"'><input type='button' class='subFile' value='-'><input type='button' class='addFile' value='+'></form>":"<input class='testData' type='text' value='"+testData+"'>"+
+						(required==true?'yes':'no')+"</td><td class='dataType'>"+dataType+"</td><td class='paramType'>"+paramType+"</td><td>"+
+						(dataType=='file'?"<form class='upload' enctype='multipart/form-data'>"+"<input type='file' class='testData' name='"+value+"'>"+"</form>":
+							dataType=='file[]'?"<form class='upload' enctype='multipart/form-data'>"+"<input type='hidden' value='"+value+"' class='fileValue'><input type='file' class='testData' name='"+value+"'><input type='button' class='subFile' value='-'><input type='button' class='addFile' value='+'></form>":"<input class='testData tdcss' type='text' value='"+testData+"'>"+
 						(dataType==null?"":dataType.indexOf('[]')==-1?"":"<input type='button' class='subtract' value='-'><input type='button' class='add' value='+'>")+"</td><td>"+description+"</td></tr>")
 					}else{
 						str+="<tr><td class='respValue addinfo' title='双击可添加参数标签信息'>"+val+"</td><td class='respInfo'>"+name+"</td><td class='respType'><input class='reqdatatype' disabled='disabled' type='text' value='"+dataType+"'></td><td>"+description+"</td></tr>"
@@ -1432,8 +1432,6 @@ function buildParams(doc,type,loc,flag,contentType){
 				str+="<tr><td colspan='7' class='requestData' hidden='hidden'></td></tr>"
 				str+="<tr class='testSend'><td colspan='7'>"+
 				"<input type='button' class='testSendButton' value='测试API请求'>&nbsp;&nbsp;"+
-				/*"<label><input type='radio' name='conType"+radioRandom+"' class='app-form' "+(contentType=='application/x-www-form-urlencoded'?"checked='true'":"")+" value='application/x-www-form-urlencoded;charset=utf-8'>application/x-www-form-urlencoded</label>&nbsp;&nbsp;"+
-				"<label><input type='radio' name='conType"+radioRandom+"' class='app-json' "+(contentType=='application/json'?"checked='true'":"")+" value='application/json;charset=utf-8'>application/json</label>&nbsp;&nbsp;"+*/
 				"<label><input type='checkbox' class='app-traditional' value='1'>阻止深度序列化</label>&nbsp;&nbsp;"+
 				"<input type='button' class='request-json' value='树状展示请求参数'>&nbsp;&nbsp;"+
 				"<input type='button' class='switch-resp-json' value='树状展示响应参数'>"+
@@ -1447,8 +1445,6 @@ function buildParams(doc,type,loc,flag,contentType){
 			str+="<tr><td colspan='7' style='color:red'>该接口没有设置请求参数</td></tr>"
 				str+="<tr class='testSend'><td colspan='7'>"+
 				"<input type='button' class='testSendButton' value='测试API请求'>&nbsp;&nbsp;"+
-				/*"<label><input type='radio' name='conType"+radioRandom+"' class='app-form' "+(contentType=='application/x-www-form-urlencoded'?"checked='true'":"")+" value='application/x-www-form-urlencoded;charset=utf-8'>application/x-www-form-urlencoded</label>&nbsp;&nbsp;"+
-				"<label><input type='radio' name='conType"+radioRandom+"' class='app-json' "+(contentType=='application/json'?"checked='true'":"")+" value='application/json;charset=utf-8'>application/json</label>&nbsp;&nbsp;"+*/
 				"<label><input type='checkbox' class='app-traditional' value='1'>阻止深度序列化</label>&nbsp;&nbsp;"+
 				"<input type='button' class='request-json' value='树状展示请求参数'>&nbsp;&nbsp;"+
 				"<input type='button' class='switch-resp-json' value='树状展示响应参数'>"+
