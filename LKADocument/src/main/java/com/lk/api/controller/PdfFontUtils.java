@@ -24,7 +24,7 @@ public class PdfFontUtils {
              * 设置字体
              * 
              * windows路径字体
-             * FONT_TYPE=C:/Windows/fonts/simsun.ttc
+             * FONT_TYPE=C:/Windows/fonts/simhei.ttf
              * linux路径字体 宋体 (如果没有这个字体文件，就将windows的字体传上去)
              * FONT_TYPE=/usr/share/fonts/win/simsun.ttc
              */
@@ -36,8 +36,14 @@ public class PdfFontUtils {
             //解决中文问题  幼圆
         	//String path = PdfFontUtils.class.getResource("/simsun.ttc").getPath();
         	//System.out.println(path);
-        	
-            baseFont = BaseFont.createFont("/simsun.ttc,1", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        	//String FONT_TYPE="/simsun.ttc";
+        	String FONT_TYPE="C:/Windows/fonts/simsun.ttc";
+        	if(System.getProperty("os.name").toLowerCase().contains("linux")) {
+        		FONT_TYPE="/usr/share/fonts/win/simsun.ttc";
+        	}if(System.getProperty("os.name").toLowerCase().contains("mac")) {
+        		FONT_TYPE="/System/Library/Fonts/simsun.ttc";
+        	}
+            baseFont = BaseFont.createFont(FONT_TYPE+",1", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
         } catch (DocumentException e) {
             e.printStackTrace();
         } catch (IOException e) {

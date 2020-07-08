@@ -17,6 +17,7 @@ import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -381,11 +382,10 @@ public class LKADController {
 				typeModel.setValue(cls.getSimpleName());
 				// 获取所有方法
 				Method[] methods = cls.getMethods();
-
 				if (methods != null && methods.length > 0) {
 					List<MethodModel> methodModels = new ArrayList<MethodModel>();
 					for (Method method : methods) {
-						if (method == null)continue;	
+						if (method == null)continue;
 						// 判断是否有LKAMethod注解
 						if (!method.isAnnotationPresent(LKAMethod.class) && !method.isAnnotationPresent(ApiOperation.class))continue;
 						MethodModel methodModel = new MethodModel();
@@ -475,7 +475,11 @@ public class LKADController {
 								if(genericReturnType instanceof ParameterizedType) {
 			                        ParameterizedType pt = (ParameterizedType) genericReturnType;
 			                        //得到泛型里的class类型对象
-			                        returnType = (Class<?>)pt.getActualTypeArguments()[0];
+									try {
+										returnType = (Class<?>)pt.getActualTypeArguments()[0];
+									} catch (Exception e) {
+										//啥也不干
+									}
 								}
 							}
 							if(returnType.isArray()) {//数组
@@ -2283,11 +2287,16 @@ public class LKADController {
 						methodModel.setRespose(respose);
 						methodModels.add(methodModel);
 					}
+					//方法排序
+					Collections.sort(methodModels);
 					typeModel.setMethodModels(methodModels);
 					typeModels.add(typeModel);
 				}
 			}
 		}
+		
+		//类排序
+		Collections.sort(typeModels);
 		return typeModels;
 	}
 	
@@ -3080,6 +3089,9 @@ public class LKADController {
 		}
 		for (Object typeObj : typeModels) {
 			if(!(typeObj instanceof TypeModel)) {
+				/*if(typeObj instanceof Map) {
+					
+				}*/
 				continue;
 			}
 			TypeModel typeModel = (TypeModel)typeObj;

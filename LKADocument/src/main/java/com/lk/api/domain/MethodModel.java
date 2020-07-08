@@ -3,7 +3,7 @@ package com.lk.api.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MethodModel {
+public class MethodModel implements Comparable<MethodModel>{
 	private String name;
 	private String description;
 	private List<ParamModel> request = new ArrayList<ParamModel>();
@@ -17,6 +17,16 @@ public class MethodModel {
 	private String createTime;
 	private String updateTime;
 	private boolean download;
+	
+	/**
+     * 将对象按名称典序升序排序
+     * @param o
+     * @return
+     */
+    @Override
+    public int compareTo(MethodModel o) {
+        return this.value.compareTo(o.getValue());
+    }
 	
 	public boolean isDownload() {
 		return download;

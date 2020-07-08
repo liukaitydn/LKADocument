@@ -5,7 +5,7 @@ import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TypeModel {
+public class TypeModel implements Comparable<TypeModel>{
 	
 	private String name;
 	private String description;
@@ -13,7 +13,16 @@ public class TypeModel {
 	private String value;
 	private String version;
 	
-	
+	/**
+     * 将对象按名称典序升序排序
+     * @param o
+     * @return
+     */
+    @Override
+    public int compareTo(TypeModel o) {
+        return this.value.compareTo(o.getValue());
+    }
+    
 	public String getVersion() {
 		return version;
 	}

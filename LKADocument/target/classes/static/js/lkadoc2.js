@@ -2,7 +2,7 @@
 function changeStyle(sel){
 	css=document.getElementById("cssfile");
 	css.href='/css/'+sel.value+'.css';
-	$.cookie('styleName',sel.value);
+	localStorage.setItem('styleName',sel.value);
 }
 
 //复制属性
@@ -105,7 +105,7 @@ function bindResize(el) {
 $(function(){
 	//加载风格
 	css=document.getElementById("cssfile");
-	var styleName = $.cookie('styleName');
+	var styleName = localStorage.getItem('styleName');
 	if(styleName == null){
 		css.href='/css/green.css';
 		$("#changeStyle").find("option").eq(0).prop("selected",true)
@@ -131,7 +131,6 @@ $(function(){
 	})
 	
 	function reloadDoc(serverName){
-		$(".navBox").html('');
 		$.ajax({
 		    url:"/lkad/doc",
 		    type:"get",
@@ -139,6 +138,7 @@ $(function(){
 		    async:false,
 		    data:{"serverName":serverName},
 		    success:function(data){
+		    	$(".navBox").html('');
 		    	if(data != null){
 		    		if(data.enabled == 'no'){
 		    			$("body").html("");
@@ -158,7 +158,12 @@ $(function(){
 									var ips = data.serverNames.split(",");
 									if(ips.length > 0){
 										for(var i = 0;i<ips.length;i++){
-											$("#changeProject").append('<option value="'+ips[i]+'">'+ips[i]+'</option>');
+											var arrips = ips[i].split("-");
+											if(arrips.length < 2){
+												$("#changeProject").append('<option value="'+ips[i]+'">'+ips[i]+'</option>');
+											}else{
+												$("#changeProject").append('<option value="'+arrips[1]+'">'+arrips[0]+'</option>');
+											}
 										}
 									}
 								}
@@ -196,42 +201,9 @@ $(function(){
 				}
 		    },
 		    error:function(respose){
-		    	alert("status:"+respose.status+",statusText:"+respose.statusText);
+		    	alert("status："+respose.status+"\nstatusText："+respose.statusText+"\nmessage："+respose.responseJSON.message);
 		    }
 		});
-		
-		/*$(".method-reqtype").each(function(){
-			if($(this).html() == 'PUT' || $(this).html() == 'put'){
-				$(this).css("background","#60dda0").css("color","#fff");
-				$(this).parent().css("background-image","linear-gradient(to right,#d3ffe3,#f8f8f8)");
-				
-			}
-			if($(this).html() == 'DELETE' || $(this).html() == 'delete'){
-				$(this).css("background","#a060dd").css("color","#fff");
-				$(this).parent().css("background-image","linear-gradient(to right,#e3d3ff,#f8f8f8)");
-			}
-			
-			if($(this).html() == 'GET' || $(this).html() == 'get' || $(this).html() == 'POST' || $(this).html() == 'post'){
-				$(this).css("background","#44b549").css("color","#f8f8f8");
-				$(this).parent().css("background-image","linear-gradient(to right,#d3e3ff,#f8f8f8)");
-			}
-			if($(this).html() == 'GET' || $(this).html() == 'get' || $(this).html() == 'POST' || $(this).html() == 'post'){
-				//$(this).css("background","#dda060").css("color","#fff");
-				//$(this).parent().css("background-image","linear-gradient(to right,#ffe3d3,#f8f8f8)");
-				$(this).css("background","#a0dd60").css("color","#fff");
-				$(this).parent().css("background-image","linear-gradient(to right,#C7EDCC,#f8f8f8)");
-			}
-			if($(this).html() == '通用'){
-				$(this).css("background","#dda060").css("color","#fff");
-				$(this).parent().css("background-image","linear-gradient(to right,#ffe3d3,#f8f8f8)");
-				$(this).css("background","#a0dd60").css("color","#fff");
-				$(this).parent().css("background-image","linear-gradient(to right,#C7EDCC,#f8f8f8)");
-			}
-			if($(this).html() == '未知'){
-				$(this).css("background","#dd60a0").css("color","#fff");
-				$(this).parent().css("background-image","linear-gradient(to right,#ffd3e3,#f8f8f8)");
-			}
-		})*/
 		
 		$(".isRequired").each(function(){
 		if($(this).html() == 'yes'){
@@ -259,57 +231,31 @@ $(function(){
 		/*$(".method-table").each(function(){
 			if($(this).find(".method-requestType").html() == 'PUT' || $(this).find(".method-requestType").html() == 'put'){
 				$(this).find(".method-requestType").css("background","#60dda0").css("color","#fff");
-				$(this).css("background","#f8f8f8");
-				$(this).find(".reqcls").css("backgroundColor","#d3ffe3")
-				$(this).find(".respcls").css("backgroundColor","#d3ffe3");
-				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#d3ffe3,#f8f8f8)");
-				
+				$(this).css("background","#f8f8f8");		
 			}
 			if($(this).find(".method-requestType").html() == 'DELETE' || $(this).find(".method-requestType").html() == 'delete'){
 				$(this).find(".method-requestType").css("background","#a060dd").css("color","#fff");
 				$(this).css("background","#f8f8f8");
-				$(this).find(".reqcls").css("backgroundColor","#e3d3ff");
-				$(this).find(".respcls").css("backgroundColor","#e3d3ff");
-				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#e3d3ff,#f8f8f8)");
 			}
 			
-			if($(this).find(".method-requestType").html() == 'GET' || $(this).find(".method-requestType").html() == 'get' ||$(this).find(".method-requestType").html() == 'POST' || $(this).find(".method-requestType").html() == 'post'){
+			if($(this).find(".method-requestType").html() == 'GET' || $(this).find(".method-requestType").html() == 'get'){
 				$(this).find(".method-requestType").css("background","#60a0dd").css("color","#fff");
 				$(this).css("background","#f8f8f8");
-				$(this).find(".reqcls").css("backgroundColor","#d3e3ff");
-				$(this).find(".respcls").css("backgroundColor","#d3e3ff");
-				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#d3e3ff,#f8f8f8)");
-				
 			}
 			if($(this).find(".method-requestType").html() == '通用' ){
 				$(this).find(".method-requestType").css("background","#dda060").css("color","#fff");
 				$(this).css("background","#f8f8f8");
-				$(this).find(".reqcls").css("backgroundColor","#ffe3d3");
-				$(this).find(".respcls").css("backgroundColor","#ffe3d3");
-				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#ffe3d3,#f8f8f8)");
-
-				$(this).find(".method-requestType").css("background","#44b549").css("color","#fff");
-				$(this).css("background","#f8f8f8");
-				$(this).find(".reqcls").css("backgroundColor","#e3ffd3");
-				$(this).find(".respcls").css("backgroundColor","#e3ffd3");
-				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#e3ffd3,#f8f8f8)");
 
 			}
-			if($(this).find(".method-requestType").html() == 'GET' || $(this).find(".method-requestType").html() == 'get' ||$(this).find(".method-requestType").html() == 'POST' || $(this).find(".method-requestType").html() == 'post'){
+			if($(this).find(".method-requestType").html() == 'POST' || $(this).find(".method-requestType").html() == 'post'){
 				$(this).find(".method-requestType").css("background","#44b549").css("color","#fff");
 				$(this).css("background","#f8f8f8");
-				$(this).find(".reqcls").css("backgroundColor","#e3ffd3");
-				$(this).find(".respcls").css("backgroundColor","#e3ffd3");
-				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#e3ffd3,#f8f8f8)");
 
 				
 			}
 			if($(this).find(".method-requestType").html() == '未知'){
 				$(this).find(".method-requestType").css("background","#dd60a0").css("color","#fff");
 				$(this).css("background","#f8f8f8");
-				$(this).find(".reqcls").css("backgroundColor","#C7EDCC");
-				$(this).find(".respcls").css("backgroundColor","#C7EDCC");
-				$(this).find(".method-requestParamInfo").css("background-image","linear-gradient(to right,#C7EDCC,#f8f8f8)");	
 			}
 		});*/
 	}
@@ -385,8 +331,9 @@ $(function(){
 					}
 				}
 			};
+			console.log(getServerName())
 			//发送ajax请求
-			xhr.send({'random':Math.random(),'serverName':getServerName()})
+			xhr.send("serverName="+getServerName())
 		}
 	})
 	
