@@ -36,13 +36,13 @@ public class PdfFontUtils {
             //解决中文问题  幼圆
         	//String path = PdfFontUtils.class.getResource("/simsun.ttc").getPath();
         	//System.out.println(path);
-        	//String FONT_TYPE="/simsun.ttc";
-        	String FONT_TYPE="C:/Windows/fonts/simsun.ttc";
+        	String FONT_TYPE="/simsun.ttc";
+        	/*String FONT_TYPE="C:/Windows/fonts/simsun.ttc";
         	if(System.getProperty("os.name").toLowerCase().contains("linux")) {
         		FONT_TYPE="/usr/share/fonts/win/simsun.ttc";
         	}if(System.getProperty("os.name").toLowerCase().contains("mac")) {
         		FONT_TYPE="/System/Library/Fonts/simsun.ttc";
-        	}
+        	}*/
             baseFont = BaseFont.createFont(FONT_TYPE+",1", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
         } catch (DocumentException e) {
             e.printStackTrace();

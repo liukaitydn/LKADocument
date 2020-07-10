@@ -47,7 +47,7 @@ a:visited{
    	/* text-decoration: underline;  */
 	}
 a:hover{
-    	color:yellow;
+    	color:blue;
     	/* text-decoration: none; */ 
 	}
 a:actived{
@@ -55,8 +55,12 @@ a:actived{
     /*  text-decoration: none;  */
   }
 
-
-
+.close-resposeData{
+	text-align:left;
+}
+.close-resposeData span{
+	color:#888;
+}
 .main{
 	width:100%;
 	display:flex;
@@ -339,7 +343,7 @@ table tbody tr:nth-child(even){
 
 /* 按钮样式 */
 .testSendButton { /* 按钮美化 */
-	width: 25%; /* 宽度 */
+	width: 10%; /* 宽度 */
 	height: 40px; /* 高度 */
 	border-width: 0px; /* 边框宽度 */
 	background-color:#3385ff;
@@ -349,6 +353,9 @@ table tbody tr:nth-child(even){
 	color: #fff; /* 字体颜色 */
 	font-size: 17px; /* 字体大小 */
 	font-weight:700;
+}
+.conutNumber,.timeNumber{
+	width: 50px;
 }
 .add,.subtract { 
 	width: 20px; 
@@ -387,7 +394,7 @@ table tbody tr:nth-child(even){
 }
 /* 文本框样式 */
 .tdcss,.prevData,.headerKey,.headerValue {
-	width: 80px;
+	width: 150px;
 	height: 25px;
 	padding: 6px 12px;
 	font-size: 14px;
@@ -606,4 +613,3 @@ input[disabled]{
 .method-table .method-requestParamInfo{
 	background-image:linear-gradient(to right,#e3e3e3,#f8f8f8);
 }
-

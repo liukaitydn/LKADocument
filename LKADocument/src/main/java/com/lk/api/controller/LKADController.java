@@ -743,8 +743,16 @@ public class LKADController {
 												paramModel.setTestData(param.testData());
 												request.add(paramModel);
 											}
-											if(param.names() != null && param.names().length>0) {
-												String[] names = param.names();
+											if(param.values() != null && param.values().length>0) {
+												String[] names = null;
+												if(param.names() != null && param.names().length>0) {
+													names = param.names();
+												}else {
+													names = new String[parameters.length];
+													for (int i = 0;i < parameters.length;i++) {
+														names[i] = parameters[i].getName();
+													}
+												}
 												for(int i = 0;i<names.length;i++) {
 													ParamModel paramModel = new ParamModel();
 													String[] split = names[i].split("-");
@@ -869,8 +877,16 @@ public class LKADController {
 												paramModel.setTestData(param.testData());
 												request.add(paramModel);
 											}
-											if(param.names() != null && param.names().length>0) {
-												String[] names = param.names();
+											if(param.values() != null && param.values().length>0) {
+												String[] names = null;
+												if(param.names() != null && param.names().length>0) {
+													names = param.names();
+												}else {
+													names = new String[parameters.length];
+													for (int i = 0;i < parameters.length;i++) {
+														names[i] = parameters[i].getName();
+													}
+												}
 												for(int i = 0;i<names.length;i++) {
 													ParamModel paramModel = new ParamModel();
 													String[] split = names[i].split("-");
@@ -994,8 +1010,16 @@ public class LKADController {
 										paramModel.setTestData(param.testData());
 										request.add(paramModel);
 									}
-									if(param.names() != null && param.names().length>0) {
-										String[] names = param.names();
+									if(param.values() != null && param.values().length>0) {
+										String[] names = null;
+										if(param.names() != null && param.names().length>0) {
+											names = param.names();
+										}else {
+											names = new String[parameters.length];
+											for (int i = 0;i < parameters.length;i++) {
+												names[i] = parameters[i].getName();
+											}
+										}
 										for(int i = 0;i<names.length;i++) {
 											ParamModel paramModel = new ParamModel();
 											String[] split = names[i].split("-");
@@ -1114,8 +1138,16 @@ public class LKADController {
 										paramModel.setTestData(param.testData());
 										request.add(paramModel);
 									}
-									if(param.names() != null && param.names().length>0) {
-										String[] names = param.names();
+									if(param.values() != null && param.values().length>0) {
+										String[] names = null;
+										if(param.names() != null && param.names().length>0) {
+											names = param.names();
+										}else {
+											names = new String[parameters.length];
+											for (int i = 0;i < parameters.length;i++) {
+												names[i] = parameters[i].getName();
+											}
+										}
 										for(int i = 0;i<names.length;i++) {
 											ParamModel paramModel = new ParamModel();
 											String[] split = names[i].split("-");

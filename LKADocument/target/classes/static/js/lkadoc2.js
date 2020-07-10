@@ -226,38 +226,6 @@ $(function(){
 				$(this).css("color","#f00");
 			}
 		})
-		
-		// 设置方法条color
-		/*$(".method-table").each(function(){
-			if($(this).find(".method-requestType").html() == 'PUT' || $(this).find(".method-requestType").html() == 'put'){
-				$(this).find(".method-requestType").css("background","#60dda0").css("color","#fff");
-				$(this).css("background","#f8f8f8");		
-			}
-			if($(this).find(".method-requestType").html() == 'DELETE' || $(this).find(".method-requestType").html() == 'delete'){
-				$(this).find(".method-requestType").css("background","#a060dd").css("color","#fff");
-				$(this).css("background","#f8f8f8");
-			}
-			
-			if($(this).find(".method-requestType").html() == 'GET' || $(this).find(".method-requestType").html() == 'get'){
-				$(this).find(".method-requestType").css("background","#60a0dd").css("color","#fff");
-				$(this).css("background","#f8f8f8");
-			}
-			if($(this).find(".method-requestType").html() == '通用' ){
-				$(this).find(".method-requestType").css("background","#dda060").css("color","#fff");
-				$(this).css("background","#f8f8f8");
-
-			}
-			if($(this).find(".method-requestType").html() == 'POST' || $(this).find(".method-requestType").html() == 'post'){
-				$(this).find(".method-requestType").css("background","#44b549").css("color","#fff");
-				$(this).css("background","#f8f8f8");
-
-				
-			}
-			if($(this).find(".method-requestType").html() == '未知'){
-				$(this).find(".method-requestType").css("background","#dd60a0").css("color","#fff");
-				$(this).css("background","#f8f8f8");
-			}
-		});*/
 	}
 	
 	function getServerName(){
@@ -286,18 +254,6 @@ $(function(){
 		if($("#changeProject").val() != 'now' && $("#changeProject").val()!=null){
 			alert("因远程调用文档数据结构对象发生变化，目前只支持生成本地项目PDF接口文档，暂不支持远程服务器生成PDF文档！");
 		}else{
-			/*$.ajax({
-				url:"/lkad/exportPdf",
-			    type:"post",
-			    dataType:"json",
-			    data:{'random':Math.random(),'serverName':getServerName()},
-			    success:function(data){
-					alert(data.msg);
-			    },
-			    error:function(){
-			    	alert("连接服务器异常");
-			    }
-			})*/
 			var xhr = new XMLHttpRequest();
 			xhr.open("post","/lkad/exportPdf",true);
 			// 设置请求头
@@ -658,8 +614,14 @@ $(function(){
 	})
 	
 	$(".right-box").on("click",".close-resposeData a",function(){
-		$(this).parent().parent().hide();
-		$(this).parents("table").find(".resposeData").hide();
+		if($(this).html() == '隐藏调试窗口'){
+			//$(this).parent().parent().hide();
+			$(this).html('打开调试窗口');
+			$(this).parents("table").find(".resposeData").hide();
+		}else{
+			$(this).html('隐藏调试窗口');
+			$(this).parents("table").find(".resposeData").show();
+		}
 	})
 	
 	$(".saveToken").click(function(){
@@ -705,8 +667,10 @@ $(function(){
 		for(var i = 0;i<paramValues.length;i++){
 			paramNames.push(paramValues.eq(i).html());
 		}
+		console.log(testDatas);
+		console.log(paramInfos);
 		// 带参数说明的json对象
-		var queryJson = assembleJson2(paramNames,paramInfos,dataTypes,paramTypes,"query");
+		var queryJson = assembleJson3(paramNames,testDatas,dataTypes,paramTypes,"query");
 		// console.log(queryJson);
 		// var headerJson =
 		// assembleJson(paramNames,testDatas,dataTypes,paramTypes,"header");
@@ -765,6 +729,7 @@ $(function(){
 		$(this).parents("table").find(".resposeData").html("");
 		$(this).parents("table").find(".resposeData").show();
 		$(this).parents("table").find(".close-resposeData").parent().show();
+		$(this).parents("table").find(".close-resposeData").find("a").html("隐藏调试窗口");
 		// 获取请求方式
 		var methodType = $(this).parents("table").parent().parent().find(".method-requestType").html();
 		// 获取请求路径
@@ -803,9 +768,6 @@ $(function(){
 			path = path.replace('{'+val+'}',pathJson[val]);
 		}
 		// 请求头参数
-		// var contentType = "application/json";
-		// var contentType = "application/x-www-form-urlencoded";
-		//var contentType = $(this).parent().find('input:radio:checked').val();
 		if(contentType != null && contentType !=""){
 			headerJson['Content-Type']=contentType;
 		}else{
@@ -846,100 +808,219 @@ $(function(){
 			path = path+"?random="+Math.random();
 			delete headerJson['Content-Type'];
 		}
-		
-		if(getServerName()==null || getServerName()==''){
-			if(download == 'true'){//下载API
-				var url = path;
-				var xhr = new XMLHttpRequest();
-				var mType = methodType=='通用'?'get':methodType;
-				// 组装参数
-				var data = "random="+Math.random();
-				for (var val in queryJson) {
-					data += '&'+val+"="+queryJson[val];
-				}
-				if(mType == 'get'){
-					url = url+"?"+data;
-				}
-				xhr.open(mType,url,true);
-				// 设置请求头
-				for (var val in headerJson) {
-					xhr.setRequestHeader(val,headerJson[val]);
-				}
-				xhr.responseType = "blob";
-				xhr.onreadystatechange = function () {
-					// 请求完成
-					if (this.status === 200) {
-						var blob = this.response;
-						var reader = new FileReader();
-						// 转换为base64，可以直接放入a表情href
-						reader.readAsDataURL(blob);  
-						reader.onload = function (e) {
-							// 转换完成，创建一个a标签用于下载
-							var a = document.createElement('a');
-							a.download = fileName;
-							a.href = e.target.result;
-							// 修复firefox中无法触发click
-							$("body").append(a);  
-							a.click();
-							$(a).remove();
-					    }
+    	var requestFail=$(this).parents("table").find(".request-fail");
+    	var requestSuccess=$(this).parents("table").find(".request-success");
+		var requestStatus = $(this).parents("table").find(".request-status");
+		var requestTime = $(this).parents("table").find(".request-time");
+		var conutNumber = $(this).parents("table").find(".conutNumber");//执行次数
+		var timeNumber = $(this).parents("table").find(".timeNumber");//执行间隔
+		if(conutNumber.val() == null || conutNumber.val() == ''){
+			conutNumber.val(1);
+		}
+		if(timeNumber.val() == null || timeNumber.val() == ''){
+			timeNumber.val(1);
+		}
+		requestFail.html(0);
+		requestSuccess.html(0);
+		var totalStartTime = new Date().getTime();
+		for(var i=0;i<conutNumber.val();i++){
+			var ajaxTime = new Date().getTime();
+			if(getServerName()==null || getServerName()==''){
+				if(download == 'true'){//下载API
+					var url = path;
+					var xhr = new XMLHttpRequest();
+					var mType = methodType=='通用'?'get':methodType;
+					// 组装参数
+					var data = "random="+Math.random();
+					for (var val in queryJson) {
+						data += '&'+val+"="+queryJson[val];
 					}
-					console.log(xhr);
-					if(this.readyState == 4){
-						var json = {};
+					if(mType == 'get'){
+						url = url+"?"+data;
+					}
+					xhr.open(mType,url,true);
+					// 设置请求头
+					for (var val in headerJson) {
+						xhr.setRequestHeader(val,headerJson[val]);
+					}
+					xhr.responseType = "blob";
+					xhr.onreadystatechange = function () {
 						if(this.status == 200){
-							json['status'] = this.status;
-					    	json['statusText'] = "操作成功！(此提示仅代表此次调用API状态，并不是返回值)";
+							requestStatus.html(this.status+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;msg：success');
 						}else{
-							json['status'] = this.status;
-					    	json['statusText'] = "操作失败！(此提示仅代表此次调用API状态，并不是返回值，具体错误信息可查看浏览器开发者工具里面的调试信息)";
-							
+							requestStatus.html(this.status+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;msg：fail');
 						}
-				    	var options = {
-				    			collapsed:false,
-				    			withQuotes:false
-				    	}
-				    	try{
-				    		resposeData.jsonViewer(json,options);
-				    	}catch(e){
-				    		resposeData.html(json);
-				    	}
-					}
-				};
-				//发送ajax请求
-				if(mType == 'get'){
-					xhr.send()
-				}else{
-					if(contentType=='application/json'){
-						xhr.send(JSON.stringify(queryJson))
+						
+						// 请求完成
+						if (this.status === 200) {
+							var blob = this.response;
+							var reader = new FileReader();
+							// 转换为base64，可以直接放入a表情href
+							reader.readAsDataURL(blob);  
+							reader.onload = function (e) {
+								// 转换完成，创建一个a标签用于下载
+								var a = document.createElement('a');
+								a.download = fileName;
+								a.href = e.target.result;
+								// 修复firefox中无法触发click
+								$("body").append(a);  
+								a.click();
+								$(a).remove();
+						    }
+						}
+						if(this.readyState == 4){
+							var countTime = new Date().getTime()-ajaxTime;
+							var totalTime = new Date().getTime()-totalStartTime;
+							
+							requestTime.html(totalTime+"ms");
+							var json = {};
+							if(this.status == 200){
+								requestSuccess.html(Number(requestSuccess.html())+1);
+								json['status'] = this.status;
+						    	json['statusText'] = "操作成功！(此提示仅代表此次调用API状态，并不是返回值)";
+							}else{
+								requestFail.html(Number(requestFail.html())+1);
+								json['status'] = this.status;
+						    	json['statusText'] = "操作失败！(此提示仅代表此次调用API状态，并不是返回值，具体错误信息可查看浏览器开发者工具里面的调试信息)";
+								
+							}
+					    	var options = {
+					    			collapsed:false,
+					    			withQuotes:false
+					    	}
+					    	if(conutNumber.val()==1){
+					    		try{
+						    		resposeData.jsonViewer(json,options);
+						    	}catch(e){
+						    		resposeData.html(json);
+						    	}
+					    	}else{
+					    		resposeData.html(resposeData.html()+"<span style='color:"+(this.status==200?"green":"red")+"'>status："+this.status+"&nbsp;&nbsp;"
+					    				+"msg："+(this.status==200?"success":"fail")+"&nbsp;&nbsp;time："+countTime+"ms</span><br/>"+"<span style='color:#888'>"+json+"</span><br/><br/>");
+					    	}
+						}
+					};
+					//发送ajax请求
+					if(mType == 'get'){
+						xhr.send()
 					}else{
-						xhr.send(data)
+						if(contentType=='application/json'){
+							xhr.send(JSON.stringify(queryJson))
+						}else{
+							xhr.send(data)
+						}
 					}
+				}else{
+					$.ajax({
+					    url:path,
+					    type:methodType=='通用'?'get':methodType,
+					    dataType:"text",
+					    async:conutNumber.val()==1?true:false,
+					    data:queryData,
+					    headers:headerJson,
+					    traditional:tl, // 阻止深度序列化
+					    cache:false,
+					    processData:processData,
+					    contentType:contentTypeBool,
+					    success:function(data,status,xhr){
+					    	requestSuccess.html(Number(requestSuccess.html())+1);
+					    	var countTime = new Date().getTime()-ajaxTime;
+					    	var totalTime = new Date().getTime()-totalStartTime;
+					    	requestStatus.html(xhr.status+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;msg：'+xhr.statusText);
+							requestTime.html(totalTime+"ms");
+					    	var options = {
+					    			collapsed:false,
+					    			withQuotes:false
+					    	}
+					    	if(conutNumber.val()==1){
+					    		try{
+						    		resposeData.jsonViewer(JSON.parse(data),options);
+						    	}catch(e){
+						    		resposeData.html(data);
+						    	}
+					    	}else{
+					    		resposeData.html(resposeData.html()+"<span style='color:green;'>conut："+(i+1)+"&nbsp;&nbsp;status："+xhr.status+"&nbsp;&nbsp;"
+					    				+"msg："+xhr.statusText+"&nbsp;&nbsp;time："+countTime+"ms</span><br/>"+"<span style='color:#888'>"+data+"</span><br/><br/>");
+					    	}
+					    	
+					    },
+					    error:function(respose){
+					    	requestFail.html(Number(requestFail.html())+1);
+					    	var countTime = new Date().getTime()-ajaxTime;
+					    	var totalTime = new Date().getTime()-totalStartTime;
+					    	requestStatus.html(respose.status+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;msg：'+respose.statusText);
+							requestTime.html(totalTime+"ms");
+					    	var json = {};
+					    	json['status'] = respose.status;
+					    	json['statusText'] = respose.statusText;
+					    	json['responseText'] = respose.responseText;
+					    	if(respose.status == 0){
+					    		json['responseText'] = '连接服务器异常！';
+					    	}
+					    	var options = {
+					    			collapsed:false,
+					    			withQuotes:false
+					    	}
+					    	if(conutNumber.val()==1){
+					    		try{
+						    		resposeData.jsonViewer(json,options);
+						    	}catch(e){
+						    		resposeData.html(json);
+						    	}
+					    	}else{
+					    		resposeData.html(resposeData.html()+"<span style='color:red;'>conut："+(i+1)+"&nbsp;&nbsp;status："+respose.status+"&nbsp;&nbsp;"
+					    				+"msg："+respose.statusText+"&nbsp;&nbsp;time："+countTime+"ms</span><br/>"+"<span style='color:#888'>"+json+"</span><br/><br/>");
+					    	}
+					    }
+					});
 				}
 			}else{
+				if(download == 'true'){
+					resposeData.html('暂时不支持远程项目下载调试!')
+					return;
+				}
+				if(fileInput != null && fileInput.length > 0){
+					resposeData.html('暂时不支持远程项目上传调试!')
+					return;
+				}
+				if(tl){
+					resposeData.html('暂时不支持远程项目数组传参调试!')
+					return;
+				}
 				$.ajax({
-				    url:path,
-				    type:methodType=='通用'?'get':methodType,
+				    url:"lkad/getServerApi",
+				    type:'get',
 				    dataType:"text",
-				    async:true,
-				    data:queryData,
-				    headers:headerJson,
+				    async:conutNumber.val()==1?true:false,
 				    traditional:tl, // 阻止深度序列化
-				    cache:false,
-				    processData:processData,
-				    contentType:contentTypeBool,
-				    success:function(data){
+				    data:{"path":getServerName()+path,"contentType":contentType,"headerJson":JSON.stringify(headerJson),"queryData":JSON.stringify(queryData),"type":methodType=='通用'?'get':methodType},
+				    success:function(data,status,xhr){
+				    	requestSuccess.html(Number(requestSuccess.html())+1);
+				    	var countTime = new Date().getTime()-ajaxTime;
+				    	var totalTime = new Date().getTime()-totalStartTime;
+				    	requestStatus.html(xhr.status+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;msg：'+xhr.statusText);
+						requestTime.html(totalTime+"ms");
 				    	var options = {
 				    			collapsed:false,
 				    			withQuotes:false
 				    	}
-				    	try{
-				    		resposeData.jsonViewer(JSON.parse(data),options);
-				    	}catch(e){
-				    		resposeData.html(data);
+				    	if(conutNumber.val()==1){
+				    		try{
+					    		resposeData.jsonViewer(JSON.parse(data),options);
+					    	}catch(e){
+					    		resposeData.html(data);
+					    	}
+				    	}else{
+				    		resposeData.html(resposeData.html()+"<span style='color:green;'>conut："+(i+1)+"&nbsp;&nbsp;status："+xhr.status+"&nbsp;&nbsp;"
+				    				+"msg："+xhr.statusText+"&nbsp;&nbsp;time："+countTime+"ms</span><br/>"+"<span style='color:#888'>"+data+"</span><br/><br/>");
 				    	}
 				    },
 				    error:function(respose){
+				    	requestFail.html(Number(requestFail.html())+1);
+				    	var countTime = new Date().getTime()-ajaxTime;
+				    	var totalTime = new Date().getTime()-totalStartTime;
+				    	requestStatus.html(respose.status+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;msg：'+respose.statusText);
+						requestTime.html(totalTime+"ms");
 				    	var json = {};
 				    	json['status'] = respose.status;
 				    	json['statusText'] = respose.statusText;
@@ -951,64 +1032,24 @@ $(function(){
 				    			collapsed:false,
 				    			withQuotes:false
 				    	}
-				    	try{
-				    		resposeData.jsonViewer(json,options);
-				    	}catch(e){
-				    		resposeData.html(json);
+				    	
+				    	if(conutNumber.val()==1){
+				    		try{
+					    		resposeData.jsonViewer(json,options);
+					    	}catch(e){
+					    		resposeData.html(json);
+					    	}
+				    	}else{
+				    		resposeData.html(resposeData.html()+"<span style='color:red;'>conut："+(i+1)+"&nbsp;&nbsp;status："+respose.status+"&nbsp;&nbsp;"
+				    				+"msg："+respose.statusText+"&nbsp;&nbsp;time："+countTime+"ms</span><br/>"+"<span style='color:#888'>"+json+"</span><br/><br/>");
 				    	}
 				    }
-				});
+				}); 
 			}
-		}else{
-			if(download == 'true'){
-				resposeData.html('暂时不支持远程项目下载调试!')
-				return;
-			}
-			if(fileInput != null && fileInput.length > 0){
-				resposeData.html('暂时不支持远程项目上传调试!')
-				return;
-			}
-			if(tl){
-				resposeData.html('暂时不支持远程项目数组传参调试!')
-				return;
-			}
-			$.ajax({
-			    url:"lkad/getServerApi",
-			    type:'get',
-			    dataType:"text",
-			    async:true,
-			    traditional:tl, // 阻止深度序列化
-			    data:{"path":getServerName()+path,"contentType":contentType,"headerJson":JSON.stringify(headerJson),"queryData":JSON.stringify(queryData),"type":methodType=='通用'?'get':methodType},
-			    success:function(data){
-			    	var options = {
-			    			collapsed:false,
-			    			withQuotes:false
-			    	}
-			    	try{
-			    		resposeData.jsonViewer(JSON.parse(data),options);
-			    	}catch(e){
-			    		resposeData.html(data);
-			    	}
-			    },
-			    error:function(respose){
-			    	var json = {};
-			    	json['status'] = respose.status;
-			    	json['statusText'] = respose.statusText;
-			    	json['responseText'] = respose.responseText;
-			    	if(respose.status == 0){
-			    		json['responseText'] = '连接服务器异常！';
-			    	}
-			    	var options = {
-			    			collapsed:false,
-			    			withQuotes:false
-			    	}
-			    	try{
-			    		resposeData.jsonViewer(json,options);
-			    	}catch(e){
-			    		resposeData.html(json);
-			    	}
-			    }
-			}); 
+			var start = (new Date()).getTime();
+		    while((new Date()).getTime() - start < timeNumber.val()) {
+		        continue;
+		    }
 		}
 	})
 	
@@ -1321,6 +1362,163 @@ function assembleJson2(paramNames,testDatas,dataTypes,paramTypes,type){// 参数
 	return paramJson;
 }
 
+//testDatas为参数说明
+function assembleJson3(paramNames,testDatas,dataTypes,paramTypes,type){// 参数名称，参数值，参数类型
+	var paramJson = {};
+	for(var i = 0;i<paramNames.length;i++){ // 遍历参数名称
+		// 判断是否有数据类型
+		var dataType;
+		var paramType;
+		try{
+			dataType = dataTypes.eq(i);
+			paramType = paramTypes.eq(i);
+		}catch(e){
+			dataType = dataTypes[i];
+			paramType = paramTypes[i];
+		}
+		if(dataType.html() != null && (type=='resp' || paramType.html() == type)){ // 有数据类型
+			var paramName = paramNames[i];
+			// 判断是否是数组
+			if(paramName.indexOf("[]")==-1){ // 不是数组
+				// 判断是否有下一级
+				if(paramName.indexOf(".") == -1){ // 没有下一级
+					if(paramJson.paramName == null){// 判断是否设置过数据
+						var testData;
+						try{
+							testData = testDatas.eq(i);
+						}catch(e){
+							testData = testDatas[i];
+						}
+						paramJson[paramName] = testData.val();// 设置数据
+					}
+				}else{ // 有下一级
+					i=i-1;// 迭代i回归
+					var paramStr = paramName.substring(0,paramName.indexOf("."));
+					if(paramJson.paramStr == null){
+						var arrParam = new Array();
+						var arrTest = new Array();
+						var arrData = new Array();
+						var arrType = new Array();
+						for(var j = 0;j<paramNames.length;j++){
+							var td;
+							var dt;
+							var pt;
+							try{
+								td = testDatas.eq(j);
+								dt = dataTypes.eq(j);
+								pt = paramTypes.eq(j);
+							}catch(e){
+								td = testDatas[j];
+								dt = dataTypes[j];
+								pt = paramTypes[j];
+							}
+							if(dt.html() != null && (type=='resp' || pt.html() == type)){ // 有数据类型
+								if(paramNames[j].indexOf(".") != -1){
+									if(paramNames[j].substring(0,paramNames[j].indexOf("."))==paramStr){
+										arrParam.push(paramNames[j].substring(paramNames[j].indexOf(".")+1));
+										arrTest.push(td);
+										arrData.push(dt);
+										arrType.push(pt);
+										paramNames.splice(j,1);
+										testDatas.splice(j,1);
+										dataTypes.splice(j,1);
+										paramTypes.splice(j,1);
+						    			j--;
+									}
+								}
+							}
+						}
+						paramJson[paramStr] = assembleJson3(arrParam,arrTest,arrData,arrType,type);
+					}
+				}
+			}else{// 是数组
+				// 判断是否有下一级
+				if(paramName.indexOf(".") == -1){ // 没有下一级
+					paramName = paramName.substring(0,paramName.indexOf("[]"));
+					if(paramJson.paramName == null){// 判断是否设置过数据
+						var arr = new Array();
+						var td;
+						try{
+							td = testDatas.eq(i);
+						}catch(e){
+							td = testDatas[i];
+						}
+						if(td.val() != null && td.val() !=''){
+							arr[0] = td.val();
+							var prevDatas = td.nextAll(".prevData");
+							if(prevDatas != null){
+								for(var m=0;m<prevDatas.length;m++){
+									arr[m+1] = prevDatas.eq(m).val();
+								}
+							}
+						}else{
+							var prevDatas = td.nextAll(".prevData");
+							if(prevDatas != null){
+								for(var m=0;m<prevDatas.length;m++){
+									arr[m] = prevDatas.eq(m).val();
+								}
+							}
+						}
+						paramJson[paramName] = arr;
+					}
+				}else{ // 有下一级
+					i=i-1;// 迭代i回归
+					var paramStrs = paramName.substring(0,paramName.indexOf("."));
+					paramStr = paramStrs.substring(0,paramStrs.indexOf("[]"));
+					var bool = true;
+					if(paramStr == null || paramStr == ''){
+						paramStr = paramStrs;
+						bool = false;
+					}
+					if(paramJson.paramStr == null){
+						var arrParam = new Array();
+						var arrTest = new Array();
+						var arrData = new Array();
+						var arrType = new Array();
+						for(var j = 0;j<paramNames.length;j++){
+							var td;
+							var dt;
+							var pt;
+							try{
+								td = testDatas.eq(j);
+								dt = dataTypes.eq(j);
+								pt = paramTypes.eq(j);
+							}catch(e){
+								td = testDatas[j];
+								dt = dataTypes[j];
+								pt = paramTypes[j];
+							}
+							if(dt.html() != null && (type=='resp' || pt.html() == type)){ // 有数据类型
+								if(paramNames[j].indexOf(".") != -1){
+									if(paramNames[j].substring(0,paramNames[j].indexOf("."))==paramStrs){
+										arrParam.push(paramNames[j].substring(paramNames[j].indexOf(".")+1));
+										arrTest.push(td);
+										arrData.push(dt);
+										arrType.push(pt);
+										paramNames.splice(j,1);
+										testDatas.splice(j,1);
+										dataTypes.splice(j,1);
+										paramTypes.splice(j,1);
+						    			j--;
+									}
+								}
+							}
+						}
+						if(bool){
+							var arr = new Array();
+							arr[0] = assembleJson3(arrParam,arrTest,arrData,arrType,type);
+							paramJson[paramStr] = arr;
+						}else{
+							paramJson[paramStr]= assembleJson3(arrParam,arrTest,arrData,arrType,type);
+						}
+					}
+				}
+			}
+		}
+	}
+	return paramJson;
+}
+
 var met_index = 0;
 function buildMenu(doc,tVersion) {
 	var methods =doc.methodModels;
@@ -1432,12 +1630,18 @@ function buildParams(doc,type,loc,flag,contentType){
 				str+="<tr><td colspan='7' class='requestData' hidden='hidden'></td></tr>"
 				str+="<tr class='testSend'><td colspan='7'>"+
 				"<input type='button' class='testSendButton' value='测试API请求'>&nbsp;&nbsp;"+
+				"执行次数：<input type='number' class='conutNumber' value='1'>&nbsp;&nbsp;时间间隔(ms)：<input class='timeNumber' type='number' value='1'>&nbsp;&nbsp;"+
 				"<label><input type='checkbox' class='app-traditional' value='1'>阻止深度序列化</label>&nbsp;&nbsp;"+
 				"<input type='button' class='request-json' value='树状展示请求参数'>&nbsp;&nbsp;"+
 				"<input type='button' class='switch-resp-json' value='树状展示响应参数'>"+
 				"</td></tr>"
-				str+="<tr><td colspan='7' class='resposeData' hidden='hidden'></td></tr>"
-				str+="<tr hidden='hidden'><td colspan='7' class='close-resposeData' align='center'><a style='font-size:24'>▲</a></td></tr>"
+				str+="<tr><td colspan='7' class='close-resposeData' align='center'><a style='font-size:12;color:blue;cursor:pointer'>打开调试窗口</a>" +
+						"<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;status：</span><span class='request-status'></span>" +
+						"<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time：</span><span class='request-time'></span>" +
+						"<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number of successful：</span><span class='request-success'></span>" +
+						"<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number of failures：</span><span class='request-fail'></span>" +
+						"</td></tr>"
+				str+="<tr><td colspan='7' class='resposeData' hidden='hidden'>暂无调试信息</td></tr>"
 			}
 		}
 	}else if(loc == "loc_method"){
@@ -1445,12 +1649,18 @@ function buildParams(doc,type,loc,flag,contentType){
 			str+="<tr><td colspan='7' style='color:red'>该接口没有设置请求参数</td></tr>"
 				str+="<tr class='testSend'><td colspan='7'>"+
 				"<input type='button' class='testSendButton' value='测试API请求'>&nbsp;&nbsp;"+
+				"执行次数：<input type='number' class='conutNumber' value='1'>&nbsp;&nbsp;时间间隔(ms)：<input class='timeNumber' type='number' value='1'>&nbsp;&nbsp;"+
 				"<label><input type='checkbox' class='app-traditional' value='1'>阻止深度序列化</label>&nbsp;&nbsp;"+
 				"<input type='button' class='request-json' value='树状展示请求参数'>&nbsp;&nbsp;"+
 				"<input type='button' class='switch-resp-json' value='树状展示响应参数'>"+
 				"</td></tr>"
-				str+="<tr><td colspan='7' class='resposeData' hidden='hidden'></td></tr>"
-				str+="<tr hidden='hidden'><td colspan='7' class='close-resposeData' align='center'><a style='font-size:24'>▲</a></td></tr>"
+				str+="<tr><td colspan='7' class='close-resposeData' align='center'><a style='font-size:12;color:blue;cursor:pointer'>打开调试窗口</a>" +
+						"<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;status：</span><span class='request-status'></span>" +
+						"<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time：</span><span class='request-time'></span>" +
+						"<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number of successful：</span><span class='request-success'></span>" +
+						"<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number of failures：</span><span class='request-fail'></span>" +
+						"</td></tr>"
+				str+="<tr><td colspan='7' class='resposeData' hidden='hidden'>暂无调试信息</td></tr>"
 		}else{
 			str+="<tr><td colspan='4' style='color:red'>该接口没有设置响应参数</td></tr>"
 		}
