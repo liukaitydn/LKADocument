@@ -36,6 +36,4 @@ public @interface LKAMethod {
 	String updateTime() default "";
 	/*是否是下载方法*/
 	boolean download() default false;
-	/*是否是上传方法*/
-	boolean upload() default false;
 }

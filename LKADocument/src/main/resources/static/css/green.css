@@ -253,7 +253,7 @@ h5{
 .method-ul li:first-child span:first-child{
 	font-size:18px;
 }
-.method-ul li:first-child span:last-child{
+.method-ul li:first-child span:nth-child(3){
 	padding:5px;
 	border-radius:50px;
 	background-color: #44b549;

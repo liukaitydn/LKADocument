@@ -139,40 +139,50 @@ public class LKADController {
 		
         //HttpEntity
 		Object object = null;
+		
+		//设置参数
+        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        Set<String> qSet = queryMap.keySet();
+        String data = "";
+        int i = 0;
+        for (String key : qSet) {
+        	requestBody.add(key,queryMap.get(key)==null?"":queryMap.get(key).toString());
+        	if(i == 0) {
+        		data = "?"+key+"="+queryMap.get(key);
+        	}else {
+        		data = data + "&"+key+"="+queryMap.get(key);
+        	}
+        	i++;
+		}
 		if("application/json".equals(contentType)) {
 	        HttpEntity<String> requestEntity = new HttpEntity<>(queryData, requestHeaders);
-	        
 	        if("get".equals(type.toLowerCase())) {
-	        	object = restTemplate.exchange(path,HttpMethod.GET,requestEntity,Object.class);
+	        	return "<span style='color:red'>ContentType值为application/json时只支持post、put、delete请求！<span>";
+	        	//object = restTemplate.exchange(path+data,HttpMethod.GET,requestEntity,String.class);
 	        }
 	        if("post".equals(type.toLowerCase())) {
-	        	object = restTemplate.exchange(path,HttpMethod.POST,requestEntity, Object.class);
+	        	object = restTemplate.exchange(path,HttpMethod.POST,requestEntity, String.class);
 	        }
 	        if("put".equals(type.toLowerCase())) {
-	        	object = restTemplate.exchange(path,HttpMethod.PUT,requestEntity, Object.class);
+	        	object = restTemplate.exchange(path,HttpMethod.PUT,requestEntity, String.class);
 	        }
 	        if("delete".equals(type.toLowerCase())) {
-	        	object = restTemplate.exchange(path,HttpMethod.DELETE,requestEntity, Object.class);
+	        	object = restTemplate.exchange(path,HttpMethod.DELETE,requestEntity, String.class);
 	        }
 		}else {
-			//设置参数
-	        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-	        Set<String> qSet = queryMap.keySet();
-	        for (String key : qSet) {
-	        	requestBody.add(key,queryMap.get(key)==null?"":queryMap.get(key).toString());
-			}
 	        HttpEntity<MultiValueMap> requestEntity = new HttpEntity<>(requestBody, requestHeaders);
+	        
 	        if("get".equals(type.toLowerCase())) {
-	        	object = restTemplate.exchange(path,HttpMethod.GET,requestEntity,Object.class);
+	        	object = restTemplate.exchange(path+data,HttpMethod.GET,null,String.class);
 	        }
 	        if("post".equals(type.toLowerCase())) {
-	        	object = restTemplate.exchange(path,HttpMethod.POST,requestEntity, Object.class);
+	        	object = restTemplate.exchange(path,HttpMethod.POST,requestEntity, String.class);
 	        }
 	        if("put".equals(type.toLowerCase())) {
-	        	object = restTemplate.exchange(path,HttpMethod.PUT,requestEntity, Object.class);
+	        	object = restTemplate.exchange(path,HttpMethod.PUT,requestEntity, String.class);
 	        }
 	        if("delete".equals(type.toLowerCase())) {
-	        	object = restTemplate.exchange(path,HttpMethod.DELETE,requestEntity, Object.class);
+	        	object = restTemplate.exchange(path,HttpMethod.DELETE,requestEntity, String.class);
 	        }
 		}
 		return object;

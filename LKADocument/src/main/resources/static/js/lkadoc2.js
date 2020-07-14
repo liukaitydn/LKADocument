@@ -624,6 +624,18 @@ $(function(){
 		}
 	})
 	
+	$(".right-box").on("change",".ImplementWay",function(){
+		if($(this).val() == 'async'){
+			$(this).parent().find('.timeNumber').attr("disabled",true).attr("type","text");
+			$(this).parent().find('.timeNumber').css("backgroundColor","#ccc")
+			$(this).parent().find('.timeNumber').val(1);
+		}else{
+			$(this).parent().find('.timeNumber').attr("disabled",false).attr("type","number");
+			$(this).parent().find('.timeNumber').css("backgroundColor","#fff")
+		}
+	})
+	
+	
 	$(".saveToken").click(function(){
 		if($(this).val()=='edit'){
 			$(this).val('save');
@@ -737,7 +749,7 @@ $(function(){
 		//获取是否是下载方法
 		var download = $(this).parents("table").parent().parent().find(".method-download").val();
 		var fileName='fileName.xls';
-		if(download == 'true'){
+		if(download == 'true' && (getServerName()==null || getServerName()=='')){
 			fileName=window.prompt("请输入要下载的文件名称：","fileName.xls");
 		}
 		//contentType
@@ -814,6 +826,7 @@ $(function(){
 		var requestTime = $(this).parents("table").find(".request-time");
 		var conutNumber = $(this).parents("table").find(".conutNumber");//执行次数
 		var timeNumber = $(this).parents("table").find(".timeNumber");//执行间隔
+		var iw = $(this).parents("table").find(".ImplementWay");//执行方式
 		if(conutNumber.val() == null || conutNumber.val() == ''){
 			conutNumber.val(1);
 		}
@@ -823,6 +836,7 @@ $(function(){
 		requestFail.html(0);
 		requestSuccess.html(0);
 		var totalStartTime = new Date().getTime();
+		var countNum = 1;
 		for(var i=0;i<conutNumber.val();i++){
 			var ajaxTime = new Date().getTime();
 			if(getServerName()==null || getServerName()==''){
@@ -895,7 +909,7 @@ $(function(){
 						    		resposeData.html(json);
 						    	}
 					    	}else{
-					    		resposeData.html(resposeData.html()+"<span style='color:"+(this.status==200?"green":"red")+"'>status："+this.status+"&nbsp;&nbsp;"
+					    		resposeData.html(resposeData.html()+"<span style='color:"+(this.status==200?"green":"red")+"'>conut："+(countNum++)+"&nbsp;&nbsp;status："+this.status+"&nbsp;&nbsp;"
 					    				+"msg："+(this.status==200?"success":"fail")+"&nbsp;&nbsp;time："+countTime+"ms</span><br/>"+"<span style='color:#888'>"+json+"</span><br/><br/>");
 					    	}
 						}
@@ -915,7 +929,7 @@ $(function(){
 					    url:path,
 					    type:methodType=='通用'?'get':methodType,
 					    dataType:"text",
-					    async:conutNumber.val()==1?true:false,
+					    async:iw.val()=='async'?true:false,
 					    data:queryData,
 					    headers:headerJson,
 					    traditional:tl, // 阻止深度序列化
@@ -926,6 +940,7 @@ $(function(){
 					    	requestSuccess.html(Number(requestSuccess.html())+1);
 					    	var countTime = new Date().getTime()-ajaxTime;
 					    	var totalTime = new Date().getTime()-totalStartTime;
+					    	
 					    	requestStatus.html(xhr.status+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;msg：'+xhr.statusText);
 							requestTime.html(totalTime+"ms");
 					    	var options = {
@@ -939,7 +954,7 @@ $(function(){
 						    		resposeData.html(data);
 						    	}
 					    	}else{
-					    		resposeData.html(resposeData.html()+"<span style='color:green;'>conut："+(i+1)+"&nbsp;&nbsp;status："+xhr.status+"&nbsp;&nbsp;"
+					    		resposeData.html(resposeData.html()+"<span style='color:green;'>conut："+(countNum++)+"&nbsp;&nbsp;status："+xhr.status+"&nbsp;&nbsp;"
 					    				+"msg："+xhr.statusText+"&nbsp;&nbsp;time："+countTime+"ms</span><br/>"+"<span style='color:#888'>"+data+"</span><br/><br/>");
 					    	}
 					    	
@@ -968,7 +983,7 @@ $(function(){
 						    		resposeData.html(json);
 						    	}
 					    	}else{
-					    		resposeData.html(resposeData.html()+"<span style='color:red;'>conut："+(i+1)+"&nbsp;&nbsp;status："+respose.status+"&nbsp;&nbsp;"
+					    		resposeData.html(resposeData.html()+"<span style='color:red;'>conut："+(countNum++)+"&nbsp;&nbsp;status："+respose.status+"&nbsp;&nbsp;"
 					    				+"msg："+respose.statusText+"&nbsp;&nbsp;time："+countTime+"ms</span><br/>"+"<span style='color:#888'>"+json+"</span><br/><br/>");
 					    	}
 					    }
@@ -976,22 +991,22 @@ $(function(){
 				}
 			}else{
 				if(download == 'true'){
-					resposeData.html('暂时不支持远程项目下载调试!')
+					resposeData.html('<span style="color:red">暂时不支持远程项目下载调试！</span>')
 					return;
 				}
 				if(fileInput != null && fileInput.length > 0){
-					resposeData.html('暂时不支持远程项目上传调试!')
+					resposeData.html('<span style="color:red">暂时不支持远程项目上传调试！</span>')
 					return;
 				}
 				if(tl){
-					resposeData.html('暂时不支持远程项目数组传参调试!')
+					resposeData.html('<span style="color:red">暂时不支持远程项目数组传参调试！</span>')
 					return;
 				}
 				$.ajax({
 				    url:"lkad/getServerApi",
 				    type:'get',
 				    dataType:"text",
-				    async:conutNumber.val()==1?true:false,
+				    async:iw.val()=='async'?true:false,
 				    traditional:tl, // 阻止深度序列化
 				    data:{"path":getServerName()+path,"contentType":contentType,"headerJson":JSON.stringify(headerJson),"queryData":JSON.stringify(queryData),"type":methodType=='通用'?'get':methodType},
 				    success:function(data,status,xhr){
@@ -1011,7 +1026,7 @@ $(function(){
 					    		resposeData.html(data);
 					    	}
 				    	}else{
-				    		resposeData.html(resposeData.html()+"<span style='color:green;'>conut："+(i+1)+"&nbsp;&nbsp;status："+xhr.status+"&nbsp;&nbsp;"
+				    		resposeData.html(resposeData.html()+"<span style='color:green;'>conut："+(countNum++)+"&nbsp;&nbsp;status："+xhr.status+"&nbsp;&nbsp;"
 				    				+"msg："+xhr.statusText+"&nbsp;&nbsp;time："+countTime+"ms</span><br/>"+"<span style='color:#888'>"+data+"</span><br/><br/>");
 				    	}
 				    },
@@ -1040,16 +1055,18 @@ $(function(){
 					    		resposeData.html(json);
 					    	}
 				    	}else{
-				    		resposeData.html(resposeData.html()+"<span style='color:red;'>conut："+(i+1)+"&nbsp;&nbsp;status："+respose.status+"&nbsp;&nbsp;"
+				    		resposeData.html(resposeData.html()+"<span style='color:red;'>conut："+(countNum++)+"&nbsp;&nbsp;status："+respose.status+"&nbsp;&nbsp;"
 				    				+"msg："+respose.statusText+"&nbsp;&nbsp;time："+countTime+"ms</span><br/>"+"<span style='color:#888'>"+json+"</span><br/><br/>");
 				    	}
 				    }
 				}); 
 			}
-			var start = (new Date()).getTime();
-		    while((new Date()).getTime() - start < timeNumber.val()) {
-		        continue;
-		    }
+			if(iw.val()!='async'){
+				var start = (new Date()).getTime();
+			    while((new Date()).getTime() - start < timeNumber.val()) {
+			        continue;
+			    }
+			}
 		}
 	})
 	
@@ -1549,7 +1566,7 @@ function buildMenu(doc,tVersion) {
     		var respose = methods[i].respose;
     		var str2 ="<div id='method_"+met_index+"' class='method-table' hidden='hidden'><div>" +
     				"<ul class='method-ul'>" +
-    				"<li><span class='method-name-pdf'>"+methods[i].name+"</span>&nbsp;&nbsp;<span class='docDescription'>"+methods[i].description+"</span>&nbsp;&nbsp;<span>"+methods[i].version+"</span></li>"+
+    				"<li><span class='method-name-pdf'>"+methods[i].name+"</span>&nbsp;&nbsp;<span class='docDescription'>"+methods[i].description+"</span>&nbsp;&nbsp;<span>"+methods[i].version+"</span><span style='color:red'>&nbsp;&nbsp;"+(methods[i].contentType=="application/json" && methods[i].requestType=="GET"?"注意：ContentType为application/json传参时只支持post、put、delete请求！":"")+"</span></li>"+
     				"<li class='method-requestParamInfo'><span>Method Type：</span><span class='method-requestType'>"+methods[i].requestType+"</span>&nbsp;&nbsp;&nbsp;<span><b>Content Type：</b></span><span class='content-TYPE'>"+methods[i].contentType+"</span></span>&nbsp;&nbsp;&nbsp;<span><b>URL：</b></span><span class='method-URL'>"+methods[i].url+"</li>"+
     				"<li class='method-requestParamInfo'><span></span><span><b>Author：</b>"+(methods[i].author==null || methods[i].author==''?'未设置':methods[i].author)+"&nbsp;&nbsp;&nbsp;<b>CreateTime：</b>"+(createTime==null || createTime==''?'未设置':createTime)+"&nbsp;&nbsp;&nbsp;<b>UpdateTime：</b>"+(updateTime==null || updateTime==''?'未设置':updateTime)+"</span><span><input class='method-download' type='hidden' value='"+methods[i].download+"'></span></li>"+
     				"</ul>"+
@@ -1630,7 +1647,9 @@ function buildParams(doc,type,loc,flag,contentType){
 				str+="<tr><td colspan='7' class='requestData' hidden='hidden'></td></tr>"
 				str+="<tr class='testSend'><td colspan='7'>"+
 				"<input type='button' class='testSendButton' value='测试API请求'>&nbsp;&nbsp;"+
-				"执行次数：<input type='number' class='conutNumber' value='1'>&nbsp;&nbsp;时间间隔(ms)：<input class='timeNumber' type='number' value='1'>&nbsp;&nbsp;"+
+				"执行次数：<input type='number' class='conutNumber' value='1'>&nbsp;&nbsp;" +
+				"时间间隔(ms)：<input class='timeNumber' disabled='true' style='background-color:#ccc' type='number' value='1'>&nbsp;&nbsp;"+
+				"执行方式：<select class='ImplementWay'><option value='async'>异步</option><option value='sync'>同步</option></select>"+
 				"<label><input type='checkbox' class='app-traditional' value='1'>阻止深度序列化</label>&nbsp;&nbsp;"+
 				"<input type='button' class='request-json' value='树状展示请求参数'>&nbsp;&nbsp;"+
 				"<input type='button' class='switch-resp-json' value='树状展示响应参数'>"+
@@ -1649,7 +1668,9 @@ function buildParams(doc,type,loc,flag,contentType){
 			str+="<tr><td colspan='7' style='color:red'>该接口没有设置请求参数</td></tr>"
 				str+="<tr class='testSend'><td colspan='7'>"+
 				"<input type='button' class='testSendButton' value='测试API请求'>&nbsp;&nbsp;"+
-				"执行次数：<input type='number' class='conutNumber' value='1'>&nbsp;&nbsp;时间间隔(ms)：<input class='timeNumber' type='number' value='1'>&nbsp;&nbsp;"+
+				"执行次数：<input type='number' class='conutNumber' value='1'>&nbsp;&nbsp;" +
+				"时间间隔(ms)：<input class='timeNumber' disabled='true' style='background-color:#ccc' type='number' value='1'>&nbsp;&nbsp;"+
+				"执行方式：<select class='ImplementWay'><option value='async'>异步</option><option value='sync'>同步</option></select>&nbsp;&nbsp;"+
 				"<label><input type='checkbox' class='app-traditional' value='1'>阻止深度序列化</label>&nbsp;&nbsp;"+
 				"<input type='button' class='request-json' value='树状展示请求参数'>&nbsp;&nbsp;"+
 				"<input type='button' class='switch-resp-json' value='树状展示响应参数'>"+
