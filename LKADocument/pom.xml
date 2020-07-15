@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.liukaitydn</groupId>
   <artifactId>lkadocument</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.4</version>
   
   <parent>
         <groupId>org.springframework.boot</groupId>
@@ -39,7 +39,6 @@
 	    <artifactId>itextpdf</artifactId>
 	    <version>5.5.13</version>
 	</dependency>
-
   </dependencies>
   
 	<distributionManagement>
