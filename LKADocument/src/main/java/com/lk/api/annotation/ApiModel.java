@@ -20,6 +20,6 @@ import java.lang.annotation.Target;
 public @interface ApiModel {
 	/*对象描述*/
 	String value() default "";
-	/*方法描述*/
+	/*对象描述*/
 	String description() default "";
 }

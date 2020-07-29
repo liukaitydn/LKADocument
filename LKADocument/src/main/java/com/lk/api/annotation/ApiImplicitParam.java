@@ -28,7 +28,7 @@ public @interface ApiImplicitParam {
 	/*参数说明*/
 	String description() default "";
 	/*参数类型(基本类型和字符串)*/
-	String dataType() default "String";
+	Class<?> dataType() default String.class;
 	/*测试数据*/
 	String testData() default "";
 	/*参数位置
@@ -49,7 +49,7 @@ public @interface ApiImplicitParam {
 	/*参数说明*/
 	String[] descriptions() default{};
 	/*参数类型(基本类型和字符串)*/
-	String[] dataTypes() default{};
+	Class<?>[] dataTypes() default{};
 	/*测试数据*/
 	String[] testDatas() default{};
 	/*参数位置
@@ -59,4 +59,15 @@ public @interface ApiImplicitParam {
 	String[] paramTypes() default{};
 	/*是否是数组*/
 	boolean[] isArrays() default{};
+	
+	/*数据校验规则*/
+	String[] valids() default{};
+	/*数据校验消息*/
+	String[] msgs() default{};
+	/*数值范围*/
+	String range() default "";
+	/*集合大小限制*/
+	String size() default "";
+	/*字符串大小限制*/
+	String length() default "";
 }

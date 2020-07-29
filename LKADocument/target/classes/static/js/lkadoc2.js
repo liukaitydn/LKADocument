@@ -814,7 +814,6 @@ $(function(){
 				formData.append(key, queryData[key]);
 			});
 			queryData = formData;
-			console.log(queryData);
 			processData=false;   // jQuery不要去处理发送的数据
 			contentTypeBool=false;   // jQuery不要去设置Content-Type请求头
 			path = path+"?random="+Math.random();
@@ -1088,7 +1087,7 @@ function assembleJson(paramNames,testDatas,dataTypes,paramTypes,type){// 参数�
 			dataType = dataTypes[i];
 			paramType = paramTypes[i];
 		}
-		if(dataType.html() != null && paramType.html() == type){ // 有数据类型
+		if(dataType.html() != null && paramType.html() == type && paramType.parent().children(":first").css("textDecoration").indexOf('line-through') == -1){ // 有数据类型
 			var paramName = paramNames[i];
 			// 判断是否是数组
 			if(paramName.indexOf("[]")==-1){ // 不是数组
@@ -1236,7 +1235,7 @@ function assembleJson2(paramNames,testDatas,dataTypes,paramTypes,type){// 参数
 			dataType = dataTypes[i];
 			paramType = paramTypes[i];
 		}
-		if(dataType.html() != null && (type=='resp' || paramType.html() == type)){ // 有数据类型
+		if(dataType.html() != null && (type=='resp' || paramType.html() == type) && paramType.parent().children(":first").css("textDecoration").indexOf('line-through') == -1){ // 有数据类型
 			var paramName = paramNames[i];
 			// 判断是否是数组
 			if(paramName.indexOf("[]")==-1){ // 不是数组
@@ -1393,7 +1392,7 @@ function assembleJson3(paramNames,testDatas,dataTypes,paramTypes,type){// 参数
 			dataType = dataTypes[i];
 			paramType = paramTypes[i];
 		}
-		if(dataType.html() != null && (type=='resp' || paramType.html() == type)){ // 有数据类型
+		if(dataType.html() != null && (type=='resp' || paramType.html() == type) && paramType.parent().children(":first").css("textDecoration").indexOf('line-through') == -1){ // 有数据类型
 			var paramName = paramNames[i];
 			// 判断是否是数组
 			if(paramName.indexOf("[]")==-1){ // 不是数组
@@ -1633,8 +1632,8 @@ function buildParams(doc,type,loc,flag,contentType){
 					if(type=="req" || type=="param" || type=="params"){
 						str+="<tr><td class='paramValue addinfo' title='双击可添加参数标签信息'>"+val+"</td><td class='paramInfo'>"+name+"</td><td class='isRequired'>"+
 						(required==true?'yes':'no')+"</td><td class='dataType'>"+dataType+"</td><td class='paramType'>"+paramType+"</td><td>"+
-						(dataType=='file'?"<form class='upload' enctype='multipart/form-data'>"+"<input type='file' class='testData' name='"+value+"'>"+"</form>":
-							dataType=='file[]'?"<form class='upload' enctype='multipart/form-data'>"+"<input type='hidden' value='"+value+"' class='fileValue'><input type='file' class='testData' name='"+value+"'><input type='button' class='subFile' value='-'><input type='button' class='addFile' value='+'></form>":"<input class='testData tdcss' type='text' value='"+testData+"'>"+
+						(dataType=='MultipartFile'?"<form class='upload' enctype='multipart/form-data'>"+"<input type='file' class='testData' name='"+value+"'>"+"</form>":
+							dataType=='MultipartFile[]'?"<form class='upload' enctype='multipart/form-data'>"+"<input type='hidden' value='"+value+"' class='fileValue'><input type='file' class='testData' name='"+value+"'><input type='button' class='subFile' value='-'><input type='button' class='addFile' value='+'></form>":"<input class='testData tdcss' type='"+(dataType=='Date'?'date':'text')+"' value='"+testData+"'>"+
 						(dataType==null?"":dataType.indexOf('[]')==-1?"":"<input type='button' class='subtract' value='-'><input type='button' class='add' value='+'>")+"</td><td>"+description+"</td></tr>")
 					}else{
 						str+="<tr><td class='respValue addinfo' title='双击可添加参数标签信息'>"+val+"</td><td class='respInfo'>"+name+"</td><td class='respType'><input class='reqdatatype' disabled='disabled' type='text' value='"+dataType+"'></td><td>"+description+"</td></tr>"

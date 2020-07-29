@@ -25,7 +25,7 @@ public @interface LKARespose {
 	/*参数说明*/
 	String description() default "";
 	/*参数类型(基本类型和字符串)*/
-	String dataType() default "String";
+	Class<?> dataType() default String.class;
 	/*是否是数组*/
 	boolean isArray() default false;
 	/*父参数*/
@@ -45,7 +45,7 @@ public @interface LKARespose {
 	
 	String[] names() default {};
 	String[] descriptions() default{};
-	String[] dataTypes() default{};
+	Class<?>[] dataTypes() default {};
 	String[] values() default{};
 	boolean[] isArrays() default{};
 	
