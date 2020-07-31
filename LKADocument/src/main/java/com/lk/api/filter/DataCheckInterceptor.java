@@ -216,10 +216,10 @@ public class DataCheckInterceptor implements  HandlerInterceptor {
 			    			int i = 0;
 			    			for (String valid : model.getValids()) {
 			    				//数据校验
-					    		if(V.NOTBLANK.equals(valid) && "java.lang.String".equals(model.getCls().getTypeName())) {
-					    			if(param == null || "".equals(param)) {
+					    		if(V.NOTBLANK.equals(valid)) {
+					    			if((param == null || "".equals(param.trim())) && "java.lang.String".equals(model.getCls().getTypeName())) {
 					    				if(model.getMsgs() == null || model.getMsgs().length < 1) {
-					    					if(param != null && "".equals(param)) {
+					    					if(param != null && "".equals(param.trim())) {
 					    						errorMap.put(model.getFieldName(),model.getFieldName()+"值不能为空");
 					    					}
 					    					if(param == null) {
@@ -252,29 +252,34 @@ public class DataCheckInterceptor implements  HandlerInterceptor {
 					    				}
 					    			}
 					    		}else if(V.EMAIL.equals(valid)) {
-					    			boolean email = RegexUtils.isEmail(param);
-					    			if(!email) {
-					    				if(model.getMsgs() == null || model.getMsgs().length < 1) {
-					    					errorMap.put(model.getFieldName(),model.getFieldName()+"邮箱格式不正确");
-					    				}else if(model.getMsgs() != null && model.getMsgs().length == 1) {
-					    					errorMap.put(model.getFieldName(),model.getMsgs()[0]);
-					    				}else {
-					    					errorMap.put(model.getFieldName(),model.getMsgs()[i]);
-					    				}
+					    			if(param != null) {
+						    			boolean email = RegexUtils.isEmail(param);
+						    			if(!email) {
+						    				if(model.getMsgs() == null || model.getMsgs().length < 1) {
+						    					errorMap.put(model.getFieldName(),model.getFieldName()+"邮箱格式不正确");
+						    				}else if(model.getMsgs() != null && model.getMsgs().length == 1) {
+						    					errorMap.put(model.getFieldName(),model.getMsgs()[0]);
+						    				}else {
+						    					errorMap.put(model.getFieldName(),model.getMsgs()[i]);
+						    				}
+						    			}
 					    			}
 					    		}else if(V.URL.equals(valid)) {
-					    			boolean url = RegexUtils.isURL(param);
-					    			if(!url) {
-					    				if(model.getMsgs() == null || model.getMsgs().length < 1) {
-					    					errorMap.put(model.getFieldName(),model.getFieldName()+"URL格式不正确");
-					    				}else if(model.getMsgs() != null && model.getMsgs().length == 1) {
-					    					errorMap.put(model.getFieldName(),model.getMsgs()[0]);
-					    				}else {
-					    					errorMap.put(model.getFieldName(),model.getMsgs()[i]);
-					    				}
+					    			if(param != null) {
+						    			boolean url = RegexUtils.isURL(param);
+						    			if(!url) {
+						    				if(model.getMsgs() == null || model.getMsgs().length < 1) {
+						    					errorMap.put(model.getFieldName(),model.getFieldName()+"地址格式不正确");
+						    				}else if(model.getMsgs() != null && model.getMsgs().length == 1) {
+						    					errorMap.put(model.getFieldName(),model.getMsgs()[0]);
+						    				}else {
+						    					errorMap.put(model.getFieldName(),model.getMsgs()[i]);
+						    				}
+						    			}
 					    			}
 					    		}else if(V.PAST.equals(valid)) {
-					    			if(param == null || "".equals(param)) {
+					    			if(param == null || "".equals(param.trim())) {
+					    				i++;
 					    				continue;
 					    			}
 					    			Date date = stringToDate(param);
@@ -287,6 +292,7 @@ public class DataCheckInterceptor implements  HandlerInterceptor {
 										e.printStackTrace();
 									}
 					    			if(date != null && nowDate.after(date)) {
+					    				i++;
 					    				continue;
 					    			}
 					    			if(model.getMsgs() == null || model.getMsgs().length < 1) {
@@ -297,7 +303,8 @@ public class DataCheckInterceptor implements  HandlerInterceptor {
 				    					errorMap.put(model.getFieldName(),model.getMsgs()[i]);
 				    				}
 					    		}else if(V.FUTURE.equals(valid)) {
-					    			if(param == null || "".equals(param)) {
+					    			if(param == null || "".equals(param.trim())) {
+					    				i++;
 					    				continue;
 					    			}
 					    			Date date = stringToDate(param);
@@ -310,6 +317,7 @@ public class DataCheckInterceptor implements  HandlerInterceptor {
 										e.printStackTrace();
 									}
 					    			if(date != null && date.after(nowDate)) {
+					    				i++;
 					    				continue;
 					    			}
 					    			if(model.getMsgs() == null || model.getMsgs().length < 1) {
@@ -321,14 +329,16 @@ public class DataCheckInterceptor implements  HandlerInterceptor {
 				    				}
 					    		}else {
 					    			if(!V.NOTEMPTY.equals(valid)) {
-					    				boolean match = RegexUtils.isMatch(valid, param);
-					    				if(!match) {
-					    					if(model.getMsgs() == null || model.getMsgs().length < 1) {
-						    					errorMap.put(model.getFieldName(),model.getFieldName()+"格式不符合要求");
-						    				}else if(model.getMsgs() != null && model.getMsgs().length == 1) {
-						    					errorMap.put(model.getFieldName(),model.getMsgs()[0]);
-						    				}else {
-						    					errorMap.put(model.getFieldName(),model.getMsgs()[i]);
+					    				if(param != null) {
+						    				boolean match = RegexUtils.isMatch(valid, param);
+						    				if(!match) {
+						    					if(model.getMsgs() == null || model.getMsgs().length < 1) {
+							    					errorMap.put(model.getFieldName(),model.getFieldName()+"格式不符合要求");
+							    				}else if(model.getMsgs() != null && model.getMsgs().length == 1) {
+							    					errorMap.put(model.getFieldName(),model.getMsgs()[0]);
+							    				}else {
+							    					errorMap.put(model.getFieldName(),model.getMsgs()[i]);
+							    				}
 						    				}
 					    				}
 					    			}
@@ -505,7 +515,7 @@ public class DataCheckInterceptor implements  HandlerInterceptor {
 		if(obj instanceof List) {
 			List l = (List)obj;
 			String params = null;
-			if(l.size() == 0) {
+			if(l.size() == 0 || subName2 == null) {
 				params = " ";
 			}
 			for (Object o : l) {

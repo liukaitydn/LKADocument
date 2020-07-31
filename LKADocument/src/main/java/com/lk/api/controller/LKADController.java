@@ -2616,6 +2616,9 @@ public class LKADController {
 						}
 						propertyModel.setParamType("query");
 						propertyModel.setArray(param.isArray());
+						if(!param.isArray() && pType.contains("[]")) {
+							propertyModel.setArray(true);
+						}
 						propertyModel.setValue(pValue);
 						
 						propertyModels.add(propertyModel);
@@ -2674,6 +2677,9 @@ public class LKADController {
 						}
 						propertyModel.setParamType("query");
 						propertyModel.setArray(param.isArray());
+						if(!param.isArray() && pType.contains("[]")) {
+							propertyModel.setArray(true);
+						}
 						propertyModel.setValue(pValue);
 						propertyModels.add(propertyModel);
 					}
@@ -2800,6 +2806,9 @@ public class LKADController {
 						}
 						propertyModel.setParamType("query");
 						propertyModel.setArray(param.isArray());
+						if(!param.isArray() && pType.contains("[]")) {
+							propertyModel.setArray(true);
+						}
 						propertyModel.setValue(pValue);
 						propertyModels.add(propertyModel);
 					}
@@ -2857,6 +2866,9 @@ public class LKADController {
 						}
 						propertyModel.setParamType("query");
 						propertyModel.setArray(param.isArray());
+						if(!param.isArray() && pType.contains("[]")) {
+							propertyModel.setArray(true);
+						}
 						propertyModel.setValue(pValue);
 						propertyModels.add(propertyModel);
 					}
@@ -2985,6 +2997,9 @@ public class LKADController {
 						}
 						propertyModel.setParamType("query");
 						propertyModel.setArray(param.isArray());
+						if(!param.isArray() && pType.contains("[]")) {
+							propertyModel.setArray(true);
+						}
 						propertyModel.setValue(pValue);
 						propertyModels.add(propertyModel);
 					}
@@ -3041,6 +3056,9 @@ public class LKADController {
 						}
 						propertyModel.setParamType("query");
 						propertyModel.setArray(param.isArray());
+						if(!param.isArray() && pType.contains("[]")) {
+							propertyModel.setArray(true);
+						}
 						propertyModel.setValue(pValue);
 						propertyModels.add(propertyModel);
 					}
