@@ -254,8 +254,18 @@ $(function(){
 		if($("#changeProject").val() != 'now' && $("#changeProject").val()!=null){
 			alert("因远程调用文档数据结构对象发生变化，目前只支持生成本地项目PDF接口文档，暂不支持远程服务器生成PDF文档！");
 		}else{
+			var exType = $("#exportDoc").val();
+			debugger;
+			if(exType != 1 && exType != 2){
+				return;
+			}
 			var xhr = new XMLHttpRequest();
-			xhr.open("post","/lkad/exportPdf",true);
+			if(exType == 1){
+				xhr.open("post","/lkad/exportPdf",true);
+			}
+			if(exType == 2){
+				xhr.open("post","/lkad/exportMarkDown",true);
+			}
 			// 设置请求头
 			xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 			xhr.responseType = "blob";
@@ -269,7 +279,12 @@ $(function(){
 			reader.onload = function (e) {
 				// 转换完成，创建一个a标签用于下载
 			var a = document.createElement('a');
-			a.download = $("#projectName").html()+".pdf";
+			if(exType == 1){
+				a.download = $("#projectName").html()+".pdf";
+			}
+			if(exType == 2){
+				a.download = $("#projectName").html()+".md";
+			}
 			a.href = e.target.result;
 			// 修复firefox中无法触发click
 			$("body").append(a);  
@@ -679,8 +694,6 @@ $(function(){
 		for(var i = 0;i<paramValues.length;i++){
 			paramNames.push(paramValues.eq(i).html());
 		}
-		console.log(testDatas);
-		console.log(paramInfos);
 		// 带参数说明的json对象
 		var queryJson = assembleJson3(paramNames,testDatas,dataTypes,paramTypes,"query");
 		// console.log(queryJson);
@@ -1076,6 +1089,7 @@ $(function(){
 
 function assembleJson(paramNames,testDatas,dataTypes,paramTypes,type){// 参数名称，参数值，参数类型
 	var paramJson = {};
+	var namesArr = new Array();
 	for(var i = 0;i<paramNames.length;i++){ // 遍历参数名称
 		// 判断是否有数据类型
 		var dataType;
@@ -1087,7 +1101,26 @@ function assembleJson(paramNames,testDatas,dataTypes,paramTypes,type){// 参数�
 			dataType = dataTypes[i];
 			paramType = paramTypes[i];
 		}
-		if(dataType.html() != null && paramType.html() == type && paramType.parent().children(":first").css("textDecoration").indexOf('line-through') == -1){ // 有数据类型
+
+		if(paramType.parent().children(":first").css("textDecoration").indexOf('line-through') != -1){
+			namesArr.push(paramNames[i]);
+			continue;
+		}
+		
+		var delBool = false;
+		for(var name of namesArr){
+			if(paramNames[i].indexOf(".") != -1 
+					&& paramNames[i].substr(0,name.length) == name
+					&& paramNames[i].charAt(name.length) == '.'){
+				delBool = true;
+				break;
+			}
+		}
+		if(delBool){
+			continue;
+		}
+		
+		if(dataType.html() != null && paramType.html() == type){ // 有数据类型
 			var paramName = paramNames[i];
 			// 判断是否是数组
 			if(paramName.indexOf("[]")==-1){ // 不是数组
@@ -1224,6 +1257,7 @@ function assembleJson(paramNames,testDatas,dataTypes,paramTypes,type){// 参数�
 // testDatas为参数说明
 function assembleJson2(paramNames,testDatas,dataTypes,paramTypes,type){// 参数名称，参数值，参数类型
 	var paramJson = {};
+	var namesArr = new Array();
 	for(var i = 0;i<paramNames.length;i++){ // 遍历参数名称
 		// 判断是否有数据类型
 		var dataType;
@@ -1235,7 +1269,26 @@ function assembleJson2(paramNames,testDatas,dataTypes,paramTypes,type){// 参数
 			dataType = dataTypes[i];
 			paramType = paramTypes[i];
 		}
-		if(dataType.html() != null && (type=='resp' || paramType.html() == type) && paramType.parent().children(":first").css("textDecoration").indexOf('line-through') == -1){ // 有数据类型
+		
+		if(paramType.parent().children(":first").css("textDecoration").indexOf('line-through') != -1){
+			namesArr.push(paramNames[i]);
+			continue;
+		}
+		
+		var delBool = false;
+		for(var name of namesArr){
+			if(paramNames[i].indexOf(".") != -1 
+					&& paramNames[i].substr(0,name.length) == name
+					&& paramNames[i].charAt(name.length) == '.'){
+				delBool = true;
+				break;
+			}
+		}
+		if(delBool){
+			continue;
+		}
+		
+		if(dataType.html() != null && (type=='resp' || paramType.html() == type)){ // 有数据类型
 			var paramName = paramNames[i];
 			// 判断是否是数组
 			if(paramName.indexOf("[]")==-1){ // 不是数组
@@ -1381,6 +1434,7 @@ function assembleJson2(paramNames,testDatas,dataTypes,paramTypes,type){// 参数
 //testDatas为参数说明
 function assembleJson3(paramNames,testDatas,dataTypes,paramTypes,type){// 参数名称，参数值，参数类型
 	var paramJson = {};
+	var namesArr = new Array();
 	for(var i = 0;i<paramNames.length;i++){ // 遍历参数名称
 		// 判断是否有数据类型
 		var dataType;
@@ -1392,7 +1446,26 @@ function assembleJson3(paramNames,testDatas,dataTypes,paramTypes,type){// 参数
 			dataType = dataTypes[i];
 			paramType = paramTypes[i];
 		}
-		if(dataType.html() != null && (type=='resp' || paramType.html() == type) && paramType.parent().children(":first").css("textDecoration").indexOf('line-through') == -1){ // 有数据类型
+		
+		if(paramType.parent().children(":first").css("textDecoration").indexOf('line-through') != -1){
+			namesArr.push(paramNames[i]);
+			continue;
+		}
+		
+		var delBool = false;
+		for(var name of namesArr){
+			if(paramNames[i].indexOf(".") != -1 
+					&& paramNames[i].substr(0,name.length) == name
+					&& paramNames[i].charAt(name.length) == '.'){
+				delBool = true;
+				break;
+			}
+		}
+		if(delBool){
+			continue;
+		}
+		
+		if(dataType.html() != null && (type=='resp' || paramType.html() == type)){ // 有数据类型
 			var paramName = paramNames[i];
 			// 判断是否是数组
 			if(paramName.indexOf("[]")==-1){ // 不是数组
@@ -1608,7 +1681,7 @@ function buildParams(doc,type,loc,flag,contentType){
 				if(type=="req" || type=="param"){
 					str+=buildParams(arr,"param",val,2);
 				}else{
-					str+="<tr class='parentParam'><td>"+val+"</td><td>"+name+"</td><td>"+description+"</td><td></td></tr>"
+					str+="<tr class='parentParam'><td class='addinfo'>"+val+"</td><td>"+name+"</td><td>"+description+"</td><td></td></tr>"
 					str+=buildParams(arr,"resp",val,2);
 				}
 			}else{
@@ -1621,10 +1694,10 @@ function buildParams(doc,type,loc,flag,contentType){
 						str+=buildParams(model.propertyModels,"resps",val,3);
 					}
 					if(type=="params"){
-						str+="<tr class='parentParam'><td>"+val+"</td><td>"+name+"</td><td>"+description+"</td><td></td><td></td><td colspan='2'></td></tr>"								
+						str+="<tr class='parentParam'><td class='paramValue addinfo'>"+val+"</td><td class='paramInfo'>"+name+"</td><td>"+description+"</td><td class='dataType paramType testData'></td><td></td><td colspan='2'></td></tr>"								
 						str+=buildParams(model.propertyModels,"params",val,2);
 					}else if(type=="resps"){
-						str+="<tr class='parentParam'><td>"+val+"</td><td>"+name+"</td><td>"+description+"</td><td></td></tr>"
+						str+="<tr class='parentParam'><td class='addinfo'>"+val+"</td><td>"+name+"</td><td>"+description+"</td><td></td></tr>"
 						str+=buildParams(model.propertyModels,"resps",val,2);
 					}
 				}else{

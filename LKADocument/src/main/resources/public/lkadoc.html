@@ -21,10 +21,15 @@
 		<div><span id="projectName"></span>&nbsp;&nbsp;&nbsp;<span id="description"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/lkad/doc">To view the document JSON data</a></div>
 		<br>
 		<div class='tokenDiv' id='change-style'><span>Header Token</span>&nbsp;&nbsp;<span>
-		key：&nbsp;</span><input type='password' class='headerKey' disabled="disabled" value=''>&nbsp;&nbsp;<span>
-		value：&nbsp;</span><input type='password' class='headerValue' disabled="disabled" value=''>
-		&nbsp;&nbsp;<input type='button' class='saveToken' value='edit'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<input type="button" id="exportPdf" value="导出PDF文档">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			key：&nbsp;</span><input type='password' class='headerKey' disabled="disabled" value=''>&nbsp;&nbsp;<span>
+			value：&nbsp;</span><input type='password' class='headerValue' disabled="disabled" value=''>
+			&nbsp;&nbsp;<input type='button' class='saveToken' value='edit'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<select id='exportDoc' class="m-wrap">
+				<option value="0">请选择导出格式</option>
+				<option value="1">PDF</option>
+				<option value="2">MarkDown</option>
+	  		</select>
+	  		<input type="button" id="exportPdf" value="导出文档">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	  		<span>项目切换：</span>
 	  		<select id='changeProject' class="m-wrap">
 

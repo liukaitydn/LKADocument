@@ -441,7 +441,7 @@ table tbody tr:nth-child(even){
 
 }
 #exportPdf{
-	width: 250px; 
+	width: 100px; 
 	height: 25px; 
 	border-width: 0px; 
 	background-color:RGB(188,188,186);
