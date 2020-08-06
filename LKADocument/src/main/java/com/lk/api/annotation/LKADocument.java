@@ -10,6 +10,9 @@ import java.lang.annotation.Target;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Import;
+
+import com.lk.api.controller.ExportMarkDownController;
+import com.lk.api.controller.ExportPDFController;
 import com.lk.api.controller.LKADController;
 import com.lk.api.filter.DataCheckConfig;
 import com.lk.api.filter.DataCheckFilter;
@@ -23,7 +26,7 @@ import com.lk.api.filter.DataCheckFilter;
 @Target(ElementType.TYPE)
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Import({LKADController.class,DataCheckConfig.class,DataCheckFilter.class})
+@Import({LKADController.class,ExportMarkDownController.class,ExportPDFController.class,DataCheckConfig.class,DataCheckFilter.class})
 @ServletComponentScan
 public @interface LKADocument {
 	String basePackages() default "";
