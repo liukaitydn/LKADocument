@@ -1,16 +1,24 @@
-## 史上最强大的接口文档自动生成工具-Lkadoc操作指南
+## Lkadoc操作指南
+
+### 更新说明：
+
+#### 1.2.1：
+
+1. 增加markdown格式导出
+2. 增加对父节点参数名称的复制功能
+3. 增加对父节点参数添加标签功能，如果父节点标签为删除标签，那么在调试该接口时不会把该父节点参数及所有子参数传到后台
 
 ### 1. 前言
 
-        犹豫很久，终于下定了决心要给Lkadoc写操作指南了。Lkadoc的前身叫lkadocument，个人感觉名字太长，不利于工具的推广，所以简化了名称为Lkadoc。名称的含义也很简单，Lk是我名字首字母，a代表接口（api）的意思，doc当然就是指文档（document）了。如果读者有使用过lkadocument的经验就知道，lkadocument的版本分奇数和偶数两种版本，奇数版自带导出PDF所需字体，所以jar包比较大，偶数版没有带字体文件，体积较小。
-        lkadocument发布最新版为1.1.4，也是lkadocument最后一个版本，以后发布的版本工具名称改为lkadoc。因为增加的功能比较多，特别是新增了数据校验等激动人心的功能，所以lkadoc第一个版本直接升级到1.2.0，从1.2.0版开始就不区分奇偶版了，统一为不带字体的，这样jar包体积更少，大家在下载使用时更顺畅。但需要检查系统是否存在simsun.ttc字体，如果系统没有这个字体的话，导出PDF文档中文不能正确显示。 windows系统字体路径：C:/Windows/fonts/simsun.ttc，linux系统字体路径：/usr/share/fonts/win/simsun.ttc，mac系统字体路径：/System/Library/Fonts/simsun.ttc。
+​		犹豫很久，终于下定了决心要给Lkadoc写操作指南了。Lkadoc的前身叫lkadocument，个人感觉名字太长，不利于工具的推广，所以简化了名称为Lkadoc。名称的含义也很简单，Lk是我名字首字母，a代表接口（api）的意思，doc当然就是指文档（document）了。如果读者有使用过lkadocument的经验就知道，lkadocument的版本分奇数和偶数两种版本，奇数版自带导出PDF所需字体，所以jar包比较大，偶数版没有带字体文件，体积较小。
 
+​		lkadocument发布最新版为1.1.4，也是lkadocument最后一个版本，以后发布的版本工具名称改为lkadoc。因为增加的功能比较多，特别是新增了数据校验等激动人心的功能，所以lkadoc第一个版本直接升级到1.2.0，从1.2.0版开始就不区分奇偶版了，统一为不带字体的，这样jar包体积更少，大家在下载使用时更顺畅。但需要检查系统是否存在simsun.ttc字体，如果系统没有这个字体的话，导出PDF文档中文不能正确显示。 windows系统字体路径：C:/Windows/fonts/simsun.ttc，linux系统字体路径：/usr/share/fonts/win/simsun.ttc，mac系统字体路径：/System/Library/Fonts/simsun.ttc。
 
 ### 2. 介绍
 
 ```
     Lkadoc是一款能够基于注解自动生成带调试功能的接口文档工具，生成的UI界面简约大方，对接口描述一目了然，自面世以来深受大家的推崇和喜爱，大大提高了后端开发效率，减小了前端和后端接口对接的沟通成本。很多以前使用swagger的读者改成了lkadoc方案，反应都说比swagger好用太多了。下面简单的对lkadoc特色功能介绍一下：
-    - 支持导出成PDF格式的文档
+    - 支持导出成PDF或MD格式的文档
     - 支持在线调试API（包括数组入参、上传文件、文件下载均支持）
     - 支持对接口进行压力测试
     - 支持多项目接口文档聚合展示
@@ -89,6 +97,7 @@ public class LKADemoApplication {
 ```
 
 #### 3.4 准备测试代码
+
 ```java
 package com.lkad.api;
 
@@ -181,6 +190,7 @@ author="liukai",hidden=false,version="1.0",download=false,createTime="2020-7-20"
         return map;
     }
 }
+
 ```
 
 效果图：
@@ -191,6 +201,7 @@ author="liukai",hidden=false,version="1.0",download=false,createTime="2020-7-20"
 
 ```
     大家应该还有印象，在用@LKADocument注解配置项目信息时有一个version属性用来设置项目的版本号，然后@LKAMethod注解也有一个version属性用来设置接口的版本号，在实际工作中，往往一个项目版本升级并不代表所有接口都需要升级，也可能会增加一些新接口。那么我们怎么才能在众多的接口中定位哪一个接口是新接口或最新修改的接口呢？很简单，我们只需把新接口或最新修改的接口的@LKAMethod注解version属性的版本值设置和@LKADocument注解的version属性的版本值设置成一致就可以了，这样Lkadoc会用红色标记出新接口。那么后端在和前端同事对接口时就可以很快定位哪些是新接口了。
+
 ```
 
 ##### 4.3.1 案例：
@@ -218,6 +229,7 @@ public class HelloController {
         return "hello Lkadoc!";
     }
 }
+
 ```
 
 效果图：
@@ -300,6 +312,7 @@ msgs:数据校验消息
 range:数值范围限制判断
 size:集合、数组大小限制判断
 length:字符串长度限制判断
+
 ```
 
 ##### 4.4.2 测试代码
@@ -327,6 +340,7 @@ public Map<String,Object> getUsers(
     map.put("data","姓名："+name+",年龄："+age+",角色类型："+(roleType==1?"经理":"员工")+",token："+token);
     return map;
 }
+
 ```
 
 效果图:
@@ -339,6 +353,7 @@ public Map<String,Object> getUsers(
 
 ```
 Lkadoc支持对单个接口进入调试，我们只需要准备好请求参数的测试数据，然后点击"测试API请求"按钮，就可以在调试窗口看到结果信息了。
+
 ```
 
 ![](https://img-blog.csdnimg.cn/20200731154359423.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdWthaXR5ZG4=,size_16,color_FFFFFF,t_70)
@@ -347,6 +362,7 @@ Lkadoc支持对单个接口进入调试，我们只需要准备好请求参数�
 
 ```
 我们可以通过选择执行方式来决定接口采用"同步"还是"异步"执行，如果选择"同步"测试，可以选择执行次数，和时间间隔，这样可以模拟对接口进行压力测试。如果选择"异步"测试，可以选择执行次数，这样可以模拟对接口进行并发测试。所有测试结果会打印在调试窗口中。
+
 ```
 
 ![](https://img-blog.csdnimg.cn/20200731154418627.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdWthaXR5ZG4=,size_16,color_FFFFFF,t_70)
@@ -355,6 +371,7 @@ Lkadoc支持对单个接口进入调试，我们只需要准备好请求参数�
 
 ```
 我们在调试需要token授权的接口时,需要在每个需要授权接口的请求头带上一个类似token的参数，调试时非常不方便，所以Lkadoc提供了一个可以给全局接口锁定一个请求头参数，这样就不需要在每一个需要授权的接口中去设置这个授权参数了。
+
 ```
 
 ![](https://img-blog.csdnimg.cn/20200731154447314.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdWthaXR5ZG4=,size_16,color_FFFFFF,t_70)
@@ -368,6 +385,7 @@ Lkadoc支持对单个接口进入调试，我们只需要准备好请求参数�
 1.isArray要设置成true，代表是数组
 2.参数类型dataType一定要是一个数组类型，例如：String[].class
 3.接口调试时要勾选“阻止深度序列化”
+
 ```
 
 ##### 4.7.2 测试代码
@@ -395,6 +413,7 @@ public Map<String,Object> arrTest(String[] ids) {
     map.put("data","ids="+arr);
     return map;
 }
+
 ```
 
 效果图:
@@ -411,6 +430,7 @@ public Map<String,Object> arrTest(String[] ids) {
 2.单个文件上传dataType类型要设置成"MultipartFile.class",批量上传dataType参数类型要设置成“MultipartFile[].class”
 3.前端需要把from表单的enctype属性设置成'multipart/form-data'
 4.请求类型必须是"post"
+
 ```
 
 ##### 4.8.2 测试代码
@@ -439,6 +459,7 @@ public Map<String,Object> fileUpload(MultipartFile[] files) {
     map.put("data","文件名："+fileNames);
     return map;
 }
+
 ```
 
 效果图:
@@ -452,6 +473,7 @@ public Map<String,Object> fileUpload(MultipartFile[] files) {
 ```
 文件下载注意事项
 LKAMethod注解里面的download属性要设置成true,代表是下载的接口
+
 ```
 
 ##### 4.9.2 测试代码
@@ -477,6 +499,7 @@ public void fileDownload(HttpServletResponse response) throws Exception {
     toClient.flush();
     toClient.close();
 }
+
 ```
 
 ![](https://img-blog.csdnimg.cn/20200731154542920.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdWthaXR5ZG4=,size_16,color_FFFFFF,t_70)
@@ -487,6 +510,7 @@ public void fileDownload(HttpServletResponse response) throws Exception {
 
 ```properties
 LKAModel注解:用来标识需要扫描的实体类
+
 ```
 
 #### 5.2 LKAProperty注解
@@ -508,6 +532,7 @@ msgs:数据校验消息
 range:数值范围限制判断
 size:集合、数组大小限制判断
 length:字符串长度限制判断
+
 ```
 
 #### 5.3 基本对象入参
@@ -516,6 +541,7 @@ length:字符串长度限制判断
 
 ```
 当我们入参是一个对象时，如果该对象上有@LKAModel注解，并且它的属性上有@LKAProperty注解，那么Lkadoc会去自动扫描这个对象信息，我们无需在接口上加额外的注解去描述对象参数。这样如果我们用对象去操作入参的话，可以大大减少接口上的注解数量，显得更加简洁。
+
 ```
 
 ##### 5.3.2 测试代码
@@ -549,6 +575,7 @@ public class Role {
 public Role getRole(Role role) {
     return role;
 }
+
 ```
 
 效果图：
@@ -565,6 +592,7 @@ public Role getRole(Role role) {
 3.如果contentType="application/json"，那么接口的请求类型不能是get
 4.如果对象参数是实体类型需要用@LKAProperty注解的type属性来指定类型
 5.如果对象参数是数组或List或Set集合需要把@LKAProperty注解的isArray设置成true
+
 ```
 
 ##### 5.4.2 测试代码
@@ -603,6 +631,7 @@ public class User {
 public User addUser(@RequestBody User user) {
     return user;
 }    
+
 ```
 
 效果图1：
@@ -617,6 +646,7 @@ public User addUser(@RequestBody User user) {
 
 ```
     我们感受到了用对象接收请求参数更具便利性，那怎么去过滤对象属性呢？例如：有一个查询接口，只用到user对象的name、age和addresses属性对象的info参数，但对于前端的友好度，我们不需要展示所有对象属性到UI界面，这时我们就可以用分组来实现.
+
 ```
 
 ##### 5.5.1 注意事项
@@ -627,6 +657,7 @@ public User addUser(@RequestBody User user) {
 3.组名没有任何限制，只要不是空白的字符串即可
 4.如果用到嵌套对象里面属性，嵌套对象名称和对应属性上都要设置相同的组名
 5.入参对象需要用@LKAGroup注解来指定对象是哪组参数用来作为入参
+
 ```
 
 ##### 5.5.2 测试代码
@@ -665,6 +696,7 @@ public class Address {
 public User addUser(@RequestBody @LKAGroup("addUser") User user) {
     return user;
 }
+
 ```
 
 效果图：
@@ -706,6 +738,7 @@ grandpaName:爷参名称（选填）
 grandpaValue:爷参作用（选填）
 grandpaDescription:爷参描述（选填）
 grandpaIsArray:爷参是否是数组或集合（选填）
+
 ```
 
 ##### 5.6.2 简单Map集合出参
@@ -729,6 +762,7 @@ public Map<String,Object> getUsers(
     map.put("data","姓名："+name+",年龄："+age+",角色类型："+(roleType==1?"经理":"员工")+",token："+token);
     return map;
 }
+
 ```
 
 效果图：
@@ -746,6 +780,7 @@ public Map<String,Object> getUsers(
 public User addUser(@RequestBody @LKAGroup("addUser") User user) {
     return user;
 }
+
 ```
 
 效果图1：
@@ -762,6 +797,7 @@ public User addUser(@RequestBody @LKAGroup("addUser") User user) {
 
 ```
 当一个接口出参是一个带嵌套结构的Map集合，我们该怎么描述它呢？如果涉及到对象，我们可以用@LKARespose注解的type属性去指定对象类型，如果涉及到多层嵌套结构，我们可以通过@LKARespose注解的parentXXX和grandpaXXX属性来指定。
+
 ```
 
 ##### 5.7.2 测试代码
@@ -792,6 +828,7 @@ public Map<String,Object> getMap() {
     map.put("result",data);
     return map;
 }
+
 ```
 
 表格展示效果图：
@@ -811,6 +848,7 @@ JSON格式化展示效果图：
  @LKARespose(name="b",value="二级",parentName="a"),
  @LKARespose(name="c",value="三级",parentName="b"),
  @LKARespose(name="d",value="四级",parentName="c")
+
 ```
 
 ##### 5.7.4 测试代码
@@ -836,6 +874,7 @@ public Map<String,Object> getMoreMap(){
     mapd.put("d",1);
     return mapa;
 }
+
 ```
 
 效果图：
@@ -869,6 +908,7 @@ public class ApiResult {
     }
     ..........get/set方法...........
 }
+
 ```
 
 ##### 5.8.2 准备一个测试接口
@@ -895,6 +935,7 @@ public ApiResult getObj() {
     users.add(user2);
     return ApiResult.ok().put("total",10).put("users",users);
 }
+
 ```
 
 效果图：
@@ -905,6 +946,7 @@ public ApiResult getObj() {
 
 ```
 @LKARespose注解的group属性也可以实现响应参数分组，使用原理和请求参数分组是一样的。
+
 ```
 
 ##### 5.9.1 准备一个对象属性过滤器
@@ -948,6 +990,7 @@ public class FieldsFilter {
         return maps;
     }
 }
+
 ```
 
 ##### 5.9.2 给对象属性分组
@@ -981,6 +1024,7 @@ public class Role {
     private String name;
     ..........get/set方法...........
 }
+
 ```
 
 ##### 5.9.3 测试代码： 
@@ -1007,6 +1051,7 @@ public ApiResult getObj() {
     user1.setRole(role);
     return ApiResult.ok().put("total",10).put("users",        FieldsFilter.filter(users,Arrays.asList("name","age","likes","role")));
 }
+
 ```
 
 效果图：
@@ -1020,6 +1065,7 @@ public ApiResult getObj() {
 ```
 如果我们要对某个特定的接口或属性增加一些说明信息，例如某个接口新增加了一个属性或修改了某个属性等等，这时我们可以在UI界面给接口或属性增加相应的标签即可。
 如果想删除该标签，就在接口或属性名称上再次双击就可以删除了。
+
 ```
 
 ![](https://img-blog.csdnimg.cn/20200731155046949.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdWthaXR5ZG4=,size_16,color_FFFFFF,t_70)
@@ -1033,6 +1079,7 @@ public ApiResult getObj() {
 导出前需要检查系统是否存在simsun.ttc字体，如果系统没有这个字体的话，导出PDF文档中文不能正确显示。 windows系统字体路径：C:/Windows/fonts/simsun.ttc
 linux系统字体路径：/usr/share/fonts/win/simsun.ttc
 mac系统字体路径：/System/Library/Fonts/simsun.ttc
+
 ```
 
 ![](https://img-blog.csdnimg.cn/20200731155120327.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdWthaXR5ZG4=,size_16,color_FFFFFF,t_70)
@@ -1047,6 +1094,7 @@ PDF效果截图：
 当我们在使用微服务或多个子项目时，我们可以把多个项目的接口文档信息聚合到一个UI界面，只需要在@LKADocument注解配置serverNames属性即可：
 serverNames="租房系统-192.168.0.77:9010,缴费系统-192.168.0.77:8888"
 多个项目之间用英文“,”号隔开，“-”符号左右是项目名称，右边是项目地址，也可以是域名，这样我们就可以在UI界面自由的在当前项目和配置好的其它项目切换接口信息了。
+
 ```
 
 切换项目后的效果图：
@@ -1057,6 +1105,7 @@ serverNames="租房系统-192.168.0.77:9010,缴费系统-192.168.0.77:8888"
 
 ```
 如果你对某一种UI界面颜色腻了，Lkadoc还支持切换不同风格的颜色，满足你不安分的心。
+
 ```
 
 切换风格效果图：
@@ -1067,6 +1116,7 @@ serverNames="租房系统-192.168.0.77:9010,缴费系统-192.168.0.77:8888"
 
 ```
 数据校验是Lkadoc 1.2.0版新增加的模块，基于过滤器和拦截器实现的功能，支持query、path、header入参校验，能满足大部分业务场景。数据校验与接口文档是完全独立的两个模块，当把接口文档功能模块关闭并不会影响数据校验模块。
+
 ```
 
 #### 7.1 准备工作
@@ -1074,6 +1124,7 @@ serverNames="租房系统-192.168.0.77:9010,缴费系统-192.168.0.77:8888"
 ```properties
 #需要在@LKADocument注解或application配置中把validation属性设置成true，代表开启数据校验功能，默认是关闭状态。
 例:@LKADocument(...,validation=true)
+
 ```
 
 #### 7.2 规则说明
@@ -1108,6 +1159,7 @@ size:集合、数组大小限制判断
 
 length:字符串长度限制判断
 #用法和range一样
+
 ```
 
 #### 7.3 ValidDataException异常对象
@@ -1116,6 +1168,7 @@ length:字符串长度限制判断
 
 ```
 如果接口有参数数据校验不通过，Lkadoc会抛出一个ValidDataException异常，可通过该异常对象的getMessage()方法获取所有没有校验通过的错误提示信息字符串，多个会用“;”隔开。除此之外ValidDataException异常对象还可以通过getErrors()方法获取所有没有校验通过的错误信息的Map集合，key对应的是参数名称，value对应的是校验错误信息。大家可以很方便的定制化返回错误结果信息。
+
 ```
 
 ##### 7.3.2 在全局异常中处理校验信息
@@ -1159,6 +1212,7 @@ public class ExceptionController {
         return map;
     }
 }
+
 ```
 
 #### 7.4 案例演示
@@ -1170,6 +1224,7 @@ public class ExceptionController {
 2.字符串可以为空串
 3.不支持path参数校验，因为如果path参数为null的话，会改变url地址
 4.如果没有设置msgs校验错误提示信息会有默认提示-xxx值不能为NULL。(xxx代表参数名称)
+
 ```
 
 测试代码
@@ -1201,6 +1256,7 @@ public class ValidsController {
         return map;
     }
 }
+
 ```
 
 效果图
@@ -1217,6 +1273,7 @@ public class ValidsController {
 1.支持对字符串参数判断不能为null也不能为空串,否则抛出ValidDataException
 2.不支持path参数校验，因为如果path参数为null的话，会改变url地址
 3.如果没有设置msgs校验错误提示信息会有默认提示-xxx值不能为空。(xxx代表参数名称)
+
 ```
 
 测试代码
@@ -1241,6 +1298,7 @@ public Map<String,Object> testNotBlank(String name,String email,Integer age) {
     map.put("msg","登录成功");
     return map;
 }
+
 ```
 
 效果图
@@ -1256,6 +1314,7 @@ public Map<String,Object> testNotBlank(String name,String email,Integer age) {
 ```
 1.支持对集合、数组、字符串、对象、包装类请求参数判断只能为null。否则抛出ValidDataException
 2.如果没有设置msgs校验错误提示信息会有默认提示-xxx值只能为NULL。(xxx代表参数名称)
+
 ```
 
 测试代码
@@ -1271,6 +1330,7 @@ public Map<String,Object> testNull(Integer age) {
     map.put("msg","操作成功");
     return map;
 }
+
 ```
 
 效果图
@@ -1286,6 +1346,7 @@ public Map<String,Object> testNull(Integer age) {
 ```
 1.支持对集合、数组判断不能为null，元素个数不能为0；字符串不能为null也不能为空;对象、包装类不能为null。否则抛出ValidDataException
 2.如果没有设置msgs校验错误提示信息会有默认提示-xxx值不能为NULL/空。(xxx代表参数名称)
+
 ```
 
 测试代码
@@ -1317,6 +1378,7 @@ public Map<String,Object> testNotEmpty(@RequestBody User user) {
     map.put("msg","操作成功");
     return map;
 }
+
 ```
 
 效果图
@@ -1330,6 +1392,7 @@ public Map<String,Object> testNotEmpty(@RequestBody User user) {
 2.EMAIL:参数必须是email格式，可以为null。否则抛出ValidDataException
 3.PAST:日期必须在当前日期的过去，可以为null。否则抛出ValidDataException
 4.FUTURE:日期必须在当前日期的未来，可以为null。否则抛出ValidDataException
+
 ```
 
 测试代码
@@ -1357,6 +1420,7 @@ public Map<String,Object> testUEPF(@RequestBody Emp emp) {
     map.put("msg","操作成功");
     return map;
 }
+
 ```
 
 效果图
@@ -1367,6 +1431,7 @@ public Map<String,Object> testUEPF(@RequestBody Emp emp) {
 
 ```
 Lkadoc还支持正则表达式的匹配，参数值可以为null。正则没有匹配上则抛出ValidDataException
+
 ```
 
 测试代码
@@ -1396,13 +1461,14 @@ public Map<String,Object> testUEPF(@RequestBody Emp emp) {
     map.put("msg","操作成功");
     return map;
 }
+
 ```
 
 效果图
 
 ![](https://img-blog.csdnimg.cn/2020073115562816.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdWthaXR5ZG4=,size_16,color_FFFFFF,t_70)
 
-#####　7.4.7 range、size、length
+##### 7.4.7 range、size、length
 
 ```
 range、size、length是单独的属性，可以和valids规则同时存在,参数可以为null
@@ -1417,6 +1483,7 @@ size:集合、数组大小限制判断
 
 length:字符串长度限制判断
 #用法和range一样
+
 ```
 
 测试代码
@@ -1441,6 +1508,7 @@ public Map<String,Object> testRSL(@RequestBody Emp emp) {
     map.put("msg","登录成功");
     return map;
 }
+
 ```
 
 效果图
@@ -1455,6 +1523,7 @@ public Map<String,Object> testRSL(@RequestBody Emp emp) {
 
 ```
 数据校验也支持参数分组，如要入参是一个对象，且对象设置了分组，那么只有组内属性才会进行数据校验。具体可参考高级应用里面的对象参数分组。
+
 ```
 
 ```java
@@ -1477,6 +1546,7 @@ public Map<String,Object> testRSL(@RequestBody @LKAGroup("testRSL") Emp emp) {
     map.put("msg","登录成功");
     return map;
 }
+
 ```
 
 效果图
