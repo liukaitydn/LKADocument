@@ -53,7 +53,6 @@ public class ExportMarkDownController {
 	 * @param serverName 服务器名称
 	 * @param response 响应对象
 	 * @return object 对象
-	 * @throws DocumentException 异常
 	 * @throws Exception 异常
 	 */
 	@PostMapping("exportMarkDown")
@@ -216,9 +215,8 @@ public class ExportMarkDownController {
 	 * 创建请求信息
 	 * @param rms 参数对象
 	 * @param loc 前缀
-	 * @param cell pdfcell
-	 * @param requestTable 表格
 	 * @param type 类型
+	 * @param pw 输出流
 	 */
 	public void buildRequests(List<ParamModel> rms,String loc,String type,PrintWriter pw) {
 		if(rms != null && rms.size() > 0){
@@ -268,10 +266,9 @@ public class ExportMarkDownController {
 	 * 创建参数信息
 	 * @param rms 对象
 	 * @param loc loc
-	 * @param cell cell
-	 * @param responseTable responseTable
-	 * @param type type
+	 * @param type 类型
 	 * @param valueRecord valueRecord
+	 * @param pw 输出流
 	 */
 	public void buildParams(List<ResposeModel> rms,String loc,String type,List<String> valueRecord,PrintWriter pw) {
 		try {
@@ -369,9 +366,8 @@ public class ExportMarkDownController {
 	 * 创建对象属性信息
 	 * @param rms rms
 	 * @param loc loc
-	 * @param cell cell
-	 * @param responseTable responseTable
 	 * @param type type
+	 * @param pw pw
 	 */
 	public void buildPropertys(List<PropertyModel> rms,String loc,String type,PrintWriter pw) {
 		if(rms != null && rms.size() > 0){
