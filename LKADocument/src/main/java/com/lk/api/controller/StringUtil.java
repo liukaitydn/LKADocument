@@ -21,18 +21,17 @@ public class StringUtil {
      * @param url url
      * @return string
      */
-    public static String getRootPath(URL url) {
-    	if(url == null) {
+    public static String getRootPath(String path) {
+    	if(path == null) {
     		return null;
     	}
-        String fileUrl = url.getFile();
-        int pos = fileUrl.indexOf('!');
+        int pos = path.indexOf('!');
 
         if (-1 == pos) {
-            return fileUrl;
+            return path;
         }
 
-        return fileUrl.substring(5, pos);
+        return path.substring(5, pos);
     }
 
     /**

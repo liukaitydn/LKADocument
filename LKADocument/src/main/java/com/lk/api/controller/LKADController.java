@@ -80,7 +80,7 @@ import com.lk.api.domain.ResposeModel;
 import com.lk.api.domain.TypeModel;
 
 /**
- * 文档信息处理类
+ * 	文档信息处理类
  * @author liukai
  *
  */
@@ -113,7 +113,7 @@ public class LKADController {
 	private int reqNum = 0,respNum = 0,proNum = 0;
 	
 	/**
-	 * 调试其它项目的接口
+	 * 	调试其它项目的接口
 	 * @param path 路径
 	 * @param contentType 内容
 	 * @param headerJson 请求头
@@ -185,7 +185,7 @@ public class LKADController {
 	}
 	
 	/**
-	 * 加载接口文档所有信息
+	 * 	加载接口文档所有信息
 	 * @param serverName 服务器名称
 	 * @return Map 集合
 	 * @throws Exception 异常
@@ -270,7 +270,7 @@ public class LKADController {
 	}
 	
 	/**
-	 * 字段信息排序
+	 * 	字段信息排序
 	 * @param rms  排序前
 	 * @param rms2  排序后
 	 * @param n 记录递归层数，防止死循环
@@ -295,7 +295,7 @@ public class LKADController {
 	}
 
 	/**
-	 * 根据包名获取文件对象
+	 * 	根据包名获取文件对象
 	 * 
 	 * @param basePackages 包名
 	 * @return list 集合
@@ -311,15 +311,12 @@ public class LKADController {
 			File packageFile = new File(path);
 			packageFiles.add(packageFile);
 		}
-		
-		
-		
 		return packageFiles;
 	}
 
 	
 	/**
-	 * 扫描所有子包
+	 *	 扫描所有子包
 	 * @param baseFile 基础包名
 	 * @return list 集合
 	 */
@@ -342,14 +339,13 @@ public class LKADController {
 	
 	
 	/**
-	 * 扫描所有满足条件的接口，获取它们的入参出参相关信息
+	 * 	扫描所有满足条件的接口，获取它们的入参出参相关信息
 	 * @param basePackages 要扫描的包
 	 * @return list 集合
 	 * @throws Exception 异常
 	 */
 	public List<TypeModel> scanType(String[] basePackages) throws Exception {
 		List<TypeModel> typeModels = new ArrayList<TypeModel>();
-		//List<File> packageFiles = getFile(basePackages);
 		// 判断是否是目录
 		if (basePackages != null) {
 			// 获取所有方法的请求信息
@@ -363,8 +359,7 @@ public class LKADController {
 			for (String sconPackage : sconPackages) {
 				Class<?> cls = Class.forName(sconPackage);
 				// 判断是否有LKAType或者Api注解
-				if (!cls.isAnnotationPresent(LKAType.class) && !cls.isAnnotationPresent(Api.class))
-					continue;
+				if (!cls.isAnnotationPresent(LKAType.class) && !cls.isAnnotationPresent(Api.class))continue;
 				TypeModel typeModel = new TypeModel();
 				if(cls.isAnnotationPresent(LKAType.class)) {
 					LKAType lkaType = cls.getAnnotation(LKAType.class);
@@ -2448,7 +2443,7 @@ public class LKADController {
 	}
 	
 	/**
-	 * 获取所有方法的请求方式，请求路径等相关信息
+	 *	 获取所有方法的请求方式，请求路径等相关信息
 	 * @return list 集合
 	 */
 	public List<Map<String,Object>> getMethodURL() {
@@ -2497,7 +2492,7 @@ public class LKADController {
 	
 	
 	/**
-	 * 解析请求参数的LKAModel对象注解
+	 * 	解析请求参数的LKAModel对象注解
 	 * @param typeCls 类型
 	 * @param group 组名
 	 * @return ParamModel 对象
@@ -2686,7 +2681,7 @@ public class LKADController {
 	}
 
 	/**
-	 * 解析对象属性的PropertyModel对象注解
+	 *	 解析对象属性的PropertyModel对象注解
 	 * @param typeCls 类型
 	 * @param group 组名
 	 * @return PropertyModel 对象
@@ -2876,7 +2871,7 @@ public class LKADController {
 	}
 
 	/**
-	 *  解析响应参数的ResposeModel对象注解
+	 * 	解析响应参数的ResposeModel对象注解
 	 * 
 	 * @param typeCls 类型
 	 * @param group 组名
@@ -3066,7 +3061,7 @@ public class LKADController {
 	}
 	
 	/**
-	 * 添加字段备注信息
+	 * 	添加字段备注信息
 	 * @param value 字段值
 	 * @param type 字段类型(1.请求参数 2.响应参数)
 	 * @param url 请求地址
@@ -3115,7 +3110,7 @@ public class LKADController {
 	}
 	
 	/**
-	 * 删除字段备注信息 
+	 * 	删除字段备注信息 
 	 * @param value 字段值
 	 * @param type type 字段类型(1.请求参数 2.响应参数)
 	 * @param url 请求地址
@@ -3171,7 +3166,7 @@ public class LKADController {
 	}
 	
 	/**
-	 * 获取字段备注信息 
+	 * 	获取字段备注信息 
 	 * @param serverName 服务器名称
 	 * @return map 集合
 	 */
@@ -3227,7 +3222,4 @@ public class LKADController {
         fieldList.toArray(fields);
         return fields;
     }
-
-  
-    
 }

@@ -52,7 +52,7 @@ public class PdfFontUtils {
     }
             
     /**
-     * 文档超级  排版
+     * 	文档超级  排版
      * @param type 1-标题 2-标题一  3-标题二 4-标题三  5-正文  6-左对齐
      * @param text 文本
      * @return Paragraph 对象

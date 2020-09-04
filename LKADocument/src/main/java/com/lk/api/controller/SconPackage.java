@@ -12,7 +12,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- * 扫描包工具类
+ * 	扫描包工具类
  * @author liukai
  *
  */
@@ -20,8 +20,17 @@ public class SconPackage implements SconPackageInterface{
     private String basePackage;
     private ClassLoader cl;
 
+    
+    public static void main(String[] args) throws IOException {
+    	SconPackage sconPackage = new SconPackage("com.lk.api");
+		List<String> list = sconPackage.getFullyQualifiedClassNameList();
+		for (String s : list) {
+			System.out.println(s);
+		}
+	}
+    
     /**
-     * 初始化1
+     * 	初始化1
      * @param basePackage 基础包名
      */
     public SconPackage(String basePackage) {
@@ -30,7 +39,7 @@ public class SconPackage implements SconPackageInterface{
     }
     
     /**
-     * 初始化2
+     *	 初始化2
      * @param basePackage 基础包名
      * @param cl 类装载器
      */
@@ -40,7 +49,7 @@ public class SconPackage implements SconPackageInterface{
     }
     
     /**
-     * 获取指定包下的所有字节码文件的全类名
+     * 	获取指定包下的所有字节码文件的全类名
      * @return list 字节码文件名集合
      */
     public List<String> getFullyQualifiedClassNameList() throws IOException {
@@ -49,7 +58,7 @@ public class SconPackage implements SconPackageInterface{
     }
 
     /**
-     *doScan函数
+     *	doScan函数
      * @param basePackage 基础包名
      * @param nameList 名称列表
      * @return list 字节码文件名集合
@@ -58,38 +67,37 @@ public class SconPackage implements SconPackageInterface{
     private List<String> doScan(String basePackage, List<String> nameList) throws IOException {
         String splashPath = StringUtil.dotToSplash(basePackage);
         URL url = cl.getResource(splashPath);   //file:/D:/WorkSpace/java/ScanTest/target/classes/com/scan
-        String filePath = StringUtil.getRootPath(url);
+        String path = java.net.URLDecoder.decode(url.getFile(),"utf-8"); 
+        String filePath = StringUtil.getRootPath(path);
         List<String> names = null; // contains the name of the class file. e.g., Apple.class will be stored as "Apple"
         if (isJarFile(filePath)) {// 先判断是否是jar包，如果是jar包，通过JarInputStream产生的JarEntity去递归查询所有类
         	names = readFromJarFile(filePath, splashPath);
-            for (String name : names) {
-                if (isClassFile(name)) {
-                	nameList.add(name.substring(0,name.lastIndexOf(".class")));
-                }else {
-                    doScan(name, nameList);
-                }
-            }
+        	if(names != null) {
+	            for (String name : names) {
+	                if (isClassFile(name)) {
+	                	nameList.add(name.substring(0,name.lastIndexOf(".class")));
+	                }else {
+	                    doScan(name, nameList);
+	                }
+	            }
+        	}
         } else {
             names = readFromDirectory(filePath);
-            for (String name : names) {
-                if (isClassFile(name)) {
-                    nameList.add(toFullyQualifiedName(name, basePackage));
-                } else {
-                    doScan(basePackage + "." + name, nameList);
-                }
+            if(names != null) {
+	            for (String name : names) {
+	                if (isClassFile(name)) {
+	                    nameList.add(toFullyQualifiedName(name, basePackage));
+	                } else {
+	                    doScan(basePackage + "." + name, nameList);
+	                }
+	            }
             }
         }
-        
-       /* if (logger.isDebugEnabled()) {
-            for (String n : nameList) {
-                logger.debug("找到{}", n);
-            }
-        }*/
         return nameList;
     }
     
     /**
-     * 文件路径格式转换
+     *	 文件路径格式转换
      * @param shortName shortName
      * @param basePackage basePackage
      * @return string string
@@ -102,7 +110,7 @@ public class SconPackage implements SconPackageInterface{
     }
     
     /**
-     * 读取jar里面的文件
+     * 	读取jar里面的文件
      * @param jarPath jar包名
      * @param splashedPackageName jar包路径
      * @return list 集合
@@ -124,7 +132,7 @@ public class SconPackage implements SconPackageInterface{
     }
     
     /**
-     * 读取指定目录里的文件
+     * 	读取指定目录里的文件
      * @param path 路径
      * @return list 集合
      */
@@ -141,7 +149,7 @@ public class SconPackage implements SconPackageInterface{
     }
     
     /**
-     * 判断是否是字节码文件
+     *	 判断是否是字节码文件
      * @param name 文件名
      * @return boolean
      */
@@ -151,7 +159,7 @@ public class SconPackage implements SconPackageInterface{
     }
     
     /**
-     * 判断是否是jar包文件
+     * 	判断是否是jar包文件
      * @param name
      * @return boolean
      */
