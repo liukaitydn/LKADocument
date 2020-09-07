@@ -249,10 +249,10 @@ $(function(){
 	
 	reloadDoc('');
 	
-	//导出PDF文档
+	//导出PDF，MD文档
 	$("#exportPdf").click(function(){
 		if($("#changeProject").val() != 'now' && $("#changeProject").val()!=null){
-			alert("因远程调用文档数据结构对象发生变化，目前只支持生成本地项目PDF接口文档，暂不支持远程服务器生成PDF文档！");
+			alert("目前只支持生成本地项目PDF、MD接口文档，暂不支持远程服务器生成文档！");
 		}else{
 			var exType = $("#exportDoc").val();
 			debugger;
@@ -1729,8 +1729,8 @@ function buildParams(doc,type,loc,flag,contentType){
 				str+="<tr><td colspan='7' class='close-resposeData' align='center'><a style='font-size:12;color:blue;cursor:pointer'>打开调试窗口</a>" +
 						"<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;status：</span><span class='request-status'></span>" +
 						"<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time：</span><span class='request-time'></span>" +
-						"<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number of successful：</span><span class='request-success'></span>" +
-						"<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number of failures：</span><span class='request-fail'></span>" +
+						"<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;successful：</span><span class='request-success'></span>" +
+						"<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;failures：</span><span class='request-fail'></span>" +
 						"</td></tr>"
 				str+="<tr><td colspan='7' class='resposeData' hidden='hidden'>暂无调试信息</td></tr>"
 			}
@@ -1750,8 +1750,8 @@ function buildParams(doc,type,loc,flag,contentType){
 				str+="<tr><td colspan='7' class='close-resposeData' align='center'><a style='font-size:12;color:blue;cursor:pointer'>打开调试窗口</a>" +
 						"<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;status：</span><span class='request-status'></span>" +
 						"<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time：</span><span class='request-time'></span>" +
-						"<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number of successful：</span><span class='request-success'></span>" +
-						"<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;number of failures：</span><span class='request-fail'></span>" +
+						"<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;successful：</span><span class='request-success'></span>" +
+						"<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;failures：</span><span class='request-fail'></span>" +
 						"</td></tr>"
 				str+="<tr><td colspan='7' class='resposeData' hidden='hidden'>暂无调试信息</td></tr>"
 		}else{
