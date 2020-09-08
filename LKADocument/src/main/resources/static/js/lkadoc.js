@@ -1681,7 +1681,7 @@ function buildParams(doc,type,loc,flag,contentType){
 				if(type=="req" || type=="param"){
 					str+=buildParams(arr,"param",val,2);
 				}else{
-					str+="<tr class='parentParam'><td class='addinfo'>"+val+"</td><td>"+name+"</td><td>"+description+"</td><td></td></tr>"
+					str+="<tr class='parentParam'><td class='addinfo' title='双击可添加参数标签信息'>"+val+"</td><td>"+name+"</td><td>"+description+"</td><td></td></tr>"
 					str+=buildParams(arr,"resp",val,2);
 				}
 			}else{
@@ -1694,10 +1694,10 @@ function buildParams(doc,type,loc,flag,contentType){
 						str+=buildParams(model.propertyModels,"resps",val,3);
 					}
 					if(type=="params"){
-						str+="<tr class='parentParam'><td class='paramValue addinfo'>"+val+"</td><td class='paramInfo'>"+name+"</td><td>"+description+"</td><td class='dataType paramType testData'></td><td></td><td colspan='2'></td></tr>"								
+						str+="<tr class='parentParam'><td class='paramValue addinfo' title='双击可添加参数标签信息'>"+val+"</td><td class='paramInfo'>"+name+"</td><td>"+description+"</td><td class='dataType paramType testData'></td><td></td><td colspan='2'></td></tr>"								
 						str+=buildParams(model.propertyModels,"params",val,2);
 					}else if(type=="resps"){
-						str+="<tr class='parentParam'><td class='addinfo'>"+val+"</td><td>"+name+"</td><td>"+description+"</td><td></td></tr>"
+						str+="<tr class='parentParam'><td class='addinfo' title='双击可添加参数标签信息'>"+val+"</td><td>"+name+"</td><td>"+description+"</td><td></td></tr>"
 						str+=buildParams(model.propertyModels,"resps",val,2);
 					}
 				}else{

@@ -489,7 +489,7 @@ table tbody tr:nth-child(even){
 }
 .modal-content{
     background-color: #f8f8f8;
-    margin: 15% auto;
+    margin: 25% auto;
     width: 30%;
     box-shadow: 0 5px 8px 0 rgba(0, 0, 0,0.4), 0 7px 20px 0 rgba(0, 0, 0,0.4);
     animation-name: modalopen;
