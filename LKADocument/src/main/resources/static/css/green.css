@@ -98,13 +98,14 @@ a:actived{
 }
 #right-box-id >div{
 	position:relative;
-	padding-top:190px;
+	padding-top:200px;
 	width:100%;
 }
 #right-box-id >div>div:nth-of-type(1){
 	position:fixed;
 	left:365px;
-	top:180px;
+	/* top:180px; */
+	top:220px;
 	background:#fff;
 	width:100%;
 	z-index:9999;
@@ -165,8 +166,10 @@ h5{
     -webkit-line-clamp:1;   /*显示行数*/
     font-weight:400;
 }
+
+
 .welcome{
-	margin-left:20px;
+	margin-left:20px; 
 }
 #menu #open .navBox {
      height: 99%; 
@@ -271,7 +274,7 @@ h5{
 
 
 .method-table{
-	margin-top:-20;
+	/* margin-top:-20px; */
 }
 table.hovertable {
 	font-family: verdana,arial,sans-serif;
@@ -612,3 +615,14 @@ input[disabled]{
 #menu #open .navBox ul li:hover{
     background-color: #e3ffd3;
 }
+
+
+
+
+
+
+
+
+
+
+

@@ -5,6 +5,87 @@ function changeStyle(sel){
 	localStorage.setItem('styleName',sel.value);
 }
 
+//点击左边菜单栏展示相对应内容
+function leftMenu(){
+	console.log('我执行了')
+	setTimeout(()=>{
+		let uls = $('.secondary')
+		
+		for(let i = 0; i < uls.length;i++){
+			
+			
+			uls[i].onclick=function(){
+				
+				indexFlag =this.getAttribute("data")
+				
+
+					let flag = true
+					let tabBox = $('#tabBox>li')
+					for(let m = 0; m < tabBox.length;m++){
+						tabBox[m].className=''
+						if(indexFlag == tabBox[m].getAttribute("data")){
+							flag = false
+							tabBox[m].className='activeTab'
+						}
+						
+					}
+					if(flag){
+						const urlname = this.getAttribute("urlname")
+						let lis = `<li data="${indexFlag}" class='activeTab'>${urlname}</li>`
+						$('#tabBox').append(lis);
+						topMenu()
+					}
+
+				
+				
+				
+				for(let j = 0; j < uls.length;j++){
+					uls[j].className = 'secondary'
+					//$(uls[j]).find("img").attr("src","img/f.gif")
+				}
+				this.className = 'secondary active'
+				//$(this).find("img").attr("src","img/fw.gif")
+				let ids = '#method_'+indexFlag
+				let divs = $(ids)[0].getElementsByTagName('div')[0]
+				  
+				divs.style.left = oldLeft  + 'px'
+				
+			}
+		}
+	},0)
+}
+
+//点击顶部菜单栏展示内容
+function topMenu(){
+	let addTabBox = $('#tabBox>li')
+	for(let i = 0; i < addTabBox.length;i++){
+		addTabBox[i].onclick=function(){
+			indexFlag = this.getAttribute("data")
+			if(indexFlag == 0) return
+			let uls = $('.secondary')
+			let ids = '#method_'+indexFlag
+			for(let j = 0; j < uls.length;j++){
+				if(indexFlag==uls[j].getAttribute("data")){
+					uls[j].className = 'secondary active'
+						
+					
+					let divs = $(ids)[0].getElementsByTagName('div')[0]
+					  
+					divs.style.left = oldLeft  + 'px'
+				}else{
+					uls[j].className = 'secondary'
+				}
+			}
+			for(let n = 0; n < addTabBox.length;n++){
+				addTabBox[n].className = ''
+			}
+			this.className = 'activeTab'
+			$(".method-table").hide();
+			$(ids).show()
+		}
+	}
+}
+
 //复制属性
 function copyVal(btn){
 	var a = btn.parentNode.firstChild;
@@ -71,12 +152,13 @@ function bindResize(el) {
 		  
 		  oldFeft_s= oldFeft_s< (minWidth+25) ? (minWidth+25) : (oldFeft_s > (maxWidth+25) ? (maxWidth+25) : oldFeft_s)
 		  if(indexFlag != null){
-
+			
 			let ids = '#method_'+indexFlag
 			let divs = $(ids)[0].getElementsByTagName('div')[0]
 			divs.style.left = oldFeft_s  + 'px'
+			$('#tabBox')[0].style.left = oldFeft_s  + 'px'
 		  }
-	    //宇宙超级无敌运算中... 
+	    
 		  oldWidth_s = oldWidth+ e.clientX - x
 		 
 		  oldWidth_s=oldWidth_s<minWidth?minWidth:(oldWidth_s>maxWidth?maxWidth:oldWidth_s)
@@ -174,26 +256,7 @@ $(function(){
 									$(".navBox").append(buildMenu(doc[i],tVersion));
 								}
 								
-								setTimeout(()=>{
-									let uls = $('.secondary')
-									for(let i = 0; i < uls.length;i++){
-										uls[i].onclick=function(){
-											
-											indexFlag = this.getAttribute("data")
-											for(let j = 0; j < uls.length;j++){
-												uls[j].className = 'secondary'
-												//$(uls[j]).find("img").attr("src","img/f.gif")
-											}
-											this.className = 'secondary active'
-											//$(this).find("img").attr("src","img/fw.gif")
-											let ids = '#method_'+indexFlag
-											let divs = $(ids)[0].getElementsByTagName('div')[0]
-											  
-											divs.style.left = oldLeft  + 'px'
-											
-										}
-									}
-								},0)
+								leftMenu()
 								
 							}
 		    			}
@@ -593,7 +656,10 @@ $(function(){
 		
 		let uls = $('.secondary')
 		for(let i = 0; i < uls.length;i++){
-			uls[i].className = 'secondary'
+			if(i != indexFlag - 1){
+				uls[i].className = 'secondary'
+			}
+			
 		}
 	})
 	
@@ -1635,7 +1701,7 @@ function buildMenu(doc,tVersion) {
     		var updateTime = methods[i].updateTime;
     		var mVersion = methods[i].version;
     		var imgName = mVersion == tVersion?"f4.gif":"f.gif";
-    		str += "<li data='"+met_index+"' class='secondary' title='双击可添加接口标签信息'>" +
+    		str += "<li data='"+met_index+"' urlname='"+methods[i].name+"' class='secondary' title='双击可添加接口标签信息'>" +
     				"<input type='hidden' value='"+methods[i].name+"-"+methods[i].url+"'>" +
     				"<h5><img src='img/"+imgName+"' height='25px' width='25px'>&nbsp;<span>"+methods[i].name+"</span></h5></li>";
     		var request = methods[i].request;

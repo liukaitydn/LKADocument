@@ -12,7 +12,42 @@
 	<script type="text/javascript" src="/js/jspdf.debug.js"></script>
 	<script type="text/javascript" src="/js/lkadoc.js"></script>
 </head>
+<style>
+#tabBox{
+	position: fixed;
+    left: 365px;
+    top: 180px;
+    background: #fff;
+    width: 100%;
+    z-index: 9999;
+    margin:0;
+    display:flex;
+    list-style: none;
+    padding-left:0;
+    
+   
+}
+#tabBox>li{
+	padding:5px 15px;
+	cursor:pointer;
+	height:40px;
+	line-height:36px;
+	border-radius: 8px 8px 0 0;
+   
+    border-bottom: 0;
+    
+    margin-right: 5px;
+    font-size:14px;
+}
+#tabBox>.activeTab{
+	background:#fff;
+	color:#333;
+	box-shadow:0px 0px 4px #666;
+	border: 1px solid #999;
+	border-bottom:0;
+}
 
+</style>
 <body>
 	<canvas id="canvas"></canvas>
 	<div class="topnav">
@@ -59,6 +94,9 @@
 		</div>
 		<div id='line'></div>
 		<div class="right-box" id="right-box-id" style="position:relative;height:100%;width:100%">
+			<ul id='tabBox'>
+				<li data='0' hidden='hidden'>首页</li>
+			</ul>
 			<h2 class='welcome'>欢迎使用lkadoc</h2>
 			<h3 class='welcome'>lkadoc是一款能够基于注解自动生成接口文档的工具，具有在线调试，导出PDF、MarkDown文档等强大的接口文档管理功能，感谢您的使用与支持，希望它能够在工作中给您带来便利！</h3>
 			<h3 class='welcome'>如果您在使用过程中遇到问题或者有好的建议，请发邮件到:281257787@qq.com</h3>
