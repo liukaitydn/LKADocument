@@ -104,7 +104,7 @@ a:actived{
 #right-box-id >div>div:nth-of-type(1){
 	position:fixed;
 	left:365px;
-	top:220px;
+	top:210px;
 	background:#fff;
 	width:100%;
 	z-index:9999;
@@ -614,3 +614,6 @@ input[disabled]{
     background-color: #ffd3e3;
 }
 
+#tabBox{
+	background: #ffd3e3;
+}
