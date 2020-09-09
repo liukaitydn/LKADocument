@@ -17,6 +17,7 @@ public class MethodModel implements Comparable<MethodModel>{
 	private String createTime;
 	private String updateTime;
 	private boolean download;
+	private boolean token;
 	
 	/**
      * 将对象按名称典序升序排序
@@ -28,6 +29,14 @@ public class MethodModel implements Comparable<MethodModel>{
         return this.value.compareTo(o.getValue());
     }
 	
+	public boolean isToken() {
+		return token;
+	}
+
+	public void setToken(boolean token) {
+		this.token = token;
+	}
+
 	public boolean isDownload() {
 		return download;
 	}

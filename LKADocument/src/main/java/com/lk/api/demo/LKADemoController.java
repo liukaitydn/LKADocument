@@ -60,7 +60,7 @@ public class LKADemoController {
 	 * version：接口版本号，如果项目版本号相同，在UI界面会标记为新接口（选填）
 	 */
 	@LKAMethod(value="登录1",description="用户登录验证",contentType=ContentType.URLENCODED,
-			author="liukai",createTime="2020-6-20",updateTime="2020-6-20",hidden=false,version="1.0")
+			author="liukai",createTime="2020-6-20",updateTime="2020-6-20",hidden=false,version="1.0",token=false)
 	@LKAParam(names= {"name","pwd"},values= {"用户名","密码"})
 	@LKARespose(names= {"code","msg"},values= {"状态码","消息"})
 	@PostMapping("login")

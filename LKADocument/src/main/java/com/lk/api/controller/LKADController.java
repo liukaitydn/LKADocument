@@ -408,6 +408,7 @@ public class LKADController {
 							methodModel.setCreateTime(lkaMethod.createTime());
 							methodModel.setUpdateTime(lkaMethod.updateTime());
 							methodModel.setDownload(lkaMethod.download());
+							methodModel.setToken(lkaMethod.token());
 						}else {
 							ApiOperation lkaMethod  = method.getAnnotation(ApiOperation.class);
 							if(lkaMethod.hidden())continue;
@@ -425,6 +426,7 @@ public class LKADController {
 							methodModel.setCreateTime(lkaMethod.createTime());
 							methodModel.setUpdateTime(lkaMethod.updateTime());
 							methodModel.setDownload(lkaMethod.download());
+							methodModel.setToken(lkaMethod.token());
 						}
 						
 						for (Map<String, Object> map : methodURLs) {

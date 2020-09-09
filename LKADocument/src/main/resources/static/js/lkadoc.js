@@ -757,6 +757,8 @@ $(function(){
 		$(this).parents("table").find(".close-resposeData").find("a").html("隐藏调试窗口");
 		// 获取请求方式
 		var methodType = $(this).parents("table").parent().parent().find(".method-requestType").html();
+		//获取是否需要令牌授权
+		var token = $(this).parents("table").parent().parent().find(".method-token").html();
 		// 获取请求路径
 		var path = $(this).parents("table").parent().parent().find(".method-URL").html();
 		//获取是否是下载方法
@@ -799,11 +801,13 @@ $(function(){
 			headerJson['Content-Type']="application/x-www-form-urlencoded";
 		}
 		// 请求头令牌设置
-		var tokenKey = $(".headerKey").val();
-		var tokenValue = $(".headerValue").val();
-		if(tokenKey != null && tokenValue != null && tokenKey != "" && tokenValue != ""){
-			headerJson[tokenKey] = tokenValue;
-		} 
+		if(token == 'authorize token'){
+			var tokenKey = $(".headerKey").val();
+			var tokenValue = $(".headerValue").val();
+			if(tokenKey != null && tokenValue != null && tokenKey != "" && tokenValue != ""){
+				headerJson[tokenKey] = tokenValue;
+			} 
+		}
 		
 		var resposeData = $(this).parents("table").find(".resposeData");
 		
@@ -1638,7 +1642,7 @@ function buildMenu(doc,tVersion) {
     		var respose = methods[i].respose;
     		var str2 ="<div id='method_"+met_index+"' class='method-table' hidden='hidden'><div>" +
     				"<ul class='method-ul'>" +
-    				"<li><span class='method-name-pdf'>"+methods[i].name+"</span>&nbsp;&nbsp;<span class='docDescription'>"+methods[i].description+"</span>&nbsp;&nbsp;<span>"+methods[i].version+"</span><span style='color:red'>&nbsp;&nbsp;"+(methods[i].contentType=="application/json" && methods[i].requestType=="GET"?"注意：ContentType为application/json传参时只支持post、put、delete请求！":"")+"</span></li>"+
+    				"<li><span class='method-name-pdf'>"+methods[i].name+"</span>&nbsp;&nbsp;<span class='docDescription'>"+methods[i].description+"</span>&nbsp;&nbsp;<span>"+methods[i].version+"</span>&nbsp;&nbsp;<span style='color:red' class='method-token'>"+(methods[i].token==true?"authorize token":"")+"</span><span style='color:red'>&nbsp;&nbsp;"+(methods[i].contentType=="application/json" && methods[i].requestType=="GET"?"注意：ContentType为application/json传参时只支持post、put、delete请求！":"")+"</span></li>"+
     				"<li class='method-requestParamInfo'><span>Method Type：</span><span class='method-requestType'>"+methods[i].requestType+"</span>&nbsp;&nbsp;&nbsp;<span><b>Content Type：</b></span><span class='content-TYPE'>"+methods[i].contentType+"</span></span>&nbsp;&nbsp;&nbsp;<span><b>URL：</b></span><span class='method-URL'>"+methods[i].url+"</li>"+
     				"<li class='method-requestParamInfo'><span></span><span><b>Author：</b>"+(methods[i].author==null || methods[i].author==''?'未设置':methods[i].author)+"&nbsp;&nbsp;&nbsp;<b>CreateTime：</b>"+(createTime==null || createTime==''?'未设置':createTime)+"&nbsp;&nbsp;&nbsp;<b>UpdateTime：</b>"+(updateTime==null || updateTime==''?'未设置':updateTime)+"</span><span><input class='method-download' type='hidden' value='"+methods[i].download+"'></span></li>"+
     				"</ul>"+
