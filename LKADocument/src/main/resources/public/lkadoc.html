@@ -25,18 +25,28 @@
     padding-left:0;
 }
 #tabBox>li{
-	padding:5px 15px;
+	padding:5px 35px 5px 15px;
 	cursor:pointer;
 	height:30px;
-	line-height:20px;
+	line-height:22px;
 	border-radius: 5px 5px 0 0;
     border-bottom: 0;
     margin-right: 5px;
     font-size:13px;
+    position:relative;
 }
 #tabBox>.activeTab{
 	background:#fff;
 	color:#333;
+}
+
+#tabBox>li>.delImg{
+	position:absolute;
+	right:10px;
+	top:50%;
+	margin-top:-8px;
+	width:16px;
+	height:16px;
 }
 
 </style>
@@ -87,7 +97,7 @@
 		<div id='line'></div>
 		<div class="right-box" id="right-box-id" style="position:relative;height:100%;width:100%">
 			<ul id='tabBox'>
-				<li data='0' hidden='hidden'>首页</li>
+				<!-- <li data='0' hidden='hidden'>首页</li> -->
 			</ul>
 			<h2 class='welcome'>欢迎使用lkadoc</h2>
 			<h3 class='welcome'>lkadoc是一款能够基于注解自动生成接口文档的工具，具有在线调试，导出PDF、MarkDown文档等强大的接口文档管理功能，感谢您的使用与支持，希望它能够在工作中给您带来便利！</h3>

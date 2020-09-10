@@ -7,7 +7,7 @@ function changeStyle(sel){
 
 //点击左边菜单栏展示相对应内容
 function leftMenu(){
-	console.log('我执行了')
+	
 	setTimeout(()=>{
 		let uls = $('.secondary')
 		
@@ -31,9 +31,13 @@ function leftMenu(){
 					}
 					if(flag){
 						const urlname = this.getAttribute("urlname")
-						let lis = `<li data="${indexFlag}" class='activeTab'>${urlname}</li>`
+						let lis = `<li data="${indexFlag}" class='activeTab'>
+									<span>${urlname}</span>
+									<img src ='../img/cuowu.png' data="${indexFlag}" class='delImg' >
+								   </li>`
 						$('#tabBox').append(lis);
 						topMenu()
+						delMenu()
 					}
 
 				
@@ -57,34 +61,69 @@ function leftMenu(){
 
 //点击顶部菜单栏展示内容
 function topMenu(){
+	
 	let addTabBox = $('#tabBox>li')
 	for(let i = 0; i < addTabBox.length;i++){
 		addTabBox[i].onclick=function(){
+			
 			indexFlag = this.getAttribute("data")
-			if(indexFlag == 0) return
-			let uls = $('.secondary')
-			let ids = '#method_'+indexFlag
-			for(let j = 0; j < uls.length;j++){
-				if(indexFlag==uls[j].getAttribute("data")){
-					uls[j].className = 'secondary active'
-						
-					
-					let divs = $(ids)[0].getElementsByTagName('div')[0]
-					  
-					divs.style.left = oldLeft  + 'px'
-				}else{
-					uls[j].className = 'secondary'
-				}
-			}
-			for(let n = 0; n < addTabBox.length;n++){
-				addTabBox[n].className = ''
-			}
-			this.className = 'activeTab'
-			$(".method-table").hide();
-			$(ids).show()
+			/*if(indexFlag == 0) return*/
+			switchMenu(addTabBox)
 		}
 	}
 }
+
+//顶部菜单栏点击删除事件
+function delMenu(){
+	let uls = $('.delImg')
+	let tabBoxs =  $('#tabBox>li')
+	for(let i = 0; i < uls.length;i++){
+		uls[i].onclick = function(event){
+			let removeId = this.getAttribute("data")
+			let tag = tabBoxs[i]
+			
+			if(uls.length==1) return //如果只有一项，不允许删除
+			//如果当前删除的选项和页面显示的选项一致
+			if(removeId==indexFlag){
+				if(i==tabBoxs.length-1){//当前删除项是最后一项
+					indexFlag = tabBoxs[i-1].getAttribute("data")
+				}else{
+					indexFlag = tabBoxs[i+1].getAttribute("data")
+				}
+				switchMenu(tabBoxs)
+			}
+			tag.parentNode.removeChild(tag);
+			delMenu()
+			event.stopPropagation();//阻止点击事件冒泡
+			return false;
+		}
+	}
+}
+//切换菜单事件
+function switchMenu(tabs){
+	let uls = $('.secondary')
+	let ids = '#method_'+indexFlag
+	for(let j = 0; j < uls.length;j++){
+		if(indexFlag==uls[j].getAttribute("data")){
+			uls[j].className = 'secondary active'
+			let divs = $(ids)[0].getElementsByTagName('div')[0]
+			divs.style.left = oldLeft  + 'px'
+		}else{
+			uls[j].className = 'secondary'
+		}
+	}
+	for(let n = 0; n < tabs.length;n++){
+		if(indexFlag==tabs[n].getAttribute("data")){
+			tabs[n].className = 'activeTab'
+		}else{
+			tabs[n].className = ''
+		}
+		
+	}
+	
+	$(".method-table").hide();
+	$(ids).show()
+} 
 
 //复制属性
 function copyVal(btn){
