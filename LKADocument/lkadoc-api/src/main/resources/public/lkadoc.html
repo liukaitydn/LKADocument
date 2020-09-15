@@ -1,0 +1,134 @@
+<html>
+<head>
+	<meta charset ="utf-8" />
+	<title>lkadoc</title>
+	<link rel="icon" href="img/logo.png" type="image/x-icon"/>
+	<link rel="stylesheet" type="text/css" href="/css/jquery.json-viewer.css" />
+	<link rel="stylesheet" id="cssfile" type="text/css" href="/css/green.css" />
+	<script type="text/javascript" src="/js/jquery-1.11.0.min.js"></script>
+	<script type="text/javascript" src="/js/jquery.json-viewer.js"></script>
+	<script type="text/javascript" src="/js/jquery.cookie.js"></script>
+	<script type="text/javascript" src="/js/html2canvas.js"></script>
+	<script type="text/javascript" src="/js/jspdf.debug.js"></script>
+	<script type="text/javascript" src="/js/lkadoc.js"></script>
+</head>
+<style>
+#tabBox{
+	position: fixed;
+    left: 345px;
+    top: 180px;
+    width: 100%;
+    z-index: 9999;
+    margin:0;
+    display:flex;
+    list-style: none;
+    padding-left:0;
+}
+#tabBox>li{
+	padding:5px 35px 5px 15px;
+	cursor:pointer;
+	height:30px;
+	line-height:22px;
+	border-radius: 5px 5px 0 0;
+    border-bottom: 0;
+    margin-right: 5px;
+    font-size:13px;
+    position:relative;
+}
+#tabBox>.activeTab{
+	background:#fff;
+	color:#333;
+}
+
+#tabBox>li>.delImg{
+	position:absolute;
+	right:10px;
+	top:50%;
+	margin-top:-8px;
+	width:16px;
+	height:16px;
+}
+
+</style>
+<body>
+	<canvas id="canvas"></canvas>
+	<div class="topnav">
+		<h2 align="center">Lkadoc</h2>
+		<!-- <h2></h2> -->
+		<div><span id="projectName"></span>&nbsp;&nbsp;&nbsp;<span id="description"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/lkad/doc">To view the document JSON data</a></div>
+		<br>
+		<div class='tokenDiv' id='change-style'><span>Header Token</span>&nbsp;&nbsp;<span>
+			key：&nbsp;</span><input type='password' class='headerKey' disabled="disabled" value=''>&nbsp;&nbsp;<span>
+			value：&nbsp;</span><input type='password' class='headerValue' disabled="disabled" value=''>
+			&nbsp;&nbsp;<input type='button' class='saveToken' value='edit'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<select id='exportDoc' class="m-wrap">
+				<option value="0">请选择导出格式</option>
+				<option value="1">PDF</option>
+				<option value="2">MarkDown</option>
+	  		</select>
+	  		<input type="button" id="exportPdf" value="导出文档">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	  		<span>项目切换：</span>
+	  		<select id='changeProject' class="m-wrap">
+
+	  		</select>
+	  		&nbsp;&nbsp;&nbsp;&nbsp;
+	  		<span>风格切换：</span>
+	  		<select id='changeStyle' onchange="changeStyle(this)">
+	  			<option value='green'>青青草原</option>
+	  			<option value='black'>暗黑无界</option>
+	  			<option value='red'>红妆素裹</option>
+	  			<option value='blue'>姹紫嫣红</option>
+	  			<option value='default'>玉楼银海</option>
+	  		</select>
+		</div>
+			
+	</div>
+	<div class="parentBox">
+		<div class="box">
+		</div>
+	</div>
+	<div class='main'>
+		<div id="menu">
+			<div id="open">
+				<div class="navBox">
+				</div>
+			</div>
+		</div>
+		<div id='line'></div>
+		<div class="right-box" id="right-box-id" style="position:relative;height:100%;width:100%">
+			<ul id='tabBox'>
+				<!-- <li data='0' hidden='hidden'>首页</li> -->
+			</ul>
+			<h2 class='welcome' align='center'>欢迎使用lkadoc</h2>
+			<h3 class='welcome' style="text-indent:2em;margin-left:50px;margin-right:50px">lkadoc是一款开源的基于springBoot平台功能非常强大的接口文档生成工具。拥有自动生成接口文档信息、在线调试接口、导出PDF或MarkDown文档、字段数据校验等强大的接口文档管理功能。感谢您的使用与支持，希望它能够在工作中给您带来便利！如果觉得好用请推荐给您身边需要的朋友或同事。承诺终身免费，免费提供技术支持！如果您在使用过程中遇到问题或者有好的建议，请发邮件到281257787@qq.com</h3>
+		</div>
+	</div>
+	<!-- 弹框部分 -->
+    <div id="simpleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="closeBtn">&times;</span>
+                <h2>添加标签信息</h2>
+            </div>
+            <div class="modal-body">
+               <table>
+               		<tr><td align="right">标签类型：</td><td>
+               			<select id='modaltype'>
+				  			<option value='1' selected>新增</option>
+				  			<option value='2'>更新</option>
+				  			<option value='3'>删除</option>
+				  			<option value='4'>其它</option>
+			  			</select>
+               		</td></tr>
+               		<tr><td align="right" class='modalcontent'>标签说明：</td><td class='modalcontent'><input id="modaltext" type="text" placeholder="请输入标签说明信息"></td></tr>
+               </table>
+            </div>
+            <div class="modal-footer">
+                <input type="button" id='modalconfirm' value="确定"><input type="button" id='modalcancel' value="取消">
+            </div>
+        </div>
+    </div>
+	<br><br><br><br><br>
+</body>
+
+</html>
