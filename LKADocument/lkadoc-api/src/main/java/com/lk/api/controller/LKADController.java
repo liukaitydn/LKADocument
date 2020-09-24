@@ -545,6 +545,11 @@ public class LKADController {
 													propertyModel.setName(split[0]);
 													propertyModel.setTestData(split[1]);
 												}
+												String[] split2 = split[0].split("\\~");
+												if(split2.length == 2) {
+													propertyModel.setName(split2[1]);
+													if(split2[0].contains("n"))propertyModel.setRequired(false);
+												}
 												propertyModel.setDescription(property.description());
 												propertyModel.setDataType(field.getType().getSimpleName());
 												propertyModels.add(propertyModel);
@@ -564,6 +569,11 @@ public class LKADController {
 												if(split.length == 2) {
 													propertyModel.setName(split[0]);
 													propertyModel.setTestData(split[1]);
+												}
+												String[] split2 = split[0].split("\\~");
+												if(split2.length == 2) {
+													propertyModel.setName(split2[1]);
+													if(split2[0].contains("n"))propertyModel.setRequired(false);
 												}
 												propertyModel.setDescription(property.description());
 												propertyModel.setDataType(field.getType().getSimpleName());
@@ -731,6 +741,11 @@ public class LKADController {
 													paramModel.setName(split2[0]);
 													paramModel.setTestData(split2[1]);
 												}
+												String[] split3 = split2[0].split("\\~");
+												if(split3.length == 2) {
+													paramModel.setName(split3[1]);
+													if(split3[0].contains("n"))paramModel.setRequired(false);
+												}
 												paramModel.setParamType(param.paramType());
 												paramModel.setArray(param.isArray());
 												request.add(paramModel);
@@ -804,12 +819,22 @@ public class LKADController {
 																paramModel.setName(split2[0]);
 																paramModel.setTestData(split2[1]);
 															}
+															String[] split3 = split2[0].split("\\~");
+															if(split3.length == 2) {
+																paramModel.setName(split3[1]);
+																if(split3[0].contains("n"))paramModel.setRequired(false);
+															}
 														} catch (Exception e) {
 															paramModel.setName(param.values()[0]);
 															String[] split2 = param.values()[0].split("\\^");
 															if(split2.length == 2) {
 																paramModel.setName(split2[0]);
 																paramModel.setTestData(split2[1]);
+															}
+															String[] split3 = split2[0].split("\\~");
+															if(split3.length == 2) {
+																paramModel.setName(split3[1]);
+																if(split3[0].contains("n"))paramModel.setRequired(false);
 															}
 														}
 													}else {
@@ -818,6 +843,11 @@ public class LKADController {
 														if(split2.length == 2) {
 															paramModel.setName(split2[0]);
 															paramModel.setTestData(split2[1]);
+														}
+														String[] split3 = split2[0].split("\\~");
+														if(split3.length == 2) {
+															paramModel.setName(split3[1]);
+															if(split3[0].contains("n"))paramModel.setRequired(false);
 														}
 													}
 													
@@ -962,12 +992,22 @@ public class LKADController {
 																paramModel.setName(split2[0]);
 																paramModel.setTestData(split2[1]);
 															}
+															String[] split3 = split2[0].split("\\~");
+															if(split3.length == 2) {
+																paramModel.setName(split3[1]);
+																if(split3[0].contains("n"))paramModel.setRequired(false);
+															}
 														} catch (Exception e) {
 															paramModel.setName(param.values()[0]);
 															String[] split2 = param.values()[0].split("\\^");
 															if(split2.length == 2) {
 																paramModel.setName(split2[0]);
 																paramModel.setTestData(split2[1]);
+															}
+															String[] split3 = split2[0].split("\\~");
+															if(split3.length == 2) {
+																paramModel.setName(split3[1]);
+																if(split3[0].contains("n"))paramModel.setRequired(false);
 															}
 														}
 													}else {
@@ -976,6 +1016,11 @@ public class LKADController {
 														if(split2.length == 2) {
 															paramModel.setName(split2[0]);
 															paramModel.setTestData(split2[1]);
+														}
+														String[] split3 = split2[0].split("\\~");
+														if(split3.length == 2) {
+															paramModel.setName(split3[1]);
+															if(split3[0].contains("n"))paramModel.setRequired(false);
 														}
 													}
 													
@@ -1054,6 +1099,11 @@ public class LKADController {
 											paramModel.setName(split2[0]);
 											paramModel.setTestData(split2[1]);
 										}
+										String[] split3 = split2[0].split("\\~");
+										if(split3.length == 2) {
+											paramModel.setName(split3[1]);
+											if(split3[0].contains("n"))paramModel.setRequired(false);
+										}
 										paramModel.setParamType(param.paramType());
 										paramModel.setArray(param.isArray());
 										request.add(paramModel);
@@ -1125,12 +1175,22 @@ public class LKADController {
 														paramModel.setName(split2[0]);
 														paramModel.setTestData(split2[1]);
 													}
+													String[] split3 = split2[0].split("\\~");
+													if(split3.length == 2) {
+														paramModel.setName(split3[1]);
+														if(split3[0].contains("n"))paramModel.setRequired(false);
+													}
 												} catch (Exception e) {
 													paramModel.setName(param.values()[0]);
 													String[] split2 = param.values()[0].split("\\^");
 													if(split2.length == 2) {
 														paramModel.setName(split2[0]);
 														paramModel.setTestData(split2[1]);
+													}
+													String[] split3 = split2[0].split("\\~");
+													if(split3.length == 2) {
+														paramModel.setName(split3[1]);
+														if(split3[0].contains("n"))paramModel.setRequired(false);
 													}
 												}
 											}else {
@@ -1140,6 +1200,13 @@ public class LKADController {
 													paramModel.setName(split2[0]);
 													paramModel.setTestData(split2[1]);
 												}
+
+												String[] split3 = split2[0].split("\\~");
+												if(split3.length == 2) {
+													paramModel.setName(split3[1]);
+													if(split3[0].contains("n"))paramModel.setRequired(false);
+												}
+												
 											}
 											if(param.paramTypes()!= null && param.paramTypes().length>0){
 												try {
@@ -1211,6 +1278,13 @@ public class LKADController {
 											paramModel.setName(split2[0]);
 											paramModel.setTestData(split2[1]);
 										}
+
+										String[] split3 = split2[0].split("\\~");
+										if(split3.length == 2) {
+											paramModel.setName(split3[1]);
+											if(split3[0].contains("n"))paramModel.setRequired(false);
+										}
+										
 										paramModel.setParamType(param.paramType());
 										paramModel.setArray(param.isArray());
 										request.add(paramModel);
@@ -1282,12 +1356,25 @@ public class LKADController {
 														paramModel.setName(split2[0]);
 														paramModel.setTestData(split2[1]);
 													}
+
+													String[] split3 = split2[0].split("\\~");
+													if(split3.length == 2) {
+														paramModel.setName(split3[1]);
+														if(split3[0].contains("n"))paramModel.setRequired(false);
+													}
+													
 												} catch (Exception e) {
 													paramModel.setName(param.values()[0]);
 													String[] split2 = param.values()[0].split("\\^");
 													if(split2.length == 2) {
 														paramModel.setName(split2[0]);
 														paramModel.setTestData(split2[1]);
+													}
+
+													String[] split3 = split2[0].split("\\~");
+													if(split3.length == 2) {
+														paramModel.setName(split3[1]);
+														if(split3[0].contains("n"))paramModel.setRequired(false);
 													}
 												}
 											}else {
@@ -1296,6 +1383,12 @@ public class LKADController {
 												if(split2.length == 2) {
 													paramModel.setName(split2[0]);
 													paramModel.setTestData(split2[1]);
+												}
+
+												String[] split3 = split2[0].split("\\~");
+												if(split3.length == 2) {
+													paramModel.setName(split3[1]);
+													if(split3[0].contains("n"))paramModel.setRequired(false);
 												}
 											}
 											
@@ -2546,9 +2639,10 @@ public class LKADController {
 				if(field.isAnnotationPresent(LKAProperty.class)) {
 					LKAProperty param = field.getAnnotation(LKAProperty.class);
 					if(param.hidden())continue;
+					boolean bool = false;
 					if(group != null && !"".equals(group)) {
 						String[] groups = param.groups();
-						boolean bool = false;
+						
 						if(groups != null && groups.length > 0) {
 							for (String gst : groups) {
 								if(gst == null) continue;
@@ -2589,10 +2683,18 @@ public class LKADController {
 							propertyModel.setName(split[0]);
 							propertyModel.setTestData(split[1]);
 						}
+
+						String[] split2 = split[0].split("\\~");
+						if(split2.length == 2) {
+							propertyModel.setName(split2[1]);
+							if(split2[0].contains("n"))propertyModel.setRequired(false);
+						}
+						
+						if(bool) {
+							propertyModel.setRequired(true);
+						}
 						if(bool2) {
 							propertyModel.setRequired(false);
-						}else {
-							propertyModel.setRequired(param.required());
 						}
 						propertyModel.setParamType("query");
 						propertyModel.setArray(param.isArray());
@@ -2606,9 +2708,10 @@ public class LKADController {
 				}else {
 					ApiModelProperty param = field.getAnnotation(ApiModelProperty.class);
 					if(param.hidden())continue;
+					boolean bool = false;
 					if(group != null && !"".equals(group)) {
 						String[] groups = param.groups();
-						boolean bool = false;
+						
 						if(groups != null && groups.length > 0) {
 							for (String gst : groups) {
 								if(gst == null) continue;
@@ -2650,10 +2753,17 @@ public class LKADController {
 							propertyModel.setName(split[0]);
 							propertyModel.setTestData(split[1]);
 						}
+
+						String[] split2 = split[0].split("\\~");
+						if(split2.length == 2) {
+							propertyModel.setName(split2[1]);
+							if(split2[0].contains("n"))propertyModel.setRequired(false);
+						}
+						if(bool) {
+							propertyModel.setRequired(true);
+						}
 						if(bool2) {
 							propertyModel.setRequired(false);
-						}else {
-							propertyModel.setRequired(param.required());
 						}
 						propertyModel.setParamType("query");
 						propertyModel.setArray(param.isArray());
@@ -2735,9 +2845,10 @@ public class LKADController {
 				if(field.isAnnotationPresent(LKAProperty.class)) {
 					LKAProperty param = field.getAnnotation(LKAProperty.class);
 					if(param.hidden())continue;
+					boolean bool = false;
 					if(group != null && !"".equals(group)) {
 						String[] groups = param.groups();
-						boolean bool = false;
+						
 						if(groups != null && groups.length > 0) {
 							for (String gst : groups) {
 								if(gst == null) continue;
@@ -2779,10 +2890,17 @@ public class LKADController {
 							propertyModel.setName(split[0]);
 							propertyModel.setTestData(split[1]);
 						}
+
+						String[] split2 = split[0].split("\\~");
+						if(split2.length == 2) {
+							propertyModel.setName(split2[1]);
+							if(split2[0].contains("n"))propertyModel.setRequired(false);
+						}
+						if(bool) {
+							propertyModel.setRequired(true);
+						}
 						if(bool2) {
 							propertyModel.setRequired(false);
-						}else {
-							propertyModel.setRequired(param.required());
 						}
 						propertyModel.setParamType("query");
 						propertyModel.setArray(param.isArray());
@@ -2795,9 +2913,10 @@ public class LKADController {
 				}else {
 					ApiModelProperty param = field.getAnnotation(ApiModelProperty.class);
 					if(param.hidden())continue;
+					boolean bool = false;
 					if(group != null && !"".equals(group)) {
 						String[] groups = param.groups();
-						boolean bool = false;
+						
 						if(groups != null && groups.length > 0) {
 							for (String gst : groups) {
 								if(gst == null) continue;
@@ -2839,10 +2958,17 @@ public class LKADController {
 							propertyModel.setName(split[0]);
 							propertyModel.setTestData(split[1]);
 						}
+
+						String[] split2 = split[0].split("\\~");
+						if(split2.length == 2) {
+							propertyModel.setName(split2[1]);
+							if(split2[0].contains("n"))propertyModel.setRequired(false);
+						}
+						if(bool) {
+							propertyModel.setRequired(true);
+						}
 						if(bool2) {
 							propertyModel.setRequired(false);
-						}else {
-							propertyModel.setRequired(param.required());
 						}
 						propertyModel.setParamType("query");
 						propertyModel.setArray(param.isArray());
@@ -2927,9 +3053,10 @@ public class LKADController {
 				if(field.isAnnotationPresent(LKAProperty.class)) {
 					LKAProperty param = field.getAnnotation(LKAProperty.class);
 					if(param.hidden())continue;
+					boolean bool = false;
 					if(group != null && !"".equals(group)) {
 						String[] groups = param.groups();
-						boolean bool = false;
+						
 						if(groups != null && groups.length > 0) {
 							for (String gst : groups) {
 								if(gst == null) continue;
@@ -2970,10 +3097,17 @@ public class LKADController {
 							propertyModel.setName(split[0]);
 							propertyModel.setTestData(split[1]);
 						}
+
+						String[] split2 = split[0].split("\\~");
+						if(split2.length == 2) {
+							propertyModel.setName(split2[1]);
+							if(split2[0].contains("n"))propertyModel.setRequired(false);
+						}
+						if(bool) {
+							propertyModel.setRequired(true);
+						}
 						if(bool2) {
 							propertyModel.setRequired(false);
-						}else {
-							propertyModel.setRequired(param.required());
 						}
 						propertyModel.setParamType("query");
 						propertyModel.setArray(param.isArray());
@@ -2986,9 +3120,10 @@ public class LKADController {
 				}else {
 					ApiModelProperty param = field.getAnnotation(ApiModelProperty.class);
 					if(param.hidden())continue;
+					boolean bool = false;
 					if(group != null && !"".equals(group)) {
 						String[] groups = param.groups();
-						boolean bool = false;
+						
 						if(groups != null && groups.length > 0) {
 							for (String gst : groups) {
 								if(gst == null) continue;
@@ -3029,10 +3164,17 @@ public class LKADController {
 							propertyModel.setName(split[0]);
 							propertyModel.setTestData(split[1]);
 						}
+
+						String[] split2 = split[0].split("\\~");
+						if(split2.length == 2) {
+							propertyModel.setName(split2[1]);
+							if(split2[0].contains("n"))propertyModel.setRequired(false);
+						}
+						if(bool) {
+							propertyModel.setRequired(true);
+						}
 						if(bool2) {
 							propertyModel.setRequired(false);
-						}else {
-							propertyModel.setRequired(param.required());
 						}
 						propertyModel.setParamType("query");
 						propertyModel.setArray(param.isArray());

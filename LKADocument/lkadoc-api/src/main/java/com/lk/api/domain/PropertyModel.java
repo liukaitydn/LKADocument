@@ -5,9 +5,9 @@ public class PropertyModel {
 	private String dataType;
 	private String description;
 	private String name;
-	private boolean required;
+	private boolean required = true;
 	private String paramType;
-	private boolean array;
+	private boolean array = false;
 	private String value;
 	private String testData;
 	public String getTestData() {
