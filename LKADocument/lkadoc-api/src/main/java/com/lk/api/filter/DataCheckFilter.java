@@ -156,7 +156,7 @@ public class DataCheckFilter implements Filter {
 									cfmModel.setLength(param.length());
 									cfmModel.setSize(param.size());
 									cfmModel.setRange(param.range());
-									cfmModel.setFieldName(param.name());
+									cfmModel.setFieldName(param.name().split("-")[0]);
 									cfmModel.setValids(param.valids());
 									cfmModel.setParamType(param.paramType());
 									cfmModel.setMsgs(param.msgs());
@@ -174,7 +174,7 @@ public class DataCheckFilter implements Filter {
 									}
 									for (int i = 0;i<names.length;i++) {
 										CheckFieldModel cfmModel = new CheckFieldModel();
-										cfmModel.setFieldName(names[i]);
+										cfmModel.setFieldName(names[i].split("-")[0]);
 										cfmModel.setUrl(url);// 请求URL
 										
 										if(param.dataTypes() == null || param.dataTypes().length == 0) {
@@ -242,7 +242,7 @@ public class DataCheckFilter implements Filter {
 									cfmModel.setLength(param.length());
 									cfmModel.setSize(param.size());
 									cfmModel.setRange(param.range());
-									cfmModel.setFieldName(param.name());
+									cfmModel.setFieldName(param.name().split("-")[0]);
 									cfmModel.setValids(param.valids());
 									cfmModel.setParamType(param.paramType());
 									cfmModel.setMsgs(param.msgs());
@@ -259,7 +259,7 @@ public class DataCheckFilter implements Filter {
 									}
 									for (int i = 0;i<names.length;i++) {
 										CheckFieldModel cfmModel = new CheckFieldModel();
-										cfmModel.setFieldName(names[i]);
+										cfmModel.setFieldName(names[i].split("-")[0]);
 										cfmModel.setUrl(url);// 请求URL
 										
 										if(param.dataTypes() == null || param.dataTypes().length == 0) {
