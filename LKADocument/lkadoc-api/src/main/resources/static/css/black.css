@@ -291,7 +291,7 @@ table.hovertable {
 	margin-top:10px;
 	table-layout:fixed;
 }
-table.hovertable thead tr{
+table.hovertable thead tr:first-child{
 	
 	border-width: 1px;
 	padding: 8px;

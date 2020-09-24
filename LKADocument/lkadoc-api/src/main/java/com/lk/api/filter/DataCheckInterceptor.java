@@ -8,8 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.logging.Log;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,15 +38,14 @@ public class DataCheckInterceptor implements  HandlerInterceptor {
 	        	int cType = 0;
 	        	if(contentType != null) {
 		        	if(contentType.contains("application/json")) {
-		        		if(request instanceof RequestWrapper) {
-			        		cType = 1;
+		        		ServletRequest req = new RequestWrapper((HttpServletRequest)request);
 			        		try {
-								String body = ((RequestWrapper)request).getBodyString();
+			        			cType = 1;
+								String body = ((RequestWrapper)req).getBodyString();
 								map = mapper.readValue(body,Map.class);
 							} catch (Exception e) {
 								throw new ValidDataException(e.getMessage());
 							}
-		        		}
 		        	}
 		        	if(contentType.contains("multipart/form-data")) {
 		        		cType = 2;
@@ -329,15 +332,19 @@ public class DataCheckInterceptor implements  HandlerInterceptor {
 				    				}
 					    		}else {
 					    			if(!V.NOTEMPTY.equals(valid)) {
-					    				if(param != null) {
-						    				boolean match = RegexUtils.isMatch(valid, param);
-						    				if(!match) {
-						    					if(model.getMsgs() == null || model.getMsgs().length < 1) {
-							    					errorMap.put(model.getFieldName(),model.getFieldName()+"格式不符合要求");
-							    				}else if(model.getMsgs() != null && model.getMsgs().length == 1) {
-							    					errorMap.put(model.getFieldName(),model.getMsgs()[0]);
-							    				}else {
-							    					errorMap.put(model.getFieldName(),model.getMsgs()[i]);
+					    				if(valid == null || "".equals(valid.trim())) {
+					    					continue;
+					    				}else {
+						    				if(param != null) {
+							    				boolean match = RegexUtils.isMatch(valid, param);
+							    				if(!match) {
+							    					if(model.getMsgs() == null || model.getMsgs().length < 1) {
+								    					errorMap.put(model.getFieldName(),model.getFieldName()+"格式不符合要求");
+								    				}else if(model.getMsgs() != null && model.getMsgs().length == 1) {
+								    					errorMap.put(model.getFieldName(),model.getMsgs()[0]);
+								    				}else {
+								    					errorMap.put(model.getFieldName(),model.getMsgs()[i]);
+								    				}
 							    				}
 						    				}
 					    				}

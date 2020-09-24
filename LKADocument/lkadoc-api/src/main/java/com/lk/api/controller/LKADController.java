@@ -828,11 +828,15 @@ public class LKADController {
 															paramModel.setParamType(param.paramTypes()[0]);
 														}
 													}else {
-														if(parameters[i].isAnnotationPresent(PathVariable.class)) {
-															paramModel.setParamType(ParamType.PATH);
-														}else if(parameters[i].isAnnotationPresent(RequestHeader.class)) {
-															paramModel.setParamType(ParamType.HEADER);
-														}else {
+														try {
+															if(parameters[i].isAnnotationPresent(PathVariable.class)) {
+																paramModel.setParamType(ParamType.PATH);
+															}else if(parameters[i].isAnnotationPresent(RequestHeader.class)) {
+																paramModel.setParamType(ParamType.HEADER);
+															}else {
+																paramModel.setParamType(param.paramType());
+															}
+														} catch (Exception e) {
 															paramModel.setParamType(param.paramType());
 														}
 													}
@@ -982,11 +986,15 @@ public class LKADController {
 															paramModel.setParamType(param.paramTypes()[0]);
 														}
 													}else {
-														if(parameters[i].isAnnotationPresent(PathVariable.class)) {
-															paramModel.setParamType(ParamType.PATH);
-														}else if(parameters[i].isAnnotationPresent(RequestHeader.class)) {
-															paramModel.setParamType(ParamType.HEADER);
-														}else {
+														try {
+															if(parameters[i].isAnnotationPresent(PathVariable.class)) {
+																paramModel.setParamType(ParamType.PATH);
+															}else if(parameters[i].isAnnotationPresent(RequestHeader.class)) {
+																paramModel.setParamType(ParamType.HEADER);
+															}else {
+																paramModel.setParamType(param.paramType());
+															}
+														} catch (Exception e) {
 															paramModel.setParamType(param.paramType());
 														}
 													}
@@ -1140,11 +1148,15 @@ public class LKADController {
 													paramModel.setParamType(param.paramTypes()[0]);
 												}
 											}else {
-												if(parameters[i].isAnnotationPresent(PathVariable.class)) {
-													paramModel.setParamType(ParamType.PATH);
-												}else if(parameters[i].isAnnotationPresent(RequestHeader.class)) {
-													paramModel.setParamType(ParamType.HEADER);
-												}else {
+												try {
+													if(parameters[i].isAnnotationPresent(PathVariable.class)) {
+														paramModel.setParamType(ParamType.PATH);
+													}else if(parameters[i].isAnnotationPresent(RequestHeader.class)) {
+														paramModel.setParamType(ParamType.HEADER);
+													}else {
+														paramModel.setParamType(param.paramType());
+													}
+												} catch (Exception e) {
 													paramModel.setParamType(param.paramType());
 												}
 											}
@@ -1294,11 +1306,15 @@ public class LKADController {
 													paramModel.setParamType(param.paramTypes()[0]);
 												}
 											}else {
-												if(parameters[i].isAnnotationPresent(PathVariable.class)) {
-													paramModel.setParamType(ParamType.PATH);
-												}else if(parameters[i].isAnnotationPresent(RequestHeader.class)) {
-													paramModel.setParamType(ParamType.HEADER);
-												}else {
+												try {
+													if(parameters[i].isAnnotationPresent(PathVariable.class)) {
+														paramModel.setParamType(ParamType.PATH);
+													}else if(parameters[i].isAnnotationPresent(RequestHeader.class)) {
+														paramModel.setParamType(ParamType.HEADER);
+													}else {
+														paramModel.setParamType(param.paramType());
+													}
+												} catch (Exception e) {
 													paramModel.setParamType(param.paramType());
 												}
 											}
