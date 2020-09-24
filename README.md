@@ -21,6 +21,24 @@
     - 更多功能...
 
 ### 版本更新说明：
+
+#### lkadoc 1.2.4于2020年9月24日发布：
+
+1. 修复项目在使用shiro等框架时application/json方式对象参数数据校验失效的BUG
+
+2. 修复map集合入参时在自动检测参数paramType类型报数组越界异常的BUG
+
+3. 优化一条注解描述多个参数时，如果哪个参数无需数据校验可在valids属性中用空字符串“”表示
+
+4. 优化入参value属性值前面加“n~”代表非必传参数。例如：
+   优化之前:
+   @LKAParam(values={"姓名","年龄"},testDatas={"张三","22"},requireds={true,false})
+   @LKAProperty(value="id主键",testData="1001",required=false)
+
+   优化之后:
+   @LKAParam(values={"姓名^张三","n~年龄^22"})
+   @LKAProperty(value="n~id主键^1001")
+
 #### lkadoc 1.2.3于2020年9月15日发布：
 1. 修复项目不能带中文路径的BUG
 2. 修复找不到文件路径报空指针的BUG
