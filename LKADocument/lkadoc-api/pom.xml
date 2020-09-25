@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.github.liukaitydn</groupId>
     <artifactId>lkadoc</artifactId>
-    <version>1.2.4</version>
+    <version>1.2.5</version>
   </parent>
   
   <artifactId>lkadoc-api</artifactId>

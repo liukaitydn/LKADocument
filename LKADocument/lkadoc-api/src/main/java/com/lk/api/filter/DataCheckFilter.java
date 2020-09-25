@@ -88,8 +88,45 @@ public class DataCheckFilter implements Filter {
 			for (Map.Entry<RequestMappingInfo, HandlerMethod> mappingInfoHandlerMethodEntry : map.entrySet()) {
 				RequestMappingInfo requestMappingInfo = mappingInfoHandlerMethodEntry.getKey();
 				HandlerMethod handlerMethod = mappingInfoHandlerMethodEntry.getValue();
+				
 				Method method = handlerMethod.getMethod();
+				Method interfaceMehtod = null;
+				Class<?>[] interfaces = handlerMethod.getMethod().getDeclaringClass().getInterfaces();
+				if (interfaces != null) {
+					for (Class<?> c : interfaces) {// 基于接口继承模式,反向获取接口注解
+						try {
+							interfaceMehtod = c.getMethod(method.getName(), method.getParameterTypes());
+						} catch (Exception e) {
+							//啥也不干
+						}
+					}
+				}
 				Annotation[] annotations = method.getAnnotations();
+				Class<?>[] parameterTypes = method.getParameterTypes();
+				Parameter[] parameters = method.getParameters();
+				if(parameters != null && parameters.length > 0) {
+					boolean b = true;
+					for (Parameter parameter : parameters) {
+						if(parameter.isAnnotationPresent(LKAGroup.class)) {
+							b = false;
+							break;
+						}
+					}
+					if(b) {
+						if(interfaceMehtod != null) {
+							parameters = interfaceMehtod.getParameters();
+						}
+					}
+				}
+				
+				if(interfaceMehtod != null) {
+					Annotation[] annotations2 = interfaceMehtod.getAnnotations();
+					List<Annotation> list = new ArrayList<>(Arrays.asList(annotations2));
+					list.addAll(new ArrayList<Annotation>(Arrays.asList(annotations)));
+					annotations = new Annotation[list.size()];
+					list.toArray(annotations);
+				}
+				
 				PatternsRequestCondition p = requestMappingInfo.getPatternsCondition();
 				String url = "";
 				if(p != null && p.getPatterns().size()>0) {
@@ -98,8 +135,6 @@ public class DataCheckFilter implements Filter {
 					}
 				}
 				
-				Class<?>[] parameterTypes = method.getParameterTypes();
-				Parameter[] parameters = method.getParameters();
 				if(parameters != null && parameters.length > 0) {
 					for (int i = 0;i<parameterTypes.length;i++) {
 						Class<?> argument = parameterTypes[i];
