@@ -54,7 +54,8 @@ public class SconPackage implements SconPackageInterface{
      */
     public List<String> getFullyQualifiedClassNameList() throws IOException {
         //logger.info("开始扫描包{}下的所有类", basePackage);
-        return doScan(basePackage, new ArrayList<String>());
+        List<String> doScan = doScan(basePackage, new ArrayList<String>());
+        return doScan;
     }
 
     /**
@@ -66,34 +67,58 @@ public class SconPackage implements SconPackageInterface{
      */
     private List<String> doScan(String basePackage, List<String> nameList) throws IOException {
         String splashPath = StringUtil.dotToSplash(basePackage);
-        URL url = cl.getResource(splashPath);   //file:/D:/WorkSpace/java/ScanTest/target/classes/com/scan
-        if(url == null) {
+        //URL url = cl.getResource(splashPath);
+        Enumeration<URL> resources = cl.getResources(splashPath);
+        
+        if(resources == null) {
         	return nameList;
         }
-        String path = java.net.URLDecoder.decode(url.getFile(),"utf-8"); 
-        String filePath = StringUtil.getRootPath(path);
-        List<String> names = null; // contains the name of the class file. e.g., Apple.class will be stored as "Apple"
-        if (isJarFile(filePath)) {// 先判断是否是jar包，如果是jar包，通过JarInputStream产生的JarEntity去递归查询所有类
-        	names = readFromJarFile(filePath, splashPath);
-        	if(names != null) {
-	            for (String name : names) {
-	                if (isClassFile(name)) {
-	                	nameList.add(name.substring(0,name.lastIndexOf(".class")));
-	                }else {
-	                    doScan(name, nameList);
-	                }
-	            }
-        	}
-        } else {
-            names = readFromDirectory(filePath);
-            if(names != null) {
-	            for (String name : names) {
-	                if (isClassFile(name)) {
-	                    nameList.add(toFullyQualifiedName(name, basePackage));
-	                } else {
-	                    doScan(basePackage + "." + name, nameList);
-	                }
-	            }
+        
+        while(resources.hasMoreElements()) {
+        	URL url = resources.nextElement();
+        	String path = java.net.URLDecoder.decode(url.getFile(),"utf-8"); 
+            String filePath = StringUtil.getRootPath(path);
+            List<String> names = null;
+            if (isJarFile(filePath)) {// 先判断是否是jar包，如果是jar包，通过JarInputStream产生的JarEntity去递归查询所有类
+            	names = readFromJarFile(filePath, splashPath);
+            	if(names != null) {
+    	            for (String name : names) {
+    	                if (isClassFile(name)) {
+    	                	String s1 = name.substring(0,name.lastIndexOf(".class"));
+    	                	boolean bool = true;
+    	                	for (String s2 : nameList) {
+								if(s1.equals(s2)) {
+									bool = false;
+								}
+							}
+    	                	if(bool) {
+    	                		nameList.add(s1);
+    	                	}
+    	                }else {
+    	                    doScan(name, nameList);
+    	                }
+    	            }
+            	}
+            } else {
+                names = readFromDirectory(filePath);
+                if(names != null) {
+    	            for (String name : names) {
+    	                if (isClassFile(name)) {
+    	                	String s1 = toFullyQualifiedName(name, basePackage);
+    	                	boolean bool = true;
+    	                	for (String s2 : nameList) {
+								if(s1.equals(s2)) {
+									bool = false;
+								}
+							}
+    	                	if(bool) {
+    	                		nameList.add(s1);
+    	                	}
+    	                } else {
+    	                    doScan(basePackage + "." + name, nameList);
+    	                }
+    	            }
+                }
             }
         }
         return nameList;

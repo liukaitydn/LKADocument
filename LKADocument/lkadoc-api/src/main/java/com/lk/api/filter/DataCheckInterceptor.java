@@ -44,7 +44,7 @@ public class DataCheckInterceptor implements  HandlerInterceptor {
 								String body = ((RequestWrapper)req).getBodyString();
 								map = mapper.readValue(body,Map.class);
 							} catch (Exception e) {
-								throw new ValidDataException(e.getMessage());
+								return true;
 							}
 		        	}
 		        	if(contentType.contains("multipart/form-data")) {
