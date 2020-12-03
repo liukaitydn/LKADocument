@@ -36,4 +36,5 @@ public @interface LKADocument {
 	String version() default "";
 	boolean enabled() default true;
 	boolean validation() default false;
+	boolean enToCn() default false;
 }

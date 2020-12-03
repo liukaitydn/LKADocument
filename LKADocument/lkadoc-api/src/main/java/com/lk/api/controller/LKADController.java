@@ -83,6 +83,9 @@ public class LKADController {
 	/*项目版本号*/
 	@Value("${lkad.version:}")
 	private String version;
+	/* 入参翻译开关 */
+	@Value("${lkad.enToCn:false}")
+	private Boolean enToCn;
 	
 	private int reqNum = 0,respNum = 0,proNum = 0;
 	
@@ -195,6 +198,7 @@ public class LKADController {
 					Class<? extends Object> bootClass = obj.getClass();
 					LKADocument annotation = bootClass.getAnnotation(LKADocument.class);
 					bpk = annotation.basePackages();
+					enToCn = annotation.enToCn();
 					if("".equals(bpk)) {
 						bool = false;
 						break;
@@ -530,7 +534,7 @@ public class LKADController {
 											if(field.isAnnotationPresent(LKAProperty.class)){
 												LKAProperty property = field.getAnnotation(LKAProperty.class);
 												if(property.hidden()) continue;
-												//System.out.println(property.type().getName());
+												
 												if(property.type().getName().equals("java.lang.Object")) {
 													propertyModel = new PropertyModel();
 												}else {
@@ -1425,7 +1429,85 @@ public class LKADController {
 									}
 								}
 							}
+						}else { //没有入参注解，自动获取
+							// 获取参数描述信息
+							if(parameters != null && parameters.length > 0) {
+								for(int i = 0;i<parameters.length;i++) {
+									ParamModel paramModel = new ParamModel();
+									Class<?> type = parameters[i].getType();
+									boolean isArray = false;
+									if(type.equals(List.class) || type.equals(Set.class)) { //list集合
+										isArray = true;
+										// 当前集合的泛型类型
+					                    Type genericType = parameters[i].getParameterizedType();
+					                    if (null == genericType) {
+					                        continue;
+					                    }
+					                    if (genericType instanceof ParameterizedType) {
+					                        ParameterizedType pt = (ParameterizedType) genericType;
+					                        //得到泛型里的class类型对象
+					                        type = (Class<?>)pt.getActualTypeArguments()[0];
+					                    }
+									}else if(type.isArray()) {//数组
+										isArray = true;
+										// 获取数组元素的类型
+										type = type.getComponentType();
+									}
+									if(type.isAnnotationPresent(LKAModel.class) || type.isAnnotationPresent(ApiModel.class)){
+										continue;
+									}
+									
+									boolean isPackageType = false;
+									if(type.equals(Integer.class) || type.equals(int.class)){
+										paramModel.setDataType("Integer");isPackageType=true;
+						            }else if(type.equals(Byte.class) || type.equals(byte.class)){
+						            	paramModel.setDataType("Byte");isPackageType=true;
+						            }else if(type.equals(Short.class) || type.equals(short.class)){
+						            	paramModel.setDataType("Short");isPackageType=true;
+						            }else if(type.equals(Float.class) || type.equals(float.class)){
+						            	paramModel.setDataType("Float");isPackageType=true;
+						            }else if(type.equals(Double.class) || type.equals(double.class)){
+						            	paramModel.setDataType("Double");isPackageType=true;
+						            }else if(type.equals(Character.class) || type.equals(char.class)){
+						            	paramModel.setDataType("Character");isPackageType=true;
+						            }else if(type.equals(Long.class) || type.equals(long.class)){
+						            	paramModel.setDataType("Long");isPackageType=true;
+						            }else if(type.equals(Boolean.class) || type.equals(boolean.class)){
+						            	paramModel.setDataType("Boolean");isPackageType=true;
+						            }else if(type.equals(String.class) || type.equals(String.class)){
+						            	paramModel.setDataType("String");isPackageType=true;
+						            }else if(type.equals(Map.class)) {
+						            	paramModel.setDataType("Map");isPackageType=true;
+						            }
+						            if(!isPackageType) {
+						            	paramModel = analysisObj(type);
+						            }
+						            String name = parameters[i].getName();
+									paramModel.setName(enToCn(name));
+								    paramModel.setValue(name);
+								    paramModel.setArray(isArray);
+								    if(isArray) {
+										paramModel.setDataType(paramModel.getDataType()+"[]");
+									}
+									paramModel.setRequired(false);
+									paramModel.setDescription("");
+									paramModel.setTestData("");
+									try {
+										if(parameters[i].isAnnotationPresent(PathVariable.class)) {
+											paramModel.setParamType(ParamType.PATH);
+										}else if(parameters[i].isAnnotationPresent(RequestHeader.class)) {
+											paramModel.setParamType(ParamType.HEADER);
+										}else {
+											paramModel.setParamType(ParamType.QUERY);
+										}
+									} catch (Exception e) {
+										paramModel.setParamType(ParamType.QUERY);
+									}
+									request.add(paramModel);
+								}
+							}
 						}
+						
 						// 判断出参注解
 						if (method.isAnnotationPresent(LKAResposes.class)) {
 							LKAResposes lkaResposes = method.getAnnotation(LKAResposes.class);
@@ -2577,6 +2659,247 @@ public class LKADController {
 	
 	
 	/**
+	 * 	解析请求参数的原生对象注解
+	 * @param typeCls 类型
+	 * @return ParamModel 对象
+	 * @throws Exception 异常
+	 */
+	public ParamModel analysisObj(Class<?> typeCls) throws Exception {
+		reqNum++; //防止递归死循环
+		if(reqNum > 10) {
+			reqNum = 0;
+			return null;
+		}
+		ParamModel pm = new ParamModel();
+		// 获取model描述信息
+		ModelModel modelModel = new ModelModel();
+		modelModel.setValue(typeCls.getSimpleName());
+		modelModel.setName(enToCn(typeCls.getSimpleName()));
+		modelModel.setDescription("");
+
+		
+		// 获取所有属性对象
+		Field[] fields = typeCls.getDeclaredFields();
+		
+		//获取父类所有属性对象
+		Field[] declaredField;
+		try {
+			declaredField = getDeclaredField(typeCls.newInstance());
+		} catch (Exception e) {
+			declaredField = null;
+		}
+		Object[] arrays = null;
+		//合并数组
+		if(declaredField != null) {
+			List<Field> list = new ArrayList<>(Arrays.asList(declaredField));
+			arrays = list.toArray();
+		}else {
+			arrays = fields;
+		}
+		
+		if (arrays != null && arrays.length > 0) {
+			List<PropertyModel> propertyModels = new ArrayList<PropertyModel>();
+			for (Object obj : arrays) {
+				Field field = (Field)obj;
+				Class<?> type = field.getType();
+				PropertyModel propertyModel = new PropertyModel();
+				boolean isArray = false;
+				if(type.equals(List.class) || type.equals(Set.class)) { //list集合
+					isArray = true;
+					// 当前集合的泛型类型
+                    Type genericType = field.getGenericType();
+                    if (null == genericType) {
+                        continue;
+                    }
+                    if (genericType instanceof ParameterizedType) {
+                        ParameterizedType pt = (ParameterizedType) genericType;
+                        //得到泛型里的class类型对象
+                        type = (Class<?>)pt.getActualTypeArguments()[0];
+                    }
+				}else if(type.isArray()) {//数组
+					isArray = true;
+					// 获取数组元素的类型
+					type = type.getComponentType();
+				}
+				
+				
+				boolean isPackageType = false;
+				if(type.equals(Integer.class) || type.equals(int.class)){
+					propertyModel.setDataType("Integer");isPackageType=true;
+	            }else if(type.equals(Byte.class) || type.equals(byte.class)){
+	            	propertyModel.setDataType("Byte");isPackageType=true;
+	            }else if(type.equals(Short.class) || type.equals(short.class)){
+	            	propertyModel.setDataType("Short");isPackageType=true;
+	            }else if(type.equals(Float.class) || type.equals(float.class)){
+	            	propertyModel.setDataType("Float");isPackageType=true;
+	            }else if(type.equals(Double.class) || type.equals(double.class)){
+	            	propertyModel.setDataType("Double");isPackageType=true;
+	            }else if(type.equals(Character.class) || type.equals(char.class)){
+	            	propertyModel.setDataType("Character");isPackageType=true;
+	            }else if(type.equals(Long.class) || type.equals(long.class)){
+	            	propertyModel.setDataType("Long");isPackageType=true;
+	            }else if(type.equals(Boolean.class) || type.equals(boolean.class)){
+	            	propertyModel.setDataType("Boolean");isPackageType=true;
+	            }else if(type.equals(String.class) || type.equals(String.class)){
+	            	propertyModel.setDataType("String");isPackageType=true;
+	            }else if(type.equals(Map.class)) {
+	            	propertyModel.setDataType("Map");isPackageType=true;
+	            }
+	            if(!isPackageType) {
+	            	propertyModel = analysisProObj(type);
+	            }
+	            String name = field.getName();
+	            propertyModel.setArray(isArray);
+	            if(isArray) {
+					propertyModel.setDataType(propertyModel.getDataType()+"[]");
+				}
+            	propertyModel.setName(enToCn(name));
+            	propertyModel.setValue(name);
+            	propertyModel.setRequired(false);
+            	propertyModel.setDescription("");
+            	propertyModel.setTestData("");
+				try {
+					if(type.isAnnotationPresent(PathVariable.class)) {
+						propertyModel.setParamType(ParamType.PATH);
+					}else if(type.isAnnotationPresent(RequestHeader.class)) {
+						propertyModel.setParamType(ParamType.HEADER);
+					}else {
+						propertyModel.setParamType(ParamType.QUERY);
+					}
+				} catch (Exception e) {
+					propertyModel.setParamType(ParamType.QUERY);
+				}
+				propertyModels.add(propertyModel);
+			}
+			modelModel.setPropertyModels(propertyModels);
+		}
+		pm.setModelModel(modelModel);
+		reqNum = 0;
+		return pm;
+	}
+	
+	
+	/**
+	 *	解析原生对象属性
+	 * @param typeCls 类型
+	 * @return PropertyModel 对象
+	 * @throws Exception 异常
+	 */
+	public PropertyModel analysisProObj(Class<?> typeCls) throws Exception {
+		proNum++;
+		if(proNum > 10) {
+			proNum = 0;
+			return null;
+		}
+		PropertyModel pm = new PropertyModel();
+		// 获取model描述信息
+		ModelModel modelModel = new ModelModel();
+		modelModel.setValue(typeCls.getSimpleName());
+		modelModel.setName(enToCn(typeCls.getSimpleName()));
+		modelModel.setDescription("");
+
+		
+		// 获取所有属性对象
+		Field[] fields = typeCls.getDeclaredFields();
+		
+		//获取父类所有属性对象
+		Field[] declaredField;
+		try {
+			declaredField = getDeclaredField(typeCls.newInstance());
+		} catch (Exception e) {
+			declaredField = null;
+		}
+		Object[] arrays = null;
+		//合并数组
+		if(declaredField != null) {
+			List<Field> list = new ArrayList<>(Arrays.asList(declaredField));
+			arrays = list.toArray();
+		}else {
+			arrays = fields;
+		}
+		
+		if (arrays != null && arrays.length > 0) {
+			List<PropertyModel> propertyModels = new ArrayList<PropertyModel>();
+			for (Object obj: arrays) {
+				Field field = (Field)obj;
+				Class<?> type = field.getType();
+				PropertyModel propertyModel = new PropertyModel();
+				boolean isArray = false;
+				if(type.equals(List.class) || type.equals(Set.class)) { //list集合
+					isArray = true;
+					// 当前集合的泛型类型
+                    Type genericType = field.getGenericType();
+                    if (null == genericType) {
+                        continue;
+                    }
+                    if (genericType instanceof ParameterizedType) {
+                        ParameterizedType pt = (ParameterizedType) genericType;
+                        //得到泛型里的class类型对象
+                        type = (Class<?>)pt.getActualTypeArguments()[0];
+                    }
+				}else if(type.isArray()) {//数组
+					isArray = true;
+					// 获取数组元素的类型
+					type = type.getComponentType();
+				}
+				
+				boolean isPackageType = false;
+				if(type.equals(Integer.class) || type.equals(int.class)){
+					propertyModel.setDataType("Integer");isPackageType=true;
+	            }else if(type.equals(Byte.class) || type.equals(byte.class)){
+	            	propertyModel.setDataType("Byte");isPackageType=true;
+	            }else if(type.equals(Short.class) || type.equals(short.class)){
+	            	propertyModel.setDataType("Short");isPackageType=true;
+	            }else if(type.equals(Float.class) || type.equals(float.class)){
+	            	propertyModel.setDataType("Float");isPackageType=true;
+	            }else if(type.equals(Double.class) || type.equals(double.class)){
+	            	propertyModel.setDataType("Double");isPackageType=true;
+	            }else if(type.equals(Character.class) || type.equals(char.class)){
+	            	propertyModel.setDataType("Character");isPackageType=true;
+	            }else if(type.equals(Long.class) || type.equals(long.class)){
+	            	propertyModel.setDataType("Long");isPackageType=true;
+	            }else if(type.equals(Boolean.class) || type.equals(boolean.class)){
+	            	propertyModel.setDataType("Boolean");isPackageType=true;
+	            }else if(type.equals(String.class) || type.equals(String.class)){
+	            	propertyModel.setDataType("String");isPackageType=true;
+	            }else if(type.equals(Map.class)) {
+	            	propertyModel.setDataType("Map");isPackageType=true;
+	            }
+	            if(!isPackageType) {
+	            	propertyModel = analysisProObj(type);
+	            }
+	            String name = field.getName();
+	            propertyModel.setArray(isArray);
+	            if(isArray) {
+					propertyModel.setDataType(propertyModel.getDataType()+"[]");
+				}
+            	propertyModel.setName(enToCn(name));
+            	propertyModel.setValue(name);
+            	propertyModel.setRequired(false);
+            	propertyModel.setDescription("");
+            	propertyModel.setTestData("");
+				try {
+					if(type.isAnnotationPresent(PathVariable.class)) {
+						propertyModel.setParamType(ParamType.PATH);
+					}else if(type.isAnnotationPresent(RequestHeader.class)) {
+						propertyModel.setParamType(ParamType.HEADER);
+					}else {
+						propertyModel.setParamType(ParamType.QUERY);
+					}
+				} catch (Exception e) {
+					propertyModel.setParamType(ParamType.QUERY);
+				}
+				propertyModels.add(propertyModel);
+			}
+			modelModel.setPropertyModels(propertyModels);
+		}
+		pm.setModelModel(modelModel);
+		proNum = 0;
+		return pm;
+	}
+	
+	
+	/**
 	 * 	解析请求参数的LKAModel对象注解
 	 * @param typeCls 类型
 	 * @param group 组名
@@ -2783,7 +3106,7 @@ public class LKADController {
 	}
 
 	/**
-	 *	 解析对象属性的PropertyModel对象注解
+	 *	解析对象属性的PropertyModel对象注解
 	 * @param typeCls 类型
 	 * @param group 组名
 	 * @return PropertyModel 对象
@@ -3355,5 +3678,52 @@ public class LKADController {
         Field[] fields = new Field[fieldList.size()];
         fieldList.toArray(fields);
         return fields;
+    }
+    
+    /**
+     * 	骆峰拆分成多个单词
+     * @param str
+     * @return
+     */
+    public String toHump(String str) {
+        String rs = "";
+
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (Character.isUpperCase(c)) {
+                rs += " " + Character.toLowerCase(c);
+            } else {
+                rs += c;
+            }
+        }
+        return rs;
+    }
+    
+    public String enToCn(String name) {
+    	if(enToCn) { //开启入参翻译
+			try {
+				RestTemplate restTemplate = new RestTemplate();
+				String data = "http://fanyi.youdao.com/translate?&doctype=json&type=EN2ZH_CN&i="+toHump(name);
+				ResponseEntity<Map> exchange = restTemplate.exchange(data,HttpMethod.GET,null,Map.class);
+				Object object = exchange.getBody().get("translateResult");
+				List list = (List)object;
+				String txt = "";
+				for (Object obj : list) {
+					List list2 = (List)obj;
+					for (Object obj2 : list2) {
+						Map map = (Map)obj2;
+						if("".equals(txt)) {
+							txt = map.get("tgt").toString();
+						}else {
+							txt = txt + "//" + map.get("tgt").toString();
+						}
+					}
+				}
+				return txt;
+			} catch (Exception e1) {
+				return name;
+			}
+		}
+    	return name;
     }
 }
