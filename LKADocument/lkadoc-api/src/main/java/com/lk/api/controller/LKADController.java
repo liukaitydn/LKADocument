@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
@@ -52,6 +53,7 @@ import com.lk.api.domain.ParamModel;
 import com.lk.api.domain.PropertyModel;
 import com.lk.api.domain.ResposeModel;
 import com.lk.api.domain.TypeModel;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 /**
  * 	文档信息处理类
@@ -451,7 +453,7 @@ public class LKADController {
 						Class<?> returnType = method.getReturnType();
 						if(returnType != null && !"void".equals(returnType.getName())) {
 							boolean bool2 = false;
-							if(returnType.equals(List.class)) {//list集合
+							if(returnType.equals(List.class) || returnType.equals(Set.class)) {//list集合
 								//当前集合的泛型类型
 								Type genericReturnType = method.getGenericReturnType();
 								if(genericReturnType instanceof ParameterizedType) {
@@ -469,6 +471,7 @@ public class LKADController {
 								returnType = returnType.getComponentType();					                    
 							}
 							if(returnType.isAnnotationPresent(LKAModel.class) || returnType.isAnnotationPresent(ApiModel.class)){
+
 								// 获取model描述信息
 								ModelModel modelModel = new ModelModel();
 								modelModel.setValue(returnType.getSimpleName());
@@ -485,8 +488,6 @@ public class LKADController {
 								Object[] arrays = null;
 								//合并数组
 								if(declaredField != null) {
-									/*List<Field> list = new ArrayList<>(Arrays.asList(fields));
-									list.addAll(Arrays.asList(declaredField));*/
 									List<Field> list = new ArrayList<>(Arrays.asList(declaredField));
 									arrays = list.toArray();
 								}else {
@@ -498,8 +499,8 @@ public class LKADController {
 									for (Object obj : arrays) {
 										Field field = (Field)obj;
 										boolean bool = false;
-										if (!field.isAnnotationPresent(LKAProperty.class) && !field.isAnnotationPresent(ApiModelProperty.class))continue;
 										String pValue = field.getName();
+										//过滤LKARespose注解与对象属性重复的字段
 										if (method.isAnnotationPresent(LKAResposes.class)) {
 											LKAResposes lKAResposes = method.getAnnotation(LKAResposes.class);
 											LKARespose[] resps = lKAResposes.value();
@@ -530,61 +531,133 @@ public class LKADController {
 											break;
 										}
 										if(!bool) {
-											PropertyModel propertyModel = null;
-											if(field.isAnnotationPresent(LKAProperty.class)){
-												LKAProperty property = field.getAnnotation(LKAProperty.class);
-												if(property.hidden()) continue;
+											if (!field.isAnnotationPresent(LKAProperty.class) && !field.isAnnotationPresent(ApiModelProperty.class)) {
+												Class<?> type = field.getType();
+												PropertyModel propertyModel = new PropertyModel();
+												int isArray = isObj(type);
+												type = getGenericType(type, field);
 												
-												if(property.type().getName().equals("java.lang.Object")) {
-													propertyModel = new PropertyModel();
-												}else {
-													propertyModel = analysisProModel(property.type(),null);
-													if(propertyModel == null) propertyModel = new PropertyModel();
+												//判断数据类型
+												propertyModel.setDataType(type.getSimpleName());
+												int flag = isObj(type);
+									            if(flag == 3) {
+									            	propertyModel = analysisProModel(methodModel.getUrl(),type,"",2);
+									            	if(propertyModel == null) { 
+									            		propertyModel = new PropertyModel();
+									            		propertyModel.setDataType("Object");
+									            	}
+									            }
+									            String name = field.getName();
+									            propertyModel.setArray(false);
+									            if(isArray == 2 || isArray == 4) {
+									            	propertyModel.setArray(true);
+													propertyModel.setDataType(propertyModel.getDataType()+"[]");
 												}
-												propertyModel.setArray(property.isArray());
-												propertyModel.setValue(pValue);
-												propertyModel.setName(property.value());
-												String[] split = property.value().split("\\^");
-												if(split.length == 2) {
-													propertyModel.setName(split[0]);
-													propertyModel.setTestData(split[1]);
+								            	propertyModel.setName(enToCn(methodModel.getUrl(),2,name));
+								            	propertyModel.setValue(name);
+								            	propertyModel.setRequired(false);
+								            	propertyModel.setDescription("");
+								            	propertyModel.setTestData("");
+												try {
+													if(type.isAnnotationPresent(PathVariable.class)) {
+														propertyModel.setParamType(ParamType.PATH);
+													}else if(type.isAnnotationPresent(RequestHeader.class)) {
+														propertyModel.setParamType(ParamType.HEADER);
+													}else {
+														propertyModel.setParamType(ParamType.QUERY);
+													}
+												} catch (Exception e) {
+													propertyModel.setParamType(ParamType.QUERY);
 												}
-												String[] split2 = split[0].split("\\~");
-												if(split2.length == 2) {
-													propertyModel.setName(split2[1]);
-													if(split2[0].contains("n"))propertyModel.setRequired(false);
-												}
-												propertyModel.setDescription(property.description());
-												propertyModel.setDataType(field.getType().getSimpleName());
 												propertyModels.add(propertyModel);
 											}else {
-												ApiModelProperty property = field.getAnnotation(ApiModelProperty.class);
-												if(property.hidden()) continue;
-												if(property.type().getName().equals("java.lang.Object")) {
-													propertyModel = new PropertyModel();
+												PropertyModel propertyModel = null;
+												Class<?> type = field.getType();
+												Class<?> ptype = getGenericType(type, field);
+												if(field.isAnnotationPresent(LKAProperty.class)){
+													LKAProperty property = field.getAnnotation(LKAProperty.class);
+													if(property.hidden()) continue;
+													if(property.type().getName().equals("java.lang.Object") && isObj(ptype) != 3) {
+														propertyModel = new PropertyModel();
+													}else {
+														if(isObj(ptype) == 3) {
+															propertyModel = analysisProModel(methodModel.getUrl(),ptype,null,2);
+															if(propertyModel == null) {
+																propertyModel = new PropertyModel();
+																propertyModel.setDataType("Object");
+															}
+														}else {
+															propertyModel = analysisProModel(methodModel.getUrl(),property.type(),null,2);
+															if(propertyModel == null) {
+																propertyModel = new PropertyModel();
+																propertyModel.setDataType("Object");
+															}
+														}
+													}
+													propertyModel.setArray(false);
+													if(isObj(type) == 2 || isObj(type) == 4 ) {
+														propertyModel.setArray(true);
+													}
+													propertyModel.setValue(pValue);
+													propertyModel.setName(property.value());
+													String[] split = property.value().split("\\^");
+													if(split.length == 2) {
+														propertyModel.setName(split[0]);
+														propertyModel.setTestData(split[1]);
+													}
+													String[] split2 = split[0].split("\\~");
+													if(split2.length == 2) {
+														propertyModel.setName(split2[1]);
+														if(split2[0].contains("n"))propertyModel.setRequired(false);
+													}
+													propertyModel.setDescription(property.description());
+													propertyModel.setDataType(field.getType().getSimpleName());
+													propertyModels.add(propertyModel);
 												}else {
-													propertyModel = analysisProModel(property.type(),null);
-													if(propertyModel == null) propertyModel = new PropertyModel();
-												}
-												propertyModel.setArray(property.isArray());
-												propertyModel.setValue(pValue);
-												propertyModel.setName(property.value());
-												String[] split = property.value().split("\\^");
-												if(split.length == 2) {
-													propertyModel.setName(split[0]);
-													propertyModel.setTestData(split[1]);
-												}
-												String[] split2 = split[0].split("\\~");
-												if(split2.length == 2) {
-													propertyModel.setName(split2[1]);
-													if(split2[0].contains("n"))propertyModel.setRequired(false);
-												}
-												propertyModel.setDescription(property.description());
-												propertyModel.setDataType(field.getType().getSimpleName());
-												propertyModels.add(propertyModel);
-											}	
+													ApiModelProperty property = field.getAnnotation(ApiModelProperty.class);
+													if(property.hidden()) continue;
+													if(property.type().getName().equals("java.lang.Object") && isObj(ptype) != 3) {
+														propertyModel = new PropertyModel();
+													}else {
+														if(isObj(ptype) == 3) {
+															propertyModel = analysisProModel(methodModel.getUrl(),ptype,null,2);
+															if(propertyModel == null) {
+																propertyModel = new PropertyModel();
+																propertyModel.setDataType("Object");
+															}
+														}else {
+															propertyModel = analysisProModel(methodModel.getUrl(),property.type(),null,2);
+															if(propertyModel == null) {
+																propertyModel = new PropertyModel();
+																propertyModel.setDataType("Object");
+															}
+														}
+													}
+													propertyModel.setArray(false);
+													if(isObj(type) == 2 || isObj(type) == 4 ) {
+														propertyModel.setArray(true);
+													}
+													propertyModel.setValue(pValue);
+													propertyModel.setName(property.value());
+													String[] split = property.value().split("\\^");
+													if(split.length == 2) {
+														propertyModel.setName(split[0]);
+														propertyModel.setTestData(split[1]);
+													}
+													String[] split2 = split[0].split("\\~");
+													if(split2.length == 2) {
+														propertyModel.setName(split2[1]);
+														if(split2[0].contains("n"))propertyModel.setRequired(false);
+													}
+													propertyModel.setDescription(property.description());
+													propertyModel.setDataType(field.getType().getSimpleName());
+													propertyModels.add(propertyModel);
+				
+												}	
+											}
 										}
 									}
+										
 									modelModel.setPropertyModels(propertyModels);
 									ResposeModel resposeModel = new ResposeModel();
 									resposeModel.setValue(modelModel.getValue());
@@ -679,23 +752,24 @@ public class LKADController {
 									if(parameters[i].isAnnotationPresent(LKAGroup.class)) {
 										group = parameters[i].getAnnotation(LKAGroup.class).value();
 									}
-									ParamModel paramModel = analysisModel(argument,group);
-									if (paramModel != null) {
-										if(argument.isAnnotationPresent(LKAModel.class)) {
-											paramModel.setArray(isArray);
-											paramModel.setValue(argument.getSimpleName());
-											paramModel.setName(argument.getAnnotation(LKAModel.class).value());
-											paramModel.setDescription(argument.getAnnotation(LKAModel.class).description());
-											paramModel.setDataType("");
-											request.add(paramModel);
-										}else {
-											paramModel.setArray(isArray);
-											paramModel.setValue(argument.getSimpleName());
-											paramModel.setName(argument.getAnnotation(ApiModel.class).value());
-											paramModel.setDescription(argument.getAnnotation(ApiModel.class).description());
-											paramModel.setDataType("");
-											request.add(paramModel);
-										}
+									ParamModel paramModel = analysisModel(methodModel.getUrl(),argument,group);
+									if (paramModel == null) {
+										paramModel = new ParamModel();
+									}
+									if(argument.isAnnotationPresent(LKAModel.class)) {
+										paramModel.setArray(isArray);
+										paramModel.setValue(argument.getSimpleName());
+										paramModel.setName(argument.getAnnotation(LKAModel.class).value());
+										paramModel.setDescription(argument.getAnnotation(LKAModel.class).description());
+										paramModel.setDataType("Object");
+										request.add(paramModel);
+									}else {
+										paramModel.setArray(isArray);
+										paramModel.setValue(argument.getSimpleName());
+										paramModel.setName(argument.getAnnotation(ApiModel.class).value());
+										paramModel.setDescription(argument.getAnnotation(ApiModel.class).description());
+										paramModel.setDataType("Object");
+										request.add(paramModel);
 									}
 								}
 							}
@@ -712,15 +786,16 @@ public class LKADController {
 										// 获取参数描述信息
 										Class<?> type = param.type();
 										if (!type.getName().equals("java.lang.Object")) { // 说明入参是对象
-											ParamModel paramModel = analysisModel(type,param.group());
-											if (paramModel != null) {
-												paramModel.setArray(param.isArray());
-												paramModel.setValue(param.name());
-												paramModel.setName(param.value());
-												paramModel.setDescription(param.description());
-												paramModel.setDataType("");
-												request.add(paramModel);
+											ParamModel paramModel = analysisModel(methodModel.getUrl(),type,param.group());
+											if (paramModel == null) {
+												paramModel = new ParamModel();
 											}
+											paramModel.setArray(param.isArray());
+											paramModel.setValue(param.name());
+											paramModel.setName(param.value());
+											paramModel.setDescription(param.description());
+											paramModel.setDataType("Object");
+											request.add(paramModel);
 										} else {
 											if(param.name() != null && !"".equals(param.name())) {
 												ParamModel paramModel = new ParamModel();
@@ -897,15 +972,16 @@ public class LKADController {
 										// 获取参数描述信息
 										Class<?> type = param.type();
 										if (!type.getName().equals("java.lang.Object")) { // 说明入参是对象
-											ParamModel paramModel = analysisModel(type,param.group());
-											if (paramModel != null) {
-												paramModel.setArray(param.isArray());
-												paramModel.setValue(param.name());
-												paramModel.setName(param.value());
-												paramModel.setDescription(param.description());
-												paramModel.setDataType("");
-												request.add(paramModel);
+											ParamModel paramModel = analysisModel(methodModel.getUrl(),type,param.group());
+											if (paramModel == null) {
+												paramModel = new ParamModel();
 											}
+											paramModel.setArray(param.isArray());
+											paramModel.setValue(param.name());
+											paramModel.setName(param.value());
+											paramModel.setDescription(param.description());
+											paramModel.setDataType("Object");
+											request.add(paramModel);
 										} else {
 											if(param.name() != null && !"".equals(param.name())) {
 												ParamModel paramModel = new ParamModel();
@@ -1070,15 +1146,16 @@ public class LKADController {
 								// 获取参数描述信息
 								Class<?> type = param.type();
 								if (!type.getName().equals("java.lang.Object")) { // 说明入参是对象
-									ParamModel paramModel = analysisModel(type,param.group());
-									if (paramModel != null) {
-										paramModel.setArray(param.isArray());
-										paramModel.setValue(param.name());
-										paramModel.setName(param.value());
-										paramModel.setDescription(param.description());
-										paramModel.setDataType("");
-										request.add(paramModel);
+									ParamModel paramModel = analysisModel(methodModel.getUrl(),type,param.group());
+									if (paramModel == null) {
+										paramModel = new ParamModel();
 									}
+									paramModel.setArray(param.isArray());
+									paramModel.setValue(param.name());
+									paramModel.setName(param.value());
+									paramModel.setDescription(param.description());
+									paramModel.setDataType("Object");
+									request.add(paramModel);
 								} else {
 									if(param.name() != null && !"".equals(param.name())) {
 										ParamModel paramModel = new ParamModel();
@@ -1249,15 +1326,16 @@ public class LKADController {
 								// 获取参数描述信息
 								Class<?> type = param.type();
 								if (!type.getName().equals("java.lang.Object")) { // 说明入参是对象
-									ParamModel paramModel = analysisModel(type,param.group());
-									if (paramModel != null) {
-										paramModel.setArray(param.isArray());
-										paramModel.setValue(param.name());
-										paramModel.setName(param.value());
-										paramModel.setDescription(param.description());
-										paramModel.setDataType("");
-										request.add(paramModel);
+									ParamModel paramModel = analysisModel(methodModel.getUrl(),type,param.group());
+									if (paramModel == null) {
+										paramModel = new ParamModel();
 									}
+									paramModel.setArray(param.isArray());
+									paramModel.setValue(param.name());
+									paramModel.setName(param.value());
+									paramModel.setDescription(param.description());
+									paramModel.setDataType("Object");
+									request.add(paramModel);
 								} else {
 									if(param.name() != null && !"".equals(param.name())) {
 										ParamModel paramModel = new ParamModel();
@@ -1457,33 +1535,19 @@ public class LKADController {
 										continue;
 									}
 									
-									boolean isPackageType = false;
-									if(type.equals(Integer.class) || type.equals(int.class)){
-										paramModel.setDataType("Integer");isPackageType=true;
-						            }else if(type.equals(Byte.class) || type.equals(byte.class)){
-						            	paramModel.setDataType("Byte");isPackageType=true;
-						            }else if(type.equals(Short.class) || type.equals(short.class)){
-						            	paramModel.setDataType("Short");isPackageType=true;
-						            }else if(type.equals(Float.class) || type.equals(float.class)){
-						            	paramModel.setDataType("Float");isPackageType=true;
-						            }else if(type.equals(Double.class) || type.equals(double.class)){
-						            	paramModel.setDataType("Double");isPackageType=true;
-						            }else if(type.equals(Character.class) || type.equals(char.class)){
-						            	paramModel.setDataType("Character");isPackageType=true;
-						            }else if(type.equals(Long.class) || type.equals(long.class)){
-						            	paramModel.setDataType("Long");isPackageType=true;
-						            }else if(type.equals(Boolean.class) || type.equals(boolean.class)){
-						            	paramModel.setDataType("Boolean");isPackageType=true;
-						            }else if(type.equals(String.class) || type.equals(String.class)){
-						            	paramModel.setDataType("String");isPackageType=true;
-						            }else if(type.equals(Map.class)) {
-						            	paramModel.setDataType("Map");isPackageType=true;
+									//判断数据类型
+									paramModel.setDataType(type.getSimpleName());
+									int flag = isObj(type);
+						            if(flag == 3) {
+						            	paramModel = analysisModel(methodModel.getUrl(),type,"");
+						            	if(paramModel == null) {
+						            		paramModel = new ParamModel();
+						            		paramModel.setDataType("Object");
+						            	}
 						            }
-						            if(!isPackageType) {
-						            	paramModel = analysisObj(type);
-						            }
+
 						            String name = parameters[i].getName();
-									paramModel.setName(enToCn(name));
+									paramModel.setName(enToCn(methodModel.getUrl(),1,name));
 								    paramModel.setValue(name);
 								    paramModel.setArray(isArray);
 								    if(isArray) {
@@ -1517,7 +1581,7 @@ public class LKADController {
 									// 获取参数描述信息
 									Class<?> type = resp.type();
 									if (!type.getName().equals("java.lang.Object")) { // 说明入参是对象
-										ResposeModel resposeModel = analysisResModel(type,resp.group());
+										ResposeModel resposeModel = analysisResModel(methodModel.getUrl(),type,resp.group());
 										if (resposeModel != null) {
 											resposeModel.setArray(resp.isArray());
 											//###################父参######################
@@ -2056,7 +2120,7 @@ public class LKADController {
 							// 获取参数描述信息
 							Class<?> type = resp.type();
 							if (!type.getName().equals("java.lang.Object")) { // 说明入参是对象
-								ResposeModel resposeModel = analysisResModel(type,resp.group());
+								ResposeModel resposeModel = analysisResModel(methodModel.getUrl(),type,resp.group());
 								if (resposeModel != null) {
 									resposeModel.setArray(resp.isArray());
 									//###################父参######################
@@ -2659,254 +2723,13 @@ public class LKADController {
 	
 	
 	/**
-	 * 	解析请求参数的原生对象注解
-	 * @param typeCls 类型
-	 * @return ParamModel 对象
-	 * @throws Exception 异常
-	 */
-	public ParamModel analysisObj(Class<?> typeCls) throws Exception {
-		reqNum++; //防止递归死循环
-		if(reqNum > 10) {
-			reqNum = 0;
-			return null;
-		}
-		ParamModel pm = new ParamModel();
-		// 获取model描述信息
-		ModelModel modelModel = new ModelModel();
-		modelModel.setValue(typeCls.getSimpleName());
-		modelModel.setName(enToCn(typeCls.getSimpleName()));
-		modelModel.setDescription("");
-
-		
-		// 获取所有属性对象
-		Field[] fields = typeCls.getDeclaredFields();
-		
-		//获取父类所有属性对象
-		Field[] declaredField;
-		try {
-			declaredField = getDeclaredField(typeCls.newInstance());
-		} catch (Exception e) {
-			declaredField = null;
-		}
-		Object[] arrays = null;
-		//合并数组
-		if(declaredField != null) {
-			List<Field> list = new ArrayList<>(Arrays.asList(declaredField));
-			arrays = list.toArray();
-		}else {
-			arrays = fields;
-		}
-		
-		if (arrays != null && arrays.length > 0) {
-			List<PropertyModel> propertyModels = new ArrayList<PropertyModel>();
-			for (Object obj : arrays) {
-				Field field = (Field)obj;
-				Class<?> type = field.getType();
-				PropertyModel propertyModel = new PropertyModel();
-				boolean isArray = false;
-				if(type.equals(List.class) || type.equals(Set.class)) { //list集合
-					isArray = true;
-					// 当前集合的泛型类型
-                    Type genericType = field.getGenericType();
-                    if (null == genericType) {
-                        continue;
-                    }
-                    if (genericType instanceof ParameterizedType) {
-                        ParameterizedType pt = (ParameterizedType) genericType;
-                        //得到泛型里的class类型对象
-                        type = (Class<?>)pt.getActualTypeArguments()[0];
-                    }
-				}else if(type.isArray()) {//数组
-					isArray = true;
-					// 获取数组元素的类型
-					type = type.getComponentType();
-				}
-				
-				
-				boolean isPackageType = false;
-				if(type.equals(Integer.class) || type.equals(int.class)){
-					propertyModel.setDataType("Integer");isPackageType=true;
-	            }else if(type.equals(Byte.class) || type.equals(byte.class)){
-	            	propertyModel.setDataType("Byte");isPackageType=true;
-	            }else if(type.equals(Short.class) || type.equals(short.class)){
-	            	propertyModel.setDataType("Short");isPackageType=true;
-	            }else if(type.equals(Float.class) || type.equals(float.class)){
-	            	propertyModel.setDataType("Float");isPackageType=true;
-	            }else if(type.equals(Double.class) || type.equals(double.class)){
-	            	propertyModel.setDataType("Double");isPackageType=true;
-	            }else if(type.equals(Character.class) || type.equals(char.class)){
-	            	propertyModel.setDataType("Character");isPackageType=true;
-	            }else if(type.equals(Long.class) || type.equals(long.class)){
-	            	propertyModel.setDataType("Long");isPackageType=true;
-	            }else if(type.equals(Boolean.class) || type.equals(boolean.class)){
-	            	propertyModel.setDataType("Boolean");isPackageType=true;
-	            }else if(type.equals(String.class) || type.equals(String.class)){
-	            	propertyModel.setDataType("String");isPackageType=true;
-	            }else if(type.equals(Map.class)) {
-	            	propertyModel.setDataType("Map");isPackageType=true;
-	            }
-	            if(!isPackageType) {
-	            	propertyModel = analysisProObj(type);
-	            }
-	            String name = field.getName();
-	            propertyModel.setArray(isArray);
-	            if(isArray) {
-					propertyModel.setDataType(propertyModel.getDataType()+"[]");
-				}
-            	propertyModel.setName(enToCn(name));
-            	propertyModel.setValue(name);
-            	propertyModel.setRequired(false);
-            	propertyModel.setDescription("");
-            	propertyModel.setTestData("");
-				try {
-					if(type.isAnnotationPresent(PathVariable.class)) {
-						propertyModel.setParamType(ParamType.PATH);
-					}else if(type.isAnnotationPresent(RequestHeader.class)) {
-						propertyModel.setParamType(ParamType.HEADER);
-					}else {
-						propertyModel.setParamType(ParamType.QUERY);
-					}
-				} catch (Exception e) {
-					propertyModel.setParamType(ParamType.QUERY);
-				}
-				propertyModels.add(propertyModel);
-			}
-			modelModel.setPropertyModels(propertyModels);
-		}
-		pm.setModelModel(modelModel);
-		reqNum = 0;
-		return pm;
-	}
-	
-	
-	/**
-	 *	解析原生对象属性
-	 * @param typeCls 类型
-	 * @return PropertyModel 对象
-	 * @throws Exception 异常
-	 */
-	public PropertyModel analysisProObj(Class<?> typeCls) throws Exception {
-		proNum++;
-		if(proNum > 10) {
-			proNum = 0;
-			return null;
-		}
-		PropertyModel pm = new PropertyModel();
-		// 获取model描述信息
-		ModelModel modelModel = new ModelModel();
-		modelModel.setValue(typeCls.getSimpleName());
-		modelModel.setName(enToCn(typeCls.getSimpleName()));
-		modelModel.setDescription("");
-
-		
-		// 获取所有属性对象
-		Field[] fields = typeCls.getDeclaredFields();
-		
-		//获取父类所有属性对象
-		Field[] declaredField;
-		try {
-			declaredField = getDeclaredField(typeCls.newInstance());
-		} catch (Exception e) {
-			declaredField = null;
-		}
-		Object[] arrays = null;
-		//合并数组
-		if(declaredField != null) {
-			List<Field> list = new ArrayList<>(Arrays.asList(declaredField));
-			arrays = list.toArray();
-		}else {
-			arrays = fields;
-		}
-		
-		if (arrays != null && arrays.length > 0) {
-			List<PropertyModel> propertyModels = new ArrayList<PropertyModel>();
-			for (Object obj: arrays) {
-				Field field = (Field)obj;
-				Class<?> type = field.getType();
-				PropertyModel propertyModel = new PropertyModel();
-				boolean isArray = false;
-				if(type.equals(List.class) || type.equals(Set.class)) { //list集合
-					isArray = true;
-					// 当前集合的泛型类型
-                    Type genericType = field.getGenericType();
-                    if (null == genericType) {
-                        continue;
-                    }
-                    if (genericType instanceof ParameterizedType) {
-                        ParameterizedType pt = (ParameterizedType) genericType;
-                        //得到泛型里的class类型对象
-                        type = (Class<?>)pt.getActualTypeArguments()[0];
-                    }
-				}else if(type.isArray()) {//数组
-					isArray = true;
-					// 获取数组元素的类型
-					type = type.getComponentType();
-				}
-				
-				boolean isPackageType = false;
-				if(type.equals(Integer.class) || type.equals(int.class)){
-					propertyModel.setDataType("Integer");isPackageType=true;
-	            }else if(type.equals(Byte.class) || type.equals(byte.class)){
-	            	propertyModel.setDataType("Byte");isPackageType=true;
-	            }else if(type.equals(Short.class) || type.equals(short.class)){
-	            	propertyModel.setDataType("Short");isPackageType=true;
-	            }else if(type.equals(Float.class) || type.equals(float.class)){
-	            	propertyModel.setDataType("Float");isPackageType=true;
-	            }else if(type.equals(Double.class) || type.equals(double.class)){
-	            	propertyModel.setDataType("Double");isPackageType=true;
-	            }else if(type.equals(Character.class) || type.equals(char.class)){
-	            	propertyModel.setDataType("Character");isPackageType=true;
-	            }else if(type.equals(Long.class) || type.equals(long.class)){
-	            	propertyModel.setDataType("Long");isPackageType=true;
-	            }else if(type.equals(Boolean.class) || type.equals(boolean.class)){
-	            	propertyModel.setDataType("Boolean");isPackageType=true;
-	            }else if(type.equals(String.class) || type.equals(String.class)){
-	            	propertyModel.setDataType("String");isPackageType=true;
-	            }else if(type.equals(Map.class)) {
-	            	propertyModel.setDataType("Map");isPackageType=true;
-	            }
-	            if(!isPackageType) {
-	            	propertyModel = analysisProObj(type);
-	            }
-	            String name = field.getName();
-	            propertyModel.setArray(isArray);
-	            if(isArray) {
-					propertyModel.setDataType(propertyModel.getDataType()+"[]");
-				}
-            	propertyModel.setName(enToCn(name));
-            	propertyModel.setValue(name);
-            	propertyModel.setRequired(false);
-            	propertyModel.setDescription("");
-            	propertyModel.setTestData("");
-				try {
-					if(type.isAnnotationPresent(PathVariable.class)) {
-						propertyModel.setParamType(ParamType.PATH);
-					}else if(type.isAnnotationPresent(RequestHeader.class)) {
-						propertyModel.setParamType(ParamType.HEADER);
-					}else {
-						propertyModel.setParamType(ParamType.QUERY);
-					}
-				} catch (Exception e) {
-					propertyModel.setParamType(ParamType.QUERY);
-				}
-				propertyModels.add(propertyModel);
-			}
-			modelModel.setPropertyModels(propertyModels);
-		}
-		pm.setModelModel(modelModel);
-		proNum = 0;
-		return pm;
-	}
-	
-	
-	/**
 	 * 	解析请求参数的LKAModel对象注解
 	 * @param typeCls 类型
 	 * @param group 组名
 	 * @return ParamModel 对象
 	 * @throws Exception 异常
 	 */
-	public ParamModel analysisModel(Class<?> typeCls,String group) throws Exception {
+	public ParamModel analysisModel(String url,Class<?> typeCls,String group) throws Exception {
 		reqNum++; //防止递归死循环
 		if(reqNum > 10) {
 			reqNum = 0;
@@ -2944,8 +2767,6 @@ public class LKADController {
 		Object[] arrays = null;
 		//合并数组
 		if(declaredField != null) {
-			/*List<Field> list = new ArrayList<>(Arrays.asList(fields));
-			list.addAll(Arrays.asList(declaredField));*/
 			List<Field> list = new ArrayList<>(Arrays.asList(declaredField));
 			arrays = list.toArray();
 		}else {
@@ -2956,145 +2777,203 @@ public class LKADController {
 			List<PropertyModel> propertyModels = new ArrayList<PropertyModel>();
 			for (Object obj : arrays) {
 				Field field = (Field)obj;
-				if (!field.isAnnotationPresent(LKAProperty.class) && !field.isAnnotationPresent(ApiModelProperty.class))
-					continue;
-				boolean bool2=false;
-				if(field.isAnnotationPresent(LKAProperty.class)) {
-					LKAProperty param = field.getAnnotation(LKAProperty.class);
-					if(param.hidden())continue;
-					boolean bool = false;
-					if(group != null && !"".equals(group)) {
-						String[] groups = param.groups();
-						
-						if(groups != null && groups.length > 0) {
-							for (String gst : groups) {
-								if(gst == null) continue;
-								String[] gs = gst.split("-");
-								if(gs == null || gs[0] == null || "".equals(gs[0]) || !gs[0].equals(group)) {
-									continue;
-								}else {
-									if(gs.length > 1 && gs[1].equals("n")) {
-										bool2 = true;
-									}
-									bool = true;
-									break;
-								}
-							}
-						}
-						if(!bool) continue;
-					}
-					Class<?> ctype = param.type();
-					String pValue = field.getName();
-					String pType = field.getType().getSimpleName();
+				String name = field.getName();
+				Class<?> type = field.getType();
+				if (!field.isAnnotationPresent(LKAProperty.class) && !field.isAnnotationPresent(ApiModelProperty.class)) {
 					PropertyModel propertyModel = new PropertyModel();
-					if (ctype.getName() != "java.lang.Object") {
-						propertyModel = analysisProModel(ctype,group);
-						if (propertyModel == null)continue;
-						propertyModel.setArray(param.isArray());
-						propertyModel.setValue(pValue);
-						propertyModel.setName(param.value());
-						propertyModel.setDescription(param.description());
-						propertyModel.setDataType("");
-						propertyModels.add(propertyModel);
-					} else {
-						propertyModel.setDataType(pType);
-						propertyModel.setDescription(param.description());
-						propertyModel.setName(param.value());
-						propertyModel.setTestData(param.testData());
-						String[] split = param.value().split("\\^");
-						if(split.length == 2) {
-							propertyModel.setName(split[0]);
-							propertyModel.setTestData(split[1]);
-						}
-
-						String[] split2 = split[0].split("\\~");
-						if(split2.length == 2) {
-							propertyModel.setName(split2[1]);
-							if(split2[0].contains("n"))propertyModel.setRequired(false);
-						}
-						
-						if(bool) {
-							propertyModel.setRequired(true);
-						}
-						if(bool2) {
-							propertyModel.setRequired(false);
-						}
-						propertyModel.setParamType("query");
-						propertyModel.setArray(param.isArray());
-						if(!param.isArray() && pType.contains("[]")) {
-							propertyModel.setArray(true);
-						}
-						propertyModel.setValue(pValue);
-						
-						propertyModels.add(propertyModel);
+					int isArray = isObj(type);
+					type = getGenericType(type,field);
+					//判断数据类型
+					propertyModel.setDataType(type.getSimpleName());
+					int flag = isObj(type);
+		            if(flag == 3) {
+		            	propertyModel = analysisProModel(url,type,"",1);
+		            	if(propertyModel == null) { 
+		            		propertyModel = new PropertyModel();
+		            		propertyModel.setDataType("Object");
+		            	}
+		            }
+		            propertyModel.setArray(false);
+		            if(isArray == 2 || isArray == 4) {
+		            	propertyModel.setArray(true);
+						propertyModel.setDataType(propertyModel.getDataType()+"[]");
 					}
+	            	propertyModel.setName(enToCn(url,1,name));
+	            	propertyModel.setValue(name);
+	            	propertyModel.setRequired(false);
+	            	propertyModel.setDescription("");
+	            	propertyModel.setTestData("");
+					try {
+						if(type.isAnnotationPresent(PathVariable.class)) {
+							propertyModel.setParamType(ParamType.PATH);
+						}else if(type.isAnnotationPresent(RequestHeader.class)) {
+							propertyModel.setParamType(ParamType.HEADER);
+						}else {
+							propertyModel.setParamType(ParamType.QUERY);
+						}
+					} catch (Exception e) {
+						propertyModel.setParamType(ParamType.QUERY);
+					}
+					propertyModels.add(propertyModel);
 				}else {
-					ApiModelProperty param = field.getAnnotation(ApiModelProperty.class);
-					if(param.hidden())continue;
-					boolean bool = false;
-					if(group != null && !"".equals(group)) {
-						String[] groups = param.groups();
-						
-						if(groups != null && groups.length > 0) {
-							for (String gst : groups) {
-								if(gst == null) continue;
-								String[] gs = gst.split("-");
-								if(gs == null || gs[0] == null || "".equals(gs[0]) || !gs[0].equals(group)) {
-									continue;
-								}else {
-									if(gs.length > 1 && gs[1].equals("n")) {
-										bool2 = true;
+					boolean bool2=false;
+					if(field.isAnnotationPresent(LKAProperty.class)) {
+						LKAProperty param = field.getAnnotation(LKAProperty.class);
+						if(param.hidden())continue;
+						boolean bool = false;
+						if(group != null && !"".equals(group)) {
+							String[] groups = param.groups();
+							
+							if(groups != null && groups.length > 0) {
+								for (String gst : groups) {
+									if(gst == null) continue;
+									String[] gs = gst.split("-");
+									if(gs == null || gs[0] == null || "".equals(gs[0]) || !gs[0].equals(group)) {
+										continue;
+									}else {
+										if(gs.length > 1 && gs[1].equals("n")) {
+											bool2 = true;
+										}
+										bool = true;
+										break;
 									}
-									bool = true;
-									break;
 								}
 							}
+							if(!bool) continue;
 						}
-						if(!bool) continue;
-					}
-					Class<?> ctype = param.type();
-					String pValue = field.getName();
-					String pType = field.getType().getSimpleName();
-					PropertyModel propertyModel = new PropertyModel();
-					if (ctype.getName() != "java.lang.Object") {
-						propertyModel = analysisProModel(ctype,group);
-						if (propertyModel == null)
-							continue;
-						propertyModel.setArray(param.isArray());
-						propertyModel.setValue(pValue);
-						propertyModel.setName(param.value());
-						propertyModel.setDescription(param.description());
-						propertyModel.setDataType("");
-						propertyModels.add(propertyModel);
-					} else {
-						propertyModel.setDataType(pType);
-						propertyModel.setDescription(param.description());
-						propertyModel.setName(param.value());
-						propertyModel.setTestData(param.testData());
-						String[] split = param.value().split("\\^");
-						if(split.length == 2) {
-							propertyModel.setName(split[0]);
-							propertyModel.setTestData(split[1]);
-						}
+						Class<?> ctype = param.type();
+						String pValue = field.getName();
+						Class<?> pType = field.getType();
+						//获取泛形类型
+						Class<?> gType = getGenericType(pType, field);
+						PropertyModel propertyModel = new PropertyModel();
+						if (ctype.getName() != "java.lang.Object" || isObj(gType) == 3) {
+							if(ctype.getName() != "java.lang.Object") {
+								propertyModel = analysisProModel(url,ctype,group,1);
+							}else {
+								propertyModel = analysisProModel(url,gType,group,1);
+							}
+							if (propertyModel == null) {
+								propertyModel = new PropertyModel();
+								propertyModel.setDataType("Object");
+							}
+							propertyModel.setArray(param.isArray());
+							if(!param.isArray() && (pType.getSimpleName().contains("[]") || pType.equals(List.class) || pType.equals(Set.class))) {
+								propertyModel.setArray(true);
+							}
+							propertyModel.setValue(pValue);
+							propertyModel.setName(param.value());
+							propertyModel.setDescription(param.description());
+							propertyModels.add(propertyModel);
+						} else {
+							propertyModel.setDataType(pType.getSimpleName());
+							propertyModel.setDescription(param.description());
+							propertyModel.setName(param.value());
+							propertyModel.setTestData(param.testData());
+							String[] split = param.value().split("\\^");
+							if(split.length == 2) {
+								propertyModel.setName(split[0]);
+								propertyModel.setTestData(split[1]);
+							}
 
-						String[] split2 = split[0].split("\\~");
-						if(split2.length == 2) {
-							propertyModel.setName(split2[1]);
-							if(split2[0].contains("n"))propertyModel.setRequired(false);
+							String[] split2 = split[0].split("\\~");
+							if(split2.length == 2) {
+								propertyModel.setName(split2[1]);
+								if(split2[0].contains("n"))propertyModel.setRequired(false);
+							}
+							
+							if(bool) {
+								propertyModel.setRequired(true);
+							}
+							if(bool2) {
+								propertyModel.setRequired(false);
+							}
+							propertyModel.setParamType("query");
+							propertyModel.setArray(param.isArray());
+							if(!param.isArray() && (pType.getSimpleName().contains("[]") || pType.equals(List.class) || pType.equals(Set.class))) {
+								propertyModel.setArray(true);
+							}
+							propertyModel.setValue(pValue);
+							
+							propertyModels.add(propertyModel);
 						}
-						if(bool) {
-							propertyModel.setRequired(true);
+					}else {
+						ApiModelProperty param = field.getAnnotation(ApiModelProperty.class);
+						if(param.hidden())continue;
+						boolean bool = false;
+						if(group != null && !"".equals(group)) {
+							String[] groups = param.groups();
+							
+							if(groups != null && groups.length > 0) {
+								for (String gst : groups) {
+									if(gst == null) continue;
+									String[] gs = gst.split("-");
+									if(gs == null || gs[0] == null || "".equals(gs[0]) || !gs[0].equals(group)) {
+										continue;
+									}else {
+										if(gs.length > 1 && gs[1].equals("n")) {
+											bool2 = true;
+										}
+										bool = true;
+										break;
+									}
+								}
+							}
+							if(!bool) continue;
 						}
-						if(bool2) {
-							propertyModel.setRequired(false);
+						Class<?> ctype = param.type();
+						String pValue = field.getName();
+						Class<?> pType = field.getType();
+						Class<?> gType = getGenericType(pType, field);
+						PropertyModel propertyModel = new PropertyModel();
+						if (ctype.getName() != "java.lang.Object" || isObj(gType) == 3) {
+							if(ctype.getName() != "java.lang.Object") {
+								propertyModel = analysisProModel(url,ctype,group,1);
+							}else {
+								propertyModel = analysisProModel(url,gType,group,1);
+							}
+							if (propertyModel == null) {
+								propertyModel = new PropertyModel();
+								propertyModel.setDataType("Object");
+							}
+							propertyModel.setArray(param.isArray());
+							if(!param.isArray() && (pType.getSimpleName().contains("[]") || pType.equals(List.class) || pType.equals(Set.class))) {
+								propertyModel.setArray(true);
+							}
+							propertyModel.setValue(pValue);
+							propertyModel.setName(param.value());
+							propertyModel.setDescription(param.description());
+							propertyModels.add(propertyModel);
+						} else {
+							propertyModel.setDataType(pType.getSimpleName());
+							propertyModel.setDescription(param.description());
+							propertyModel.setName(param.value());
+							propertyModel.setTestData(param.testData());
+							String[] split = param.value().split("\\^");
+							if(split.length == 2) {
+								propertyModel.setName(split[0]);
+								propertyModel.setTestData(split[1]);
+							}
+
+							String[] split2 = split[0].split("\\~");
+							if(split2.length == 2) {
+								propertyModel.setName(split2[1]);
+								if(split2[0].contains("n"))propertyModel.setRequired(false);
+							}
+							if(bool) {
+								propertyModel.setRequired(true);
+							}
+							if(bool2) {
+								propertyModel.setRequired(false);
+							}
+							propertyModel.setParamType("query");
+							propertyModel.setArray(param.isArray());
+							if(!param.isArray() && (pType.getSimpleName().contains("[]") || pType.equals(List.class) || pType.equals(Set.class))) {
+								propertyModel.setArray(true);
+							}
+							propertyModel.setValue(pValue);
+							propertyModels.add(propertyModel);
 						}
-						propertyModel.setParamType("query");
-						propertyModel.setArray(param.isArray());
-						if(!param.isArray() && pType.contains("[]")) {
-							propertyModel.setArray(true);
-						}
-						propertyModel.setValue(pValue);
-						propertyModels.add(propertyModel);
 					}
 				}
 			}
@@ -3112,7 +2991,7 @@ public class LKADController {
 	 * @return PropertyModel 对象
 	 * @throws Exception 异常
 	 */
-	public PropertyModel analysisProModel(Class<?> typeCls,String group) throws Exception {
+	public PropertyModel analysisProModel(String url,Class<?> typeCls,String group,Integer proType) throws Exception {
 		proNum++;
 		if(proNum > 10) {
 			proNum = 0;
@@ -3150,8 +3029,6 @@ public class LKADController {
 		Object[] arrays = null;
 		//合并数组
 		if(declaredField != null) {
-			/*List<Field> list = new ArrayList<>(Arrays.asList(fields));
-			list.addAll(Arrays.asList(declaredField));*/
 			List<Field> list = new ArrayList<>(Arrays.asList(declaredField));
 			arrays = list.toArray();
 		}else {
@@ -3162,144 +3039,202 @@ public class LKADController {
 			List<PropertyModel> propertyModels = new ArrayList<PropertyModel>();
 			for (Object obj: arrays) {
 				Field field = (Field)obj;
-				if (!field.isAnnotationPresent(LKAProperty.class) && !field.isAnnotationPresent(ApiModelProperty.class))
-					continue;
-				boolean bool2=false;
-				if(field.isAnnotationPresent(LKAProperty.class)) {
-					LKAProperty param = field.getAnnotation(LKAProperty.class);
-					if(param.hidden())continue;
-					boolean bool = false;
-					if(group != null && !"".equals(group)) {
-						String[] groups = param.groups();
-						
-						if(groups != null && groups.length > 0) {
-							for (String gst : groups) {
-								if(gst == null) continue;
-								String[] gs = gst.split("-");
-								if(gs == null || gs[0] == null || "".equals(gs[0]) || !gs[0].equals(group)) {
-									continue;
-								}else {
-									if(gs.length > 1 && gs[1].equals("n")) {
-										bool2 = true;
-									}
-									bool = true;
-									break;
-								}
-							}
-						}
-						if(!bool) continue;
-					}
-					Class<?> ctype = param.type();
-					String pValue = field.getName();
-					String pType = field.getType().getSimpleName();
+				if (!field.isAnnotationPresent(LKAProperty.class) && !field.isAnnotationPresent(ApiModelProperty.class)) {
+					Class<?> type = field.getType();
 					PropertyModel propertyModel = new PropertyModel();
-					if (ctype.getName() != "java.lang.Object") {
-						propertyModel = analysisProModel(ctype,group);
-						if (propertyModel == null)
-							continue;
-						propertyModel.setArray(param.isArray());
-						propertyModel.setValue(pValue);
-						propertyModel.setName(param.value());
-						propertyModel.setDescription(param.description());
-						propertyModel.setDataType("");
-						propertyModels.add(propertyModel);
-					} else {
-						propertyModel.setDataType(pType);
-						propertyModel.setDescription(param.description());
-						propertyModel.setName(param.value());
-						propertyModel.setTestData(param.testData());
-						String[] split = param.value().split("\\^");
-						if(split.length == 2) {
-							propertyModel.setName(split[0]);
-							propertyModel.setTestData(split[1]);
-						}
-
-						String[] split2 = split[0].split("\\~");
-						if(split2.length == 2) {
-							propertyModel.setName(split2[1]);
-							if(split2[0].contains("n"))propertyModel.setRequired(false);
-						}
-						if(bool) {
-							propertyModel.setRequired(true);
-						}
-						if(bool2) {
-							propertyModel.setRequired(false);
-						}
-						propertyModel.setParamType("query");
-						propertyModel.setArray(param.isArray());
-						if(!param.isArray() && pType.contains("[]")) {
-							propertyModel.setArray(true);
-						}
-						propertyModel.setValue(pValue);
-						propertyModels.add(propertyModel);
+					int isArray = isObj(type);
+					type = getGenericType(type, field);
+					
+					//判断数据类型
+					propertyModel.setDataType(type.getSimpleName());
+					int flag = isObj(type);
+		            if(flag == 3) {
+		            	propertyModel = analysisProModel(url,type,"",proType);
+		            	if(propertyModel == null) { 
+		            		propertyModel = new PropertyModel();
+		            		propertyModel.setDataType("Object");
+		            	}
+		            }
+		            String name = field.getName();
+		            propertyModel.setArray(false);
+		            if(isArray == 2 || isArray == 4) {
+						propertyModel.setDataType(propertyModel.getDataType()+"[]");
 					}
+	            	propertyModel.setName(enToCn(url,proType,name));
+	            	propertyModel.setValue(name);
+	            	propertyModel.setRequired(false);
+	            	propertyModel.setDescription("");
+	            	propertyModel.setTestData("");
+					try {
+						if(type.isAnnotationPresent(PathVariable.class)) {
+							propertyModel.setParamType(ParamType.PATH);
+						}else if(type.isAnnotationPresent(RequestHeader.class)) {
+							propertyModel.setParamType(ParamType.HEADER);
+						}else {
+							propertyModel.setParamType(ParamType.QUERY);
+						}
+					} catch (Exception e) {
+						propertyModel.setParamType(ParamType.QUERY);
+					}
+					propertyModels.add(propertyModel);
 				}else {
-					ApiModelProperty param = field.getAnnotation(ApiModelProperty.class);
-					if(param.hidden())continue;
-					boolean bool = false;
-					if(group != null && !"".equals(group)) {
-						String[] groups = param.groups();
-						
-						if(groups != null && groups.length > 0) {
-							for (String gst : groups) {
-								if(gst == null) continue;
-								String[] gs = gst.split("-");
-								if(gs == null || gs[0] == null || "".equals(gs[0]) || !gs[0].equals(group)) {
-									continue;
-								}else {
-									if(gs.length > 1 && gs[1].equals("n")) {
-										bool2 = true;
+					boolean bool2=false;
+					if(field.isAnnotationPresent(LKAProperty.class)) {
+						LKAProperty param = field.getAnnotation(LKAProperty.class);
+						if(param.hidden())continue;
+						boolean bool = false;
+						if(group != null && !"".equals(group)) {
+							String[] groups = param.groups();
+							
+							if(groups != null && groups.length > 0) {
+								for (String gst : groups) {
+									if(gst == null) continue;
+									String[] gs = gst.split("-");
+									if(gs == null || gs[0] == null || "".equals(gs[0]) || !gs[0].equals(group)) {
+										continue;
+									}else {
+										if(gs.length > 1 && gs[1].equals("n")) {
+											bool2 = true;
+										}
+										bool = true;
+										break;
 									}
-									bool = true;
-									break;
 								}
 							}
+							if(!bool) continue;
 						}
-						if(!bool) continue;
-					}
-					Class<?> ctype = param.type();
-					String pValue = field.getName();
-					String pType = field.getType().getSimpleName();
-					PropertyModel propertyModel = new PropertyModel();
-					if (ctype.getName() != "java.lang.Object") {
-						propertyModel = analysisProModel(ctype,group);
-						if (propertyModel == null)
-							continue;
-						propertyModel.setArray(param.isArray());
-						propertyModel.setValue(pValue);
-						propertyModel.setName(param.value());
-						propertyModel.setDescription(param.description());
-						propertyModel.setDataType("");
-						propertyModels.add(propertyModel);
-					} else {
-						propertyModel.setDataType(pType);
-						propertyModel.setDescription(param.description());
-						propertyModel.setName(param.value());
-						propertyModel.setTestData(param.testData());
-						String[] split = param.value().split("\\^");
-						if(split.length == 2) {
-							propertyModel.setName(split[0]);
-							propertyModel.setTestData(split[1]);
-						}
+						Class<?> ctype = param.type();
+						String pValue = field.getName();
+						Class<?> pType = field.getType();
+						//获取泛形类型
+						Class<?> gType = getGenericType(pType, field);
+						PropertyModel propertyModel = new PropertyModel();
+						if (ctype.getName() != "java.lang.Object" || isObj(gType) == 3) {
+							if(ctype.getName() != "java.lang.Object") {
+								propertyModel = analysisProModel(url,ctype,group,proType);
+							}else {
+								propertyModel = analysisProModel(url,gType,group,proType);
+							}
+							if (propertyModel == null) {
+								propertyModel = new PropertyModel();
+							}
+							propertyModel.setArray(param.isArray());
+							if(!param.isArray() && (pType.getSimpleName().contains("[]") || pType.equals(List.class) || pType.equals(Set.class))) {
+								propertyModel.setArray(true);
+							}
+							propertyModel.setValue(pValue);
+							propertyModel.setName(param.value());
+							propertyModel.setDescription(param.description());
+							propertyModel.setDataType("Object");
+							propertyModels.add(propertyModel);
+						} else {
+							propertyModel.setDataType(pType.getSimpleName());
+							propertyModel.setDescription(param.description());
+							propertyModel.setName(param.value());
+							propertyModel.setTestData(param.testData());
+							String[] split = param.value().split("\\^");
+							if(split.length == 2) {
+								propertyModel.setName(split[0]);
+								propertyModel.setTestData(split[1]);
+							}
 
-						String[] split2 = split[0].split("\\~");
-						if(split2.length == 2) {
-							propertyModel.setName(split2[1]);
-							if(split2[0].contains("n"))propertyModel.setRequired(false);
+							String[] split2 = split[0].split("\\~");
+							if(split2.length == 2) {
+								propertyModel.setName(split2[1]);
+								if(split2[0].contains("n"))propertyModel.setRequired(false);
+							}
+							if(bool) {
+								propertyModel.setRequired(true);
+							}
+							if(bool2) {
+								propertyModel.setRequired(false);
+							}
+							propertyModel.setParamType("query");
+							propertyModel.setArray(param.isArray());
+							if(!param.isArray() && (pType.getSimpleName().contains("[]") || pType.equals(List.class) || pType.equals(Set.class))) {
+								propertyModel.setArray(true);
+							}
+							propertyModel.setValue(pValue);
+							propertyModels.add(propertyModel);
 						}
-						if(bool) {
-							propertyModel.setRequired(true);
+					}else {
+						ApiModelProperty param = field.getAnnotation(ApiModelProperty.class);
+						if(param.hidden())continue;
+						boolean bool = false;
+						if(group != null && !"".equals(group)) {
+							String[] groups = param.groups();
+							
+							if(groups != null && groups.length > 0) {
+								for (String gst : groups) {
+									if(gst == null) continue;
+									String[] gs = gst.split("-");
+									if(gs == null || gs[0] == null || "".equals(gs[0]) || !gs[0].equals(group)) {
+										continue;
+									}else {
+										if(gs.length > 1 && gs[1].equals("n")) {
+											bool2 = true;
+										}
+										bool = true;
+										break;
+									}
+								}
+							}
+							if(!bool) continue;
 						}
-						if(bool2) {
-							propertyModel.setRequired(false);
+						Class<?> ctype = param.type();
+						String pValue = field.getName();
+						Class<?> pType = field.getType();
+						//获取泛形类型
+						Class<?> gType = getGenericType(pType, field);
+						PropertyModel propertyModel = new PropertyModel();
+						if (ctype.getName() != "java.lang.Object" || isObj(gType) == 3) {
+							if(ctype.getName() != "java.lang.Object") {
+								propertyModel = analysisProModel(url,ctype,group,proType);
+							}else {
+								propertyModel = analysisProModel(url,gType,group,proType);
+							}
+							if (propertyModel == null) {
+								propertyModel = new PropertyModel();
+								propertyModel.setDataType("Object");
+							}
+							propertyModel.setArray(param.isArray());
+							if(!param.isArray() && (pType.getSimpleName().contains("[]") || pType.equals(List.class) || pType.equals(Set.class))) {
+								propertyModel.setArray(true);
+							}
+							propertyModel.setValue(pValue);
+							propertyModel.setName(param.value());
+							propertyModel.setDescription(param.description());
+							propertyModels.add(propertyModel);
+						} else {
+							propertyModel.setDataType(pType.getSimpleName());
+							propertyModel.setDescription(param.description());
+							propertyModel.setName(param.value());
+							propertyModel.setTestData(param.testData());
+							String[] split = param.value().split("\\^");
+							if(split.length == 2) {
+								propertyModel.setName(split[0]);
+								propertyModel.setTestData(split[1]);
+							}
+
+							String[] split2 = split[0].split("\\~");
+							if(split2.length == 2) {
+								propertyModel.setName(split2[1]);
+								if(split2[0].contains("n"))propertyModel.setRequired(false);
+							}
+							if(bool) {
+								propertyModel.setRequired(true);
+							}
+							if(bool2) {
+								propertyModel.setRequired(false);
+							}
+							propertyModel.setParamType("query");
+							propertyModel.setArray(param.isArray());
+							if(!param.isArray() && (pType.getSimpleName().contains("[]") || pType.equals(List.class) || pType.equals(Set.class))) {
+								propertyModel.setArray(true);
+							}
+							propertyModel.setValue(pValue);
+							propertyModels.add(propertyModel);
 						}
-						propertyModel.setParamType("query");
-						propertyModel.setArray(param.isArray());
-						if(!param.isArray() && pType.contains("[]")) {
-							propertyModel.setArray(true);
-						}
-						propertyModel.setValue(pValue);
-						propertyModels.add(propertyModel);
 					}
 				}
 				
@@ -3319,7 +3254,7 @@ public class LKADController {
 	 * @return ResposeModel 对象
 	 * @throws Exception 异常
 	 */
-	public ResposeModel analysisResModel(Class<?> typeCls,String group) throws Exception {
+	public ResposeModel analysisResModel(String url,Class<?> typeCls,String group) throws Exception {
 		respNum++;
 		if(respNum > 10) {
 			respNum = 0;
@@ -3358,8 +3293,6 @@ public class LKADController {
 		Object[] arrays = null;
 		//合并数组
 		if(declaredField != null) {
-			/*List<Field> list = new ArrayList<>(Arrays.asList(fields));
-			list.addAll(Arrays.asList(declaredField));*/
 			List<Field> list = new ArrayList<>(Arrays.asList(declaredField));
 			arrays = list.toArray();
 		}else {
@@ -3370,145 +3303,204 @@ public class LKADController {
 			List<PropertyModel> propertyModels = new ArrayList<PropertyModel>();
 			for (Object obj : arrays) {
 				Field field =  (Field)obj;
-				if (!field.isAnnotationPresent(LKAProperty.class) && !field.isAnnotationPresent(ApiModelProperty.class))
-					continue;
-				boolean bool2 = false;
-				if(field.isAnnotationPresent(LKAProperty.class)) {
-					LKAProperty param = field.getAnnotation(LKAProperty.class);
-					if(param.hidden())continue;
-					boolean bool = false;
-					if(group != null && !"".equals(group)) {
-						String[] groups = param.groups();
-						
-						if(groups != null && groups.length > 0) {
-							for (String gst : groups) {
-								if(gst == null) continue;
-								String[] gs = gst.split("-");
-								if(gs == null || gs[0] == null || "".equals(gs[0]) || !gs[0].equals(group)) {
-									continue;
-								}else {
-									if(gs.length > 1 && gs[1].equals("n")) {
-										bool2 = true;
-									}
-									bool = true;
-									break;
-								}
-							}
-						}
-						if(!bool) continue;
-					}
-					Class<?> ctype = param.type();
-					String pValue = field.getName();
-					String pType = field.getType().getSimpleName();
+				if (!field.isAnnotationPresent(LKAProperty.class) && !field.isAnnotationPresent(ApiModelProperty.class)) {
+					Class<?> type = field.getType();
 					PropertyModel propertyModel = new PropertyModel();
-					if (ctype.getName() != "java.lang.Object") {
-						propertyModel = analysisProModel(ctype,group);
-						if (propertyModel == null)continue;
-						propertyModel.setArray(param.isArray());
-						propertyModel.setValue(pValue);
-						propertyModel.setName(param.value());
-						propertyModel.setDescription(param.description());
-						propertyModel.setDataType("");
-						propertyModels.add(propertyModel);
-					} else {
-						propertyModel.setDataType(pType);
-						propertyModel.setDescription(param.description());
-						propertyModel.setName(param.value());
-						propertyModel.setTestData(param.testData());
-						String[] split = param.value().split("\\^");
-						if(split.length == 2) {
-							propertyModel.setName(split[0]);
-							propertyModel.setTestData(split[1]);
-						}
-
-						String[] split2 = split[0].split("\\~");
-						if(split2.length == 2) {
-							propertyModel.setName(split2[1]);
-							if(split2[0].contains("n"))propertyModel.setRequired(false);
-						}
-						if(bool) {
-							propertyModel.setRequired(true);
-						}
-						if(bool2) {
-							propertyModel.setRequired(false);
-						}
-						propertyModel.setParamType("query");
-						propertyModel.setArray(param.isArray());
-						if(!param.isArray() && pType.contains("[]")) {
-							propertyModel.setArray(true);
-						}
-						propertyModel.setValue(pValue);
-						propertyModels.add(propertyModel);
+					int isArray = isObj(type);
+					type = getGenericType(type, field);
+					
+					//判断数据类型
+					propertyModel.setDataType(type.getSimpleName());
+					int flag = isObj(type);
+		            if(flag == 3) {
+		            	propertyModel = analysisProModel(url,type,"",2);
+		            	if(propertyModel == null) { 
+		            		propertyModel = new PropertyModel();
+		            		propertyModel.setDataType("Object");
+		            	}
+		            }
+		            String name = field.getName();
+		            propertyModel.setArray(false);
+		            if(isArray == 2 || isArray == 4) {
+						propertyModel.setDataType(propertyModel.getDataType()+"[]");
 					}
+	            	propertyModel.setName(enToCn(url,2,name));
+	            	propertyModel.setValue(name);
+	            	propertyModel.setRequired(false);
+	            	propertyModel.setDescription("");
+	            	propertyModel.setTestData("");
+					try {
+						if(type.isAnnotationPresent(PathVariable.class)) {
+							propertyModel.setParamType(ParamType.PATH);
+						}else if(type.isAnnotationPresent(RequestHeader.class)) {
+							propertyModel.setParamType(ParamType.HEADER);
+						}else {
+							propertyModel.setParamType(ParamType.QUERY);
+						}
+					} catch (Exception e) {
+						propertyModel.setParamType(ParamType.QUERY);
+					}
+					propertyModels.add(propertyModel);
 				}else {
-					ApiModelProperty param = field.getAnnotation(ApiModelProperty.class);
-					if(param.hidden())continue;
-					boolean bool = false;
-					if(group != null && !"".equals(group)) {
-						String[] groups = param.groups();
-						
-						if(groups != null && groups.length > 0) {
-							for (String gst : groups) {
-								if(gst == null) continue;
-								String[] gs = gst.split("-");
-								if(gs == null || gs[0] == null || "".equals(gs[0]) || !gs[0].equals(group)) {
-									continue;
-								}else {
-									if(gs.length > 1 && gs[1].equals("n")) {
-										bool2 = true;
+					boolean bool2 = false;
+					if(field.isAnnotationPresent(LKAProperty.class)) {
+						LKAProperty param = field.getAnnotation(LKAProperty.class);
+						if(param.hidden())continue;
+						boolean bool = false;
+						if(group != null && !"".equals(group)) {
+							String[] groups = param.groups();
+							
+							if(groups != null && groups.length > 0) {
+								for (String gst : groups) {
+									if(gst == null) continue;
+									String[] gs = gst.split("-");
+									if(gs == null || gs[0] == null || "".equals(gs[0]) || !gs[0].equals(group)) {
+										continue;
+									}else {
+										if(gs.length > 1 && gs[1].equals("n")) {
+											bool2 = true;
+										}
+										bool = true;
+										break;
 									}
-									bool = true;
-									break;
 								}
 							}
+							if(!bool) continue;
 						}
-						if(!bool) continue;
-					}
-					Class<?> ctype = param.type();
-					String pValue = field.getName();
-					String pType = field.getType().getSimpleName();
-					PropertyModel propertyModel = new PropertyModel();
-					if (ctype.getName() != "java.lang.Object") {
-						propertyModel = analysisProModel(ctype,group);
-						if (propertyModel == null)continue;
-						propertyModel.setArray(param.isArray());
-						propertyModel.setValue(pValue);
-						propertyModel.setName(param.value());
-						propertyModel.setDescription(param.description());
-						propertyModel.setDataType("");
-						propertyModels.add(propertyModel);
-					} else {
-						propertyModel.setDataType(pType);
-						propertyModel.setDescription(param.description());
-						propertyModel.setName(param.value());
-						propertyModel.setTestData(param.testData());
-						String[] split = param.value().split("\\^");
-						if(split.length == 2) {
-							propertyModel.setName(split[0]);
-							propertyModel.setTestData(split[1]);
-						}
+						Class<?> ctype = param.type();
+						String pValue = field.getName();
+						Class<?> pType = field.getType();
+						//获取泛形类型
+						Class<?> gType = getGenericType(pType, field);
+						PropertyModel propertyModel = new PropertyModel();
+						if (ctype.getName() != "java.lang.Object" || isObj(gType) == 3) {
+							if(ctype.getName() != "java.lang.Object") {
+								propertyModel = analysisProModel(url,ctype,group,2);
+							}else {
+								propertyModel = analysisProModel(url,gType,group,2);
+							}
+							if (propertyModel == null) {
+								propertyModel = new PropertyModel();
+								propertyModel.setDataType("Object");
+							}
+							propertyModel.setArray(param.isArray());
+							if(!param.isArray() && (pType.getSimpleName().contains("[]") || pType.equals(List.class) || pType.equals(Set.class))) {
+								propertyModel.setArray(true);
+							}
+							propertyModel.setValue(pValue);
+							propertyModel.setName(param.value());
+							propertyModel.setDescription(param.description());
+							propertyModels.add(propertyModel);
+						} else {
+							propertyModel.setDataType(pType.getSimpleName());
+							propertyModel.setDescription(param.description());
+							propertyModel.setName(param.value());
+							propertyModel.setTestData(param.testData());
+							String[] split = param.value().split("\\^");
+							if(split.length == 2) {
+								propertyModel.setName(split[0]);
+								propertyModel.setTestData(split[1]);
+							}
 
-						String[] split2 = split[0].split("\\~");
-						if(split2.length == 2) {
-							propertyModel.setName(split2[1]);
-							if(split2[0].contains("n"))propertyModel.setRequired(false);
+							String[] split2 = split[0].split("\\~");
+							if(split2.length == 2) {
+								propertyModel.setName(split2[1]);
+								if(split2[0].contains("n"))propertyModel.setRequired(false);
+							}
+							if(bool) {
+								propertyModel.setRequired(true);
+							}
+							if(bool2) {
+								propertyModel.setRequired(false);
+							}
+							propertyModel.setParamType("query");
+							propertyModel.setArray(param.isArray());
+							if(!param.isArray() && (pType.getSimpleName().contains("[]") || pType.equals(List.class) || pType.equals(Set.class))) {
+								propertyModel.setArray(true);
+							}
+							propertyModel.setValue(pValue);
+							propertyModels.add(propertyModel);
 						}
-						if(bool) {
-							propertyModel.setRequired(true);
+					}else {
+						ApiModelProperty param = field.getAnnotation(ApiModelProperty.class);
+						if(param.hidden())continue;
+						boolean bool = false;
+						if(group != null && !"".equals(group)) {
+							String[] groups = param.groups();
+							
+							if(groups != null && groups.length > 0) {
+								for (String gst : groups) {
+									if(gst == null) continue;
+									String[] gs = gst.split("-");
+									if(gs == null || gs[0] == null || "".equals(gs[0]) || !gs[0].equals(group)) {
+										continue;
+									}else {
+										if(gs.length > 1 && gs[1].equals("n")) {
+											bool2 = true;
+										}
+										bool = true;
+										break;
+									}
+								}
+							}
+							if(!bool) continue;
 						}
-						if(bool2) {
-							propertyModel.setRequired(false);
+						Class<?> ctype = param.type();
+						String pValue = field.getName();
+						Class<?> pType = field.getType();
+						//获取泛形类型
+						Class<?> gType = getGenericType(pType, field);
+						PropertyModel propertyModel = new PropertyModel();
+						if (ctype.getName() != "java.lang.Object" || isObj(gType) == 3) {
+							if(ctype.getName() != "java.lang.Object") {
+								propertyModel = analysisProModel(url,ctype,group,2);
+							}else {
+								propertyModel = analysisProModel(url,gType,group,2);
+							}
+							if (propertyModel == null) {
+								propertyModel = new PropertyModel();
+								propertyModel.setDataType("Object");
+							}
+							propertyModel.setArray(param.isArray());
+							if(!param.isArray() && (pType.getSimpleName().contains("[]") || pType.equals(List.class) || pType.equals(Set.class))) {
+								propertyModel.setArray(true);
+							}
+							propertyModel.setValue(pValue);
+							propertyModel.setName(param.value());
+							propertyModel.setDescription(param.description());
+							propertyModels.add(propertyModel);
+						} else {
+							propertyModel.setDataType(pType.getSimpleName());
+							propertyModel.setDescription(param.description());
+							propertyModel.setName(param.value());
+							propertyModel.setTestData(param.testData());
+							String[] split = param.value().split("\\^");
+							if(split.length == 2) {
+								propertyModel.setName(split[0]);
+								propertyModel.setTestData(split[1]);
+							}
+
+							String[] split2 = split[0].split("\\~");
+							if(split2.length == 2) {
+								propertyModel.setName(split2[1]);
+								if(split2[0].contains("n"))propertyModel.setRequired(false);
+							}
+							if(bool) {
+								propertyModel.setRequired(true);
+							}
+							if(bool2) {
+								propertyModel.setRequired(false);
+							}
+							propertyModel.setParamType("query");
+							propertyModel.setArray(param.isArray());
+							if(!param.isArray() && (pType.getSimpleName().contains("[]") || pType.equals(List.class) || pType.equals(Set.class))) {
+								propertyModel.setArray(true);
+							}
+							propertyModel.setValue(pValue);
+							propertyModels.add(propertyModel);
 						}
-						propertyModel.setParamType("query");
-						propertyModel.setArray(param.isArray());
-						if(!param.isArray() && pType.contains("[]")) {
-							propertyModel.setArray(true);
-						}
-						propertyModel.setValue(pValue);
-						propertyModels.add(propertyModel);
 					}
 				}
-				
 			}
 			modelModel.setPropertyModels(propertyModels);
 		}
@@ -3543,15 +3535,31 @@ public class LKADController {
 			ResponseEntity<String> exchange = restTemplate.exchange(serverName+"/lkad/addParamInfo",HttpMethod.POST,requestEntity,String.class);
 			return exchange.getBody();
 		}
+		//先删除作用
+		if("5".equals(modaltype)) {
+			value = value.replace("[]","");
+			Map<Object, Object> map = getParamInfo(serverName);
+			if(map != null) {
+				for (Entry<Object, Object> entry : map.entrySet()) {
+					if(entry.getKey().equals(url+"A."+type+"."+value)) {
+						delParamInfo(value,type,url+"A",serverName);
+					}
+				}
+			}
+		}
 		
 		File file = new File("lkadParamInfo.properties");
 		FileOutputStream outStream = null;
         try {
-        	outStream = new FileOutputStream(file,true); 
-            Properties prop= new Properties();
-             prop.setProperty(url+"."+type+"."+value,modaltype+"-"+content);
-             prop.store(outStream, null);
-             return "操作成功";
+			outStream = new FileOutputStream(file,true); 
+			Properties prop= new Properties();
+			if("5".equals(modaltype)) {
+				value = value.replace("[]","");
+				url=url+"A";
+			}
+			prop.setProperty(url+"."+type+"."+value,modaltype+"-"+content);
+			prop.store(outStream, null);
+			return "操作成功";
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -3661,8 +3669,7 @@ public class LKADController {
         }       
 		return null;
 	}
-	
-    
+
 	/**
 	 * July_wonderful兄优化方案(支持多层继承)
 	 * @param object 对象
@@ -3699,7 +3706,43 @@ public class LKADController {
         return rs;
     }
     
-    public String enToCn(String name) {
+    public String enToCn(String url,Integer type,String name) {
+    	
+    	
+    	File file = new File("lkadParamInfo.properties");
+		FileInputStream inStream = null;
+        try {
+        	inStream = new FileInputStream(file); 
+            Properties prop = new Properties();
+            prop.load(inStream);
+            Set<Map.Entry<Object, Object>> entrySet = prop.entrySet();//返回的属性键值对实体
+            for (Map.Entry<Object, Object> entry : entrySet) {
+            	if(entry.getKey().equals(url+"A."+type+"."+name)) {
+            		String value = entry.getValue().toString();
+            		String[] split = value.split("-");
+            		if("5".equals(split[0])) {
+            			String str = "";
+            			for (int i = 1;i<split.length;i++) {
+							str+=split[i];
+						}
+            			return str;
+            		}
+            	}
+            }
+        } catch (Exception e) {
+           // e.printStackTrace();
+        } finally {
+        	if(inStream != null) {
+        		try {
+        			inStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+        	}
+        }       
+    	
+    	
+    	
     	if(enToCn) { //开启入参翻译
 			try {
 				RestTemplate restTemplate = new RestTemplate();
@@ -3725,5 +3768,64 @@ public class LKADController {
 			}
 		}
     	return name;
+    }
+    
+    /**
+     * 	判断数据类型
+     * @param type
+     * @return
+     */
+    public int isObj(Class<?> type) {
+    	if(type.equals(Integer.class) || type.equals(int.class)){
+			return 0;
+        }else if(type.equals(Byte.class) || type.equals(byte.class)){
+        	return 0;
+        }else if(type.equals(Short.class) || type.equals(short.class)){
+        	return 0;
+        }else if(type.equals(Float.class) || type.equals(float.class)){
+        	return 0;
+        }else if(type.equals(Double.class) || type.equals(double.class)){
+        	return 0;
+        }else if(type.equals(Character.class) || type.equals(char.class)){
+        	return 0;
+        }else if(type.equals(Long.class) || type.equals(long.class)){
+        	return 0;
+        }else if(type.equals(Boolean.class) || type.equals(boolean.class)){
+        	return 0;
+        }else if(type.equals(String.class) || type.equals(String.class)){
+        	return 0;
+        }else if(type.equals(Map.class)) {
+        	return 1;
+        }else if(type.equals(List.class) || type.equals(Set.class)) {
+        	return 2;
+        }else if(type.isArray()) {
+        	return 4;
+        }
+    	return 3;
+    }
+    
+    /**
+     * 	获取数组或list、set集合泛形类型
+     * @param type
+     * @param field
+     * @return
+     */
+    public Class<?> getGenericType(Class<?> type,Field field){
+	    if(type.equals(List.class) || type.equals(Set.class)) { //list集合
+			// 当前集合的泛型类型
+	        Type genericType = field.getGenericType();
+	        if (null == genericType) {
+	            type = Object.class;
+	        }
+	        if (genericType instanceof ParameterizedType) {
+	            ParameterizedType pt = (ParameterizedType) genericType;
+	            //得到泛型里的class类型对象
+	            type = (Class<?>)pt.getActualTypeArguments()[0];
+	        }
+		}else if(type.isArray()) {//数组
+			// 获取数组元素的类型
+			type = type.getComponentType();
+		}
+	    return type;
     }
 }

@@ -503,6 +503,16 @@ $(function(){
 		    $("#modalconfirm").click(function(){
 		    	let modaltype = $("#modaltype").val();
 		    	let modalcontent = $("#modaltext").val();
+		    	if(modaltype == 5){
+			    	if(value.lastIndexOf('.') != -1){
+			    		value = value.substring(value.lastIndexOf('.')+1);
+			    	}
+			    	console.log(value);
+			    	if(value.lastIndexOf('[]') != -1){
+			    		value = value.substring(0,value.lastIndexOf('[]'));
+			    	}
+			    	console.log(value);
+		    	}
 				$('#modalconfirm').off(); //解除所有绑定事件
 				modal.style.display = "none";
 				$.ajax({
