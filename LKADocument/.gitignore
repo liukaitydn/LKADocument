@@ -1,1 +1,21 @@
-/target/
+*target
+.settings
+lib/
+.classpath
+classes/
+.tern-project
+javadocs/
+.springBeans
+  .idea/
+lkadoc-api.iml
+lkadoc-annotations.iml
+LKADocument.iml
+*.iml
+*.ipr
+*.iws
+.mymetadata
+META-INF
+logs/
+bin/
+.settings/
+.classpath
